@@ -1,0 +1,148 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using ExpenseManager.Controllers;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            LoadExpenses();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            
+            // Window control buttons
+            MinimizeButton.Click += (s, e) => this.WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => this.Close();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            AddExpenseWindow addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                LoadExpenses(); // Refresh list after adding
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            LoadExpenses();
+        }
+
+        private void LoadExpenses() {
+            try {
+                var expenses = expenseController.GetAllExpenses();
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary stats
+                TotalExpensesLabel.Text = expenseController.GetTotalExpenses().ToString("C");
+                TotalItemsLabel.Text = expenses.Count.ToString();
+                ExpenseCountLabel.Text = $"{expenses.Count} items";
+                
+                // Calculate monthly and daily totals
+                var today = DateTime.Today;
+                var thisMonth = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year);
+                var todayExpenses = expenses.Where(e => e.Date.Date == today);
+                
+                MonthlyLabel.Text = thisMonth.Sum(e => e.Amount).ToString("C");
+                TodayLabel.Text = todayExpenses.Sum(e => e.Amount).ToString("C");
+                
+                // Update charts with real data
+                UpdateCharts(expenses);
+                
+            } catch (Exception ex) {
+                MessageBox.Show($"Error loading expenses: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateCharts(System.Collections.Generic.List<ExpenseManager.Models.Expense> expenses) {
+            UpdateCategoryChart(expenses);
+            UpdateTrendSummary(expenses);
+        }
+
+        private void UpdateCategoryChart(System.Collections.Generic.List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                FoodPercentLabel.Text = "Food: 0%";
+                ShoppingPercentLabel.Text = "Shopping: 0%";
+                EntertainmentPercentLabel.Text = "Entertainment: 0%";
+                OthersPercentLabel.Text = "Others: 0%";
+                return;
+            }
+
+            var total = expenses.Sum(e => e.Amount);
+            
+            // Calculate category totals
+            var foodTotal = expenses.Where(e => 
+                e.Category.ToLower().Contains("food") || 
+                e.Category.Contains("🍽️") ||
+                e.Category.ToLower().Contains("ăn")).Sum(e => e.Amount);
+                
+            var shoppingTotal = expenses.Where(e => 
+                e.Category.ToLower().Contains("shopping") || 
+                e.Category.Contains("🛍️") ||
+                e.Category.ToLower().Contains("mua")).Sum(e => e.Amount);
+                
+            var entertainmentTotal = expenses.Where(e => 
+                e.Category.ToLower().Contains("entertainment") || 
+                e.Category.Contains("🎮") ||
+                e.Category.ToLower().Contains("giải")).Sum(e => e.Amount);
+                
+            var othersTotal = total - foodTotal - shoppingTotal - entertainmentTotal;
+
+            // Calculate percentages
+            var foodPercent = total > 0 ? (foodTotal / total) * 100 : 0;
+            var shoppingPercent = total > 0 ? (shoppingTotal / total) * 100 : 0;
+            var entertainmentPercent = total > 0 ? (entertainmentTotal / total) * 100 : 0;
+            var othersPercent = total > 0 ? (othersTotal / total) * 100 : 0;
+
+            // Update labels with data
+            FoodPercentLabel.Text = $"Food: {foodPercent:F1}% (${foodTotal:F0})";
+            ShoppingPercentLabel.Text = $"Shopping: {shoppingPercent:F1}% (${shoppingTotal:F0})";
+            EntertainmentPercentLabel.Text = $"Entertainment: {entertainmentPercent:F1}% (${entertainmentTotal:F0})";
+            OthersPercentLabel.Text = $"Others: {othersPercent:F1}% (${othersTotal:F0})";
+        }
+
+        private void UpdateTrendSummary(System.Collections.Generic.List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                TrendSummaryLabel.Text = "Add expenses to see trends";
+                return;
+            }
+
+            // Get this month and last month totals
+            var today = DateTime.Today;
+            var thisMonth = expenses.Where(e => 
+                e.Date.Month == today.Month && 
+                e.Date.Year == today.Year).Sum(e => e.Amount);
+                
+            var lastMonth = expenses.Where(e => 
+                e.Date.Month == today.AddMonths(-1).Month && 
+                e.Date.Year == today.AddMonths(-1).Year).Sum(e => e.Amount);
+
+            // Update month labels
+            Month1Label.Text = today.AddMonths(-5).ToString("MMM");
+            Month2Label.Text = today.AddMonths(-4).ToString("MMM");
+            Month3Label.Text = today.AddMonths(-3).ToString("MMM");
+            Month4Label.Text = today.AddMonths(-2).ToString("MMM");
+            Month5Label.Text = today.AddMonths(-1).ToString("MMM");
+            Month6Label.Text = today.ToString("MMM");
+
+            // Calculate trend
+            if (lastMonth > 0) {
+                var change = ((thisMonth - lastMonth) / lastMonth) * 100;
+                var trend = change > 0 ? "📈" : "📉";
+                TrendSummaryLabel.Text = $"{trend} {Math.Abs(change):F1}% vs last month";
+            } else {
+                TrendSummaryLabel.Text = $"💰 This month: ${thisMonth:F0}";
+            }
+        }
+    }
+}

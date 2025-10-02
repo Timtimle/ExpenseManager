@@ -1,0 +1,571 @@
+﻿<Window x:Class="ExpenseManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpenseManager.Views"
+        mc:Ignorable="d"
+        Title="💫 Anime Expense Manager ✨" Height="750" Width="1300"
+        WindowStartupLocation="CenterScreen"
+        Background="#1a1a2e">
+
+	<Window.Resources>
+		<!-- Anime Card Style -->
+		<Style x:Key="AnimeCard" TargetType="Border">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+						<GradientStop Color="#16213e" Offset="0"/>
+						<GradientStop Color="#0f3460" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="CornerRadius" Value="20"/>
+			<Setter Property="Padding" Value="25"/>
+			<Setter Property="BorderBrush" Value="#ff6b6b"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="#ff6b6b" BlurRadius="25" 
+                                      ShadowDepth="0" Opacity="0.3"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Magical Button Style -->
+		<Style x:Key="MagicalButton" TargetType="Button">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" CornerRadius="25" Padding="25,15">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#ff6b6b" Offset="0"/>
+									<GradientStop Color="#feca57" Offset="0.5"/>
+									<GradientStop Color="#ff9ff3" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Effect">
+									<Setter.Value>
+										<DropShadowEffect Color="#feca57" BlurRadius="30" ShadowDepth="0" Opacity="0.8"/>
+									</Setter.Value>
+								</Setter>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+
+		<!-- Kawaii Button Style -->
+		<Style x:Key="KawaiiButton" TargetType="Button">
+			<Setter Property="Width" Value="50"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Background" Value="#ff9ff3"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="25">
+							<Border.Effect>
+								<DropShadowEffect Color="#ff9ff3" BlurRadius="15" ShadowDepth="0" Opacity="0.5"/>
+							</Border.Effect>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Background" Value="#feca57"/>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Magical Stats Card -->
+		<Style x:Key="MagicalStats" TargetType="Border">
+			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="Padding" Value="30,25"/>
+			<Setter Property="BorderThickness" Value="3"/>
+		</Style>
+
+		<!-- Anime DataGrid -->
+		<Style x:Key="AnimeDataGrid" TargetType="DataGrid">
+			<Setter Property="Background" Value="#16213e"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="BorderBrush" Value="#ff6b6b"/>
+			<Setter Property="GridLinesVisibility" Value="None"/>
+			<Setter Property="RowBackground" Value="#0f3460"/>
+			<Setter Property="AlternatingRowBackground" Value="#16213e"/>
+			<Setter Property="CanUserAddRows" Value="False"/>
+			<Setter Property="CanUserDeleteRows" Value="False"/>
+			<Setter Property="AutoGenerateColumns" Value="False"/>
+			<Setter Property="SelectionMode" Value="Single"/>
+			<Setter Property="HeadersVisibility" Value="Column"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
+		
+		<!-- Sparkle Button Style -->
+		<Style x:Key="SparkleButton" TargetType="Button">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" CornerRadius="15" Padding="20,12">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+									<GradientStop Color="#ff6b6b" Offset="0"/>
+									<GradientStop Color="#feca57" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Effect">
+									<Setter.Value>
+										<DropShadowEffect Color="#feca57" BlurRadius="20" ShadowDepth="0" Opacity="0.7"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+	</Window.Resources>
+
+	<!-- Main Anime Container -->
+	<Border Background="#1a1a2e" CornerRadius="20" Margin="10">
+		<Border.Effect>
+			<DropShadowEffect Color="#ff6b6b" BlurRadius="40" ShadowDepth="0" Opacity="0.2"/>
+		</Border.Effect>
+		
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="80"/>   <!-- Magical Header -->
+				<RowDefinition Height="*"/>    <!-- Main Content -->
+			</Grid.RowDefinitions>
+
+			<!-- ✨ MAGICAL HEADER BAR ✨ -->
+			<Border Grid.Row="0" CornerRadius="20,20,0,0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="#ff6b6b" Offset="0"/>
+						<GradientStop Color="#feca57" Offset="0.5"/>
+						<GradientStop Color="#ff9ff3" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid Margin="30,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<!-- Anime Title với placeholder image -->
+					<StackPanel Grid.Column="0" Orientation="Horizontal"
+                                VerticalAlignment="Center">
+						<!-- Có thể thay bằng Image -->
+						<Border Width="50" Height="50" Margin="0,0,20,0" CornerRadius="25">
+							<Border.Background>
+								<ImageBrush ImageSource="Images/kawaii_logo.png" 
+                                            Stretch="UniformToFill"/>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#feca57" BlurRadius="20" ShadowDepth="0" Opacity="0.8"/>
+							</Border.Effect>
+						</Border>
+						<StackPanel>
+							<TextBlock Text="✨ Anime Expense Manager ✨" FontSize="24"
+                                       FontWeight="Bold" Foreground="White">
+								<TextBlock.Effect>
+									<DropShadowEffect Color="#1a1a2e" BlurRadius="5" ShadowDepth="2"/>
+								</TextBlock.Effect>
+							</TextBlock>
+							<TextBlock Text="🌸 Kawaii Finance Tracker 🌸" FontSize="13"
+                                       Foreground="White" Opacity="0.9" Margin="0,-3,0,0"/>
+						</StackPanel>
+					</StackPanel>
+
+					<!-- Kawaii Controls -->
+					<StackPanel Grid.Column="1" Orientation="Horizontal">
+						<Button x:Name="MinimizeButton" Content="─"
+                                Style="{StaticResource KawaiiButton}"
+                                Foreground="White" FontSize="16" FontWeight="Bold"/>
+						<Button x:Name="MaximizeButton" Content="□"
+                                Style="{StaticResource KawaiiButton}"
+                                Foreground="White" FontSize="12" Margin="8,0"/>
+						<Button x:Name="CloseButton" Content="✕"
+                                Style="{StaticResource KawaiiButton}"
+                                Background="#ff4757"
+                                Foreground="White" FontSize="14" FontWeight="Bold"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+
+			<!-- 🌟 MAIN CONTENT AREA 🌟 -->
+			<Border Grid.Row="1" Background="#1a1a2e" CornerRadius="0,0,20,20">
+				<Grid Margin="30,25">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>  <!-- Search & Actions -->
+						<RowDefinition Height="Auto"/>  <!-- Magical Stats -->
+						<RowDefinition Height="*"/>     <!-- Content -->
+					</Grid.RowDefinitions>
+
+					<!-- 🔮 MAGICAL SEARCH & ACTIONS 🔮 -->
+					<Grid Grid.Row="0" Margin="0,0,0,30">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- Kawaii Search Bar -->
+						<Border Grid.Column="0" Background="#16213e" CornerRadius="25"
+                                Height="60" Margin="0,0,25,0"
+                                BorderBrush="#ff9ff3" BorderThickness="3">
+							<Border.Effect>
+								<DropShadowEffect Color="#ff9ff3" BlurRadius="15" ShadowDepth="0" Opacity="0.3"/>
+							</Border.Effect>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="60"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+
+								<TextBlock Grid.Column="0" Text="🔍" FontSize="24"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								<TextBox Grid.Column="1" Name="SearchTextBox"
+                                         Background="Transparent" BorderThickness="0"
+                                         VerticalAlignment="Center" FontSize="16"
+                                         Foreground="#feca57" FontWeight="Medium"
+                                         Text="✨ Search your magical expenses... ✨"/>
+								<ComboBox Grid.Column="2" Name="CategoryFilterComboBox"
+                                          Width="180" Margin="0,0,20,0" Background="Transparent"
+                                          BorderThickness="0" FontSize="14" Foreground="#feca57">
+									<ComboBoxItem Content="🌟 All Categories"/>
+									<ComboBoxItem Content="🍜 Food and Drinks"/>
+									<ComboBoxItem Content="🛍️ Shopping"/>
+									<ComboBoxItem Content="🎮 Entertainment"/>
+									<ComboBoxItem Content="✨ Others"/>
+								</ComboBox>
+							</Grid>
+						</Border>
+
+						<!-- Magical Action Buttons -->
+						<StackPanel Grid.Column="1" Orientation="Horizontal">
+							<Button Name="AddExpenseButton" Content="💫 Add Expense"
+                                    Style="{StaticResource MagicalButton}"
+                                    Margin="0,0,15,0"/>
+							<Button Name="RefreshButton" Content="🔄"
+                                    Style="{StaticResource KawaiiButton}"
+                                    Background="#feca57" Foreground="White"/>
+						</StackPanel>
+					</Grid>
+
+					<!-- 🌈 MAGICAL STATS CARDS 🌈 -->
+					<Grid Grid.Row="1" Margin="0,0,0,30">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="20"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="20"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="20"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- Total Expenses - Pink Magic -->
+						<Border Grid.Column="0" Style="{StaticResource MagicalStats}"
+                                BorderBrush="#ff6b6b">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#ff6b6b" Offset="0"/>
+									<GradientStop Color="#ff9ff3" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#ff6b6b" BlurRadius="25" ShadowDepth="0" Opacity="0.4"/>
+							</Border.Effect>
+							<StackPanel>
+								<TextBlock Text="💰" FontSize="35" HorizontalAlignment="Center"
+                                           Margin="0,0,0,10"/>
+								<TextBlock Text="Total Expenses" FontSize="14"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Bold"/>
+								<TextBlock Name="TotalExpensesLabel" Text="$0.00"
+                                           FontSize="26" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+
+						<!-- This Month - Green Magic -->
+						<Border Grid.Column="2" Style="{StaticResource MagicalStats}"
+                                BorderBrush="#2ed573">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#2ed573" Offset="0"/>
+									<GradientStop Color="#7bed9f" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#2ed573" BlurRadius="25" ShadowDepth="0" Opacity="0.4"/>
+							</Border.Effect>
+							<StackPanel>
+								<TextBlock Text="🌸" FontSize="35" HorizontalAlignment="Center"
+                                           Margin="0,0,0,10"/>
+								<TextBlock Text="This Month" FontSize="14"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Bold"/>
+								<TextBlock Name="MonthlyLabel" Text="$0.00"
+                                           FontSize="26" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+
+						<!-- Total Items - Orange Magic -->
+						<Border Grid.Column="4" Style="{StaticResource MagicalStats}"
+                                BorderBrush="#feca57">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#feca57" Offset="0"/>
+									<GradientStop Color="#ff9f43" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#feca57" BlurRadius="25" ShadowDepth="0" Opacity="0.4"/>
+							</Border.Effect>
+							<StackPanel>
+								<TextBlock Text="✨" FontSize="35" HorizontalAlignment="Center"
+                                           Margin="0,0,0,10"/>
+								<TextBlock Text="Total Items" FontSize="14"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Bold"/>
+								<TextBlock Name="TotalItemsLabel" Text="0"
+                                           FontSize="26" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+
+						<!-- Today - Purple Magic -->
+						<Border Grid.Column="6" Style="{StaticResource MagicalStats}"
+                                BorderBrush="#a55eea">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#a55eea" Offset="0"/>
+									<GradientStop Color="#d63384" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#a55eea" BlurRadius="25" ShadowDepth="0" Opacity="0.4"/>
+							</Border.Effect>
+							<StackPanel>
+								<TextBlock Text="🌙" FontSize="35" HorizontalAlignment="Center"
+                                           Margin="0,0,0,10"/>
+								<TextBlock Text="Today" FontSize="14"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Bold"/>
+								<TextBlock Name="TodayLabel" Text="$0.00"
+                                           FontSize="26" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+					</Grid>
+
+					<!-- 📊 MAIN CONTENT 📊 -->
+					<Grid Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*"/>
+							<ColumnDefinition Width="30"/>
+							<ColumnDefinition Width="400"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- LEFT: Magical Expense Table -->
+						<Border Grid.Column="0" Style="{StaticResource AnimeCard}">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="*"/>
+								</Grid.RowDefinitions>
+
+								<!-- Kawaii Table Header -->
+								<StackPanel Grid.Row="0" Orientation="Horizontal"
+                                            Margin="0,0,0,25">
+									<TextBlock Text="📝 Magical Expenses ✨" FontSize="20"
+                                               FontWeight="Bold" Foreground="#feca57"/>
+									<Border Background="#ff6b6b" CornerRadius="15"
+                                            Padding="12,6" Margin="20,0,0,0">
+										<Border.Effect>
+											<DropShadowEffect Color="#ff6b6b" BlurRadius="10" ShadowDepth="0" Opacity="0.5"/>
+										</Border.Effect>
+										<TextBlock Name="ExpenseCountLabel" Text="0 items"
+                                                   Foreground="White" FontSize="13" FontWeight="Bold"/>
+									</Border>
+								</StackPanel>
+
+								<!-- Anime Data Grid -->
+								<DataGrid Grid.Row="1" Name="ExpenseDataGrid"
+                                          Style="{StaticResource AnimeDataGrid}">
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="💰 Amount"
+                                                          Binding="{Binding Amount, StringFormat={}{0:C}}"
+                                                          Width="130">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#ff6b6b"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Bold"/>
+													<Setter Property="FontSize" Value="14"/>
+													<Setter Property="Padding" Value="18,15"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+
+										<DataGridTextColumn Header="📝 Description"
+                                                          Binding="{Binding Description}"
+                                                          Width="*">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#ff6b6b"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Bold"/>
+													<Setter Property="FontSize" Value="14"/>
+													<Setter Property="Padding" Value="18,15"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+
+										<DataGridTextColumn Header="📂 Category"
+                                                          Binding="{Binding Category}"
+                                                          Width="150">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#ff6b6b"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Bold"/>
+													<Setter Property="FontSize" Value="14"/>
+													<Setter Property="Padding" Value="18,15"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+
+										<DataGridTextColumn Header="📅 Date"
+                                                          Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}"
+                                                          Width="120">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#ff6b6b"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Bold"/>
+													<Setter Property="FontSize" Value="14"/>
+													<Setter Property="Padding" Value="18,15"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+									</DataGrid.Columns>
+								</DataGrid>
+							</Grid>
+						</Border>
+
+						<!-- RIGHT: Kawaii Actions -->
+						<StackPanel Grid.Column="2">
+							<!-- AI Magical Insights -->
+							<Border Style="{StaticResource AnimeCard}" Margin="0,0,0,25">
+								<StackPanel>
+									<TextBlock Text="🤖 AI Magic Insights ✨" FontSize="18"
+                                               FontWeight="Bold" Foreground="#feca57"
+                                               Margin="0,0,0,20"/>
+
+									<Border Background="#2ed573" CornerRadius="15"
+                                            Padding="20,15" Margin="0,0,0,20">
+										<Border.Effect>
+											<DropShadowEffect Color="#2ed573" BlurRadius="15" ShadowDepth="0" Opacity="0.4"/>
+										</Border.Effect>
+										<StackPanel>
+											<TextBlock Text="💡 Kawaii Tip" FontSize="14"
+                                                       Foreground="White" FontWeight="Bold"/>
+											<TextBlock Name="AITipLabel"
+                                                       Text="Start your magical expense journey! ✨"
+                                                       FontSize="13" Foreground="White"
+                                                       TextWrapping="Wrap" Margin="0,8,0,0"/>
+										</StackPanel>
+									</Border>
+
+									<Button Content="🎯 More Magic Insights"
+                                            Style="{StaticResource SparkleButton}"/>
+								</StackPanel>
+							</Border>
+
+							<!-- Magical Quick Actions -->
+							<Border Style="{StaticResource AnimeCard}">
+								<StackPanel>
+									<TextBlock Text="⚡ Magical Actions 🌟" FontSize="18"
+                                               FontWeight="Bold" Foreground="#feca57"
+                                               Margin="0,0,0,20"/>
+
+									<Button Content="📊 View Magic Reports"
+                                            Background="#a55eea"
+                                            Style="{StaticResource SparkleButton}"
+                                            Margin="0,0,0,15"/>
+
+									<Button Content="📤 Export to Excel"
+                                            Background="#2ed573"
+                                            Style="{StaticResource SparkleButton}"
+                                            Margin="0,0,0,15"/>
+
+									<Button Content="📈 Budget Magic"
+                                            Background="#feca57"
+                                            Style="{StaticResource SparkleButton}"
+                                            Margin="0,0,0,15"/>
+
+									<Button Content="⚙️ Kawaii Settings"
+                                            Background="#ff9ff3"
+                                            Style="{StaticResource SparkleButton}"/>
+								</StackPanel>
+							</Border>
+						</StackPanel>
+					</Grid>
+				</Grid>
+			</Border>
+		</Grid>
+	</Border>
+</Window>
+
+
+
+
+
+
+
+
+
+

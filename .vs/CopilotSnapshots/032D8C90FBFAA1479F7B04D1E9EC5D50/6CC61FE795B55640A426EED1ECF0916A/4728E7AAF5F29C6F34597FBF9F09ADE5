@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using ExpenseManager.Models;
+using ExpenseManager.Repository.Interface;
+
+namespace ExpenseManager.Repository {
+    public class ExpenseRepository : IExpenseRepository {
+        private List<Expense> expenses;
+        private string csvFilePath = "expenses.csv";
+        private string jsonFilePath = @"..\..\Data\User\expenses.json";
+
+        public ExpenseRepository() {
+            expenses = new List<Expense>();
+            LoadExpenses();
+        }
+
+        public bool AddExpense(Expense expense) {
+            try {
+                expenses.Insert(0, expense); // Add to top
+                return SaveExpenses();
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenses;
+        }
+
+        public List<Expense> GetExpensesByCategory(string category) {
+            return expenses.Where(e => e.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        public bool DeleteExpense(int index) {
+            try {
+                if (index >= 0 && index < expenses.Count) {
+                    expenses.RemoveAt(index);
+                    return SaveExpenses();
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool SaveExpenses() {
+            try {
+                using (StreamWriter sw = new StreamWriter(csvFilePath)) {
+                    sw.WriteLine("Amount,Description,Date,Category");
+                    foreach (Expense expense in expenses) {
+                        sw.WriteLine($"{expense.Amount},{expense.Description},{expense.Date},{expense.Category}");
+                    }
+                }
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpenses() {
+            try {
+                if (File.Exists(csvFilePath)) {
+                    string[] lines = File.ReadAllLines(csvFilePath);
+                    expenses.Clear();
+                    
+                    for (int i = 1; i < lines.Length; i++) { // Skip header
+                        string[] parts = lines[i].Split(',');
+                        if (parts.Length >= 4) {
+                            decimal amount = decimal.Parse(parts[0]);
+                            string description = parts[1];
+                            DateTime date = DateTime.Parse(parts[2]);
+                            string category = parts[3];
+                            
+                            expenses.Add(new Expense(amount, description, date, category));
+                        }
+                    }
+                }
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public decimal GetTotalAmount() {
+            return expenses.Sum(e => e.Amount);
+        }
+    }
+}

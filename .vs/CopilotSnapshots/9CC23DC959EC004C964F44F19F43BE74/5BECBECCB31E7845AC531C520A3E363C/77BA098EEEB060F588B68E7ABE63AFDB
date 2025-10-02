@@ -1,0 +1,25 @@
+﻿using System.Collections.Generic;
+using SmartExpense.Interfaces;
+
+namespace ExpenseManager.Classifers {
+    public class RuleBasedClassifier : IExpenseClassifier {
+        public Dictionary<string, string[]> rules = new Dictionary<string, string[]> {
+            {"Ăn Uống", new string[] {"ăn", "uống", "cơm", "cà phê", "trà", "nước"} },
+            {"Mua Sắm", new string[] {"mua", "giày", "quần", "áo", "Shoppe", "Tiki", "Lazada", "Tiktok"} },
+            {"Giải Trí", new string[] {"xem", "phim", "game", "hát", "nhạc" } },
+        };
+
+        public string Classify(string description) {
+            description = description.ToLower();
+
+            foreach (var rule in rules) {
+                foreach (var keyword in rule.Value) {
+                    if (description.Contains(keyword)) {
+                        return rule.Key;
+                    }
+                }
+            }
+            return "Continue";
+        }
+    }
+}

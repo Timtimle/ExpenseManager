@@ -1,0 +1,219 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using ExpenseManager.Controllers;
+using System.Collections.Generic;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            LoadExpenses();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            LoadJsonButton.Click += LoadJsonButton_Click;
+            
+            // Window control buttons
+            MinimizeButton.Click += (s, e) => this.WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => this.Close();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            AddExpenseWindow addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                LoadExpenses(); // Refresh list after adding
+            }
+        }
+
+        private void LoadJsonButton_Click(object sender, RoutedEventArgs e) {
+            LoadExpensesFromJson();
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            // Create dialog to ask user what to load
+            MessageBoxResult result = MessageBox.Show(
+                "Do you want to load expenses from JSON file?\n\nData/User/expenses.json", 
+                "Load Data Source", 
+                MessageBoxButton.YesNoCancel, 
+                MessageBoxImage.Question);
+            
+            if (result == MessageBoxResult.Yes) {
+                LoadExpensesFromJson();
+            } else if (result == MessageBoxResult.No) {
+                LoadExpenses(); // Load from CSV
+                MessageBox.Show("Loaded expenses from CSV file.", "Info", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            // Cancel - do nothing
+        }
+
+        private void LoadExpenses() {
+            try {
+                List<ExpenseManager.Models.Expense> expenses = expenseController.GetAllExpenses();
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary stats
+                TotalExpensesLabel.Text = expenseController.GetTotalExpenses().ToString("C");
+                TotalItemsLabel.Text = expenses.Count.ToString();
+                ExpenseCountLabel.Text = $"{expenses.Count} items";
+                
+                // Calculate monthly and daily totals
+                DateTime today = DateTime.Today;
+                IEnumerable<ExpenseManager.Models.Expense> thisMonth = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year);
+                IEnumerable<ExpenseManager.Models.Expense> todayExpenses = expenses.Where(e => e.Date.Date == today);
+                
+                MonthlyLabel.Text = thisMonth.Sum(e => e.Amount).ToString("C");
+                TodayLabel.Text = todayExpenses.Sum(e => e.Amount).ToString("C");
+                
+                // Update charts with real data
+                UpdateCharts(expenses);
+                
+            } catch (Exception ex) {
+                MessageBox.Show($"Error loading expenses: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void LoadExpensesFromJson() {
+            try {
+                string message;
+                int loadedCount;
+                bool success = expenseController.LoadExpensesFromJsonWithDetails(out message, out loadedCount);
+                
+                if (success) {
+                    LoadExpenses(); // Refresh UI
+                    MessageBox.Show($"{message}\n\nData loaded successfully!", "Success", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                } else {
+                    MessageBox.Show(message, "Load Failed", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show($"Unexpected error: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateCharts(List<ExpenseManager.Models.Expense> expenses) {
+            UpdateCategoryChart(expenses);
+            UpdateTrendSummary(expenses);
+        }
+
+        private void UpdateCategoryChart(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                FoodPercentLabel.Text = "Food: 0%";
+                ShoppingPercentLabel.Text = "Shopping: 0%";
+                EntertainmentPercentLabel.Text = "Entertainment: 0%";
+                OthersPercentLabel.Text = "Others: 0%";
+                return;
+            }
+
+            decimal total = expenses.Sum(e => e.Amount);
+            
+            // Calculate category totals with Vietnamese keywords
+            decimal foodTotal = expenses.Where(e => 
+                e.Category.ToLower().Contains("food") || 
+                e.Category.Contains("🍽️") ||
+                e.Category.ToLower().Contains("ăn") ||
+                e.Category.ToLower().Contains("an") ||
+                e.Description.ToLower().Contains("com") ||
+                e.Description.ToLower().Contains("pho") ||
+                e.Description.ToLower().Contains("banh") ||
+                e.Description.ToLower().Contains("tra") ||
+                e.Description.ToLower().Contains("ca phe") ||
+                e.Description.ToLower().Contains("nuoc") ||
+                e.Description.ToLower().Contains("chao") ||
+                e.Description.ToLower().Contains("an com") ||
+                e.Description.ToLower().Contains("hu tieu") ||
+                e.Description.ToLower().Contains("mien") ||
+                e.Description.ToLower().Contains("xeo") ||
+                e.Description.ToLower().Contains("khot")).Sum(e => e.Amount);
+                
+            decimal shoppingTotal = expenses.Where(e => 
+                e.Category.ToLower().Contains("shopping") || 
+                e.Category.Contains("🛍️") ||
+                e.Category.ToLower().Contains("mua") ||
+                e.Description.ToLower().Contains("mua") ||
+                e.Description.ToLower().Contains("sach") ||
+                e.Description.ToLower().Contains("ao") ||
+                e.Description.ToLower().Contains("quan") ||
+                e.Description.ToLower().Contains("giay") ||
+                e.Description.ToLower().Contains("but") ||
+                e.Description.ToLower().Contains("vo") ||
+                e.Description.ToLower().Contains("balo") ||
+                e.Description.ToLower().Contains("usb") ||
+                e.Description.ToLower().Contains("chuot") ||
+                e.Description.ToLower().Contains("tap") ||
+                e.Description.ToLower().Contains("den") ||
+                e.Description.ToLower().Contains("pin") ||
+                e.Description.ToLower().Contains("tai nghe")).Sum(e => e.Amount);
+                
+            decimal entertainmentTotal = expenses.Where(e => 
+                e.Category.ToLower().Contains("entertainment") || 
+                e.Category.Contains("🎮") ||
+                e.Category.ToLower().Contains("giải") ||
+                e.Category.ToLower().Contains("giai") ||
+                e.Description.ToLower().Contains("choi") ||
+                e.Description.ToLower().Contains("xem") ||
+                e.Description.ToLower().Contains("phim")).Sum(e => e.Amount);
+                
+            decimal othersTotal = total - foodTotal - shoppingTotal - entertainmentTotal;
+
+            // Calculate percentages
+            decimal foodPercent = total > 0 ? (foodTotal / total) * 100 : 0;
+            decimal shoppingPercent = total > 0 ? (shoppingTotal / total) * 100 : 0;
+            decimal entertainmentPercent = total > 0 ? (entertainmentTotal / total) * 100 : 0;
+            decimal othersPercent = total > 0 ? (othersTotal / total) * 100 : 0;
+
+            // Update labels with data
+            FoodPercentLabel.Text = $"Food: {foodPercent:F1}% (${foodTotal:F0})";
+            ShoppingPercentLabel.Text = $"Shopping: {shoppingPercent:F1}% (${shoppingTotal:F0})";
+            EntertainmentPercentLabel.Text = $"Entertainment: {entertainmentPercent:F1}% (${entertainmentTotal:F0})";
+            OthersPercentLabel.Text = $"Others: {othersPercent:F1}% (${othersTotal:F0})";
+        }
+
+        private void UpdateTrendSummary(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                TrendSummaryLabel.Text = "Add expenses to see trends";
+                return;
+            }
+
+            // Get this month and last month totals
+            DateTime today = DateTime.Today;
+            decimal thisMonth = expenses.Where(e => 
+                e.Date.Month == today.Month && 
+                e.Date.Year == today.Year).Sum(e => e.Amount);
+                
+            decimal lastMonth = expenses.Where(e => 
+                e.Date.Month == today.AddMonths(-1).Month && 
+                e.Date.Year == today.AddMonths(-1).Year).Sum(e => e.Amount);
+
+            // Update month labels
+            Month1Label.Text = today.AddMonths(-5).ToString("MMM");
+            Month2Label.Text = today.AddMonths(-4).ToString("MMM");
+            Month3Label.Text = today.AddMonths(-3).ToString("MMM");
+            Month4Label.Text = today.AddMonths(-2).ToString("MMM");
+            Month5Label.Text = today.AddMonths(-1).ToString("MMM");
+            Month6Label.Text = today.ToString("MMM");
+
+            // Calculate trend
+            if (lastMonth > 0) {
+                decimal change = ((thisMonth - lastMonth) / lastMonth) * 100;
+                string trend = change > 0 ? "📈" : "📉";
+                TrendSummaryLabel.Text = $"{trend} {Math.Abs(change):F1}% vs last month";
+            } else {
+                TrendSummaryLabel.Text = $"💰 This month: ${thisMonth:F0}";
+            }
+        }
+    }
+}

@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections.Generic;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+using ExpenseManager.Repository;
+using ExpenseManager.Repository.Interface;
+
+namespace ExpenseManager.Controllers {
+    public class PredictionController {
+        private IPredictionRepository repository;
+        private ExpensePredictor predictor;
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+        private string modelPath = @"..\..\Data\Models\trained_model.json";
+
+        public PredictionController() {
+            repository = new PredictionRepository();
+            SetupClassifiers();
+        }
+
+        // Constructor với dependency injection (như pattern bạn lụm)
+        public PredictionController(IPredictionRepository predictionRepository) {
+            repository = predictionRepository;
+            SetupClassifiers();
+        }
+
+        private void SetupClassifiers() {
+            classifiers = new List<IExpenseClassifier>();
+            mlClassifier = new MLClassifier();
+            
+            try {
+                if (repository.ModelExists(modelPath)) {
+                    Console.WriteLine("Loading existing trained model...");
+                    mlClassifier.LoadModel(modelPath);
+                    Console.WriteLine("✅ Model loaded successfully!");
+                } else {
+                    Console.WriteLine("No existing model found. Training new model...");
+                    TrainAndSaveModel();
+                }
+                
+                classifiers.Add(mlClassifier);
+            } catch (Exception ex) {
+                Console.WriteLine($"❌ ML Model error: {ex.Message}");
+                RuleBasedClassifier ruleClassifier = new RuleBasedClassifier();
+                classifiers.Add(ruleClassifier);
+            }
+
+            predictor = new ExpensePredictor(classifiers);
+        }
+
+        private void TrainAndSaveModel() {
+            try {
+                // Load training data từ repository
+                List<ExpenseData> trainingData = repository.LoadTrainingData();
+                Console.WriteLine($"📚 Loaded {trainingData.Count} training samples");
+                
+                // Train model
+                Console.WriteLine("🔥 Training model (100 epochs)...");
+                mlClassifier.Train(trainingData, 100, true);
+                
+                // Save model thông qua repository  
+                mlClassifier.SaveModel(modelPath);
+                Console.WriteLine($"💾 Model saved to: {modelPath}");
+                
+                // Save training info
+                repository.SaveTrainingInfo(trainingData.Count, 100, "1.0");
+                
+            } catch (Exception ex) {
+                Console.WriteLine($"❌ Training failed: {ex.Message}");
+                throw;
+            }
+        }
+
+        // Public methods giống pattern bạn lụm
+        public PredictionResult PredictCategory(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return new PredictionResult("Khac", 0.0, "Default");
+            }
+
+            return predictor.PredictWithDetails(description);
+        }
+
+        public List<CategoryData> GetAvailableCategories() {
+            return new List<CategoryData> {
+                new CategoryData("An Uong", "🍽️ Ăn uống", "🍽️", new List<string> { "com", "pho", "tra" }),
+                new CategoryData("Mua Sam", "🛍️ Mua sắm", "🛍️", new List<string> { "mua", "giay", "ao" }),
+                new CategoryData("Giai Tri", "🎮 Giải trí", "🎮", new List<string> { "phim", "game" }),
+                new CategoryData("Khac", "📦 Khác", "📦", new List<string>())
+            };
+        }
+
+        public bool RetrainModel() {
+            try {
+                Console.WriteLine("🔄 Retraining model...");
+                TrainAndSaveModel();
+                SetupClassifiers(); // Reload classifiers
+                Console.WriteLine("✅ Model retrained successfully!");
+                return true;
+            } catch (Exception ex) {
+                Console.WriteLine($"❌ Retraining failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool IsModelTrained() {
+            return repository.ModelExists(modelPath);
+        }
+
+        public string GetModelInfo() {
+            return repository.GetModelInfo();
+        }
+
+        // Method filtering giống pattern bạn lụm
+        public List<PredictionResult> GetPredictionHistory(string searchText, string category, DateTime date) {
+            // Placeholder - có thể implement sau
+            List<PredictionResult> results = new List<PredictionResult>();
+            
+            if (category == "All") {
+                // Filter all predictions containing searchText
+                // và có date <= date parameter
+            } else {
+                // Filter by specific category
+            }
+            
+            return results;
+        }
+    }
+}

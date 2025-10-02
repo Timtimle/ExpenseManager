@@ -1,0 +1,323 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+using ExpenseManager.Services;
+
+namespace ExpenseManager.Controllers {
+    public class ExpenseController {
+        private ExpenseManager.Services.ExpenseManager expenseManager;
+
+        public ExpenseController() {
+            expenseManager = new ExpenseManager.Services.ExpenseManager();
+            
+            // Chỉ load từ file nếu chưa có data trong memory
+            if (expenseManager.Expenses.Count == 0) {
+                expenseManager.LoadExpensesFromFile();
+            }
+        }
+
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (!ValidateExpense(amount, description, category)) {
+                return false;
+            }
+
+            try {
+                Expense expense = new Expense(amount, description, DateTime.Now, category);
+                expenseManager.AddExpense(expense);
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenseManager.Expenses;
+        }
+
+        public decimal GetTotalExpenses() {
+            return expenseManager.GetTotal();
+        }
+
+        public bool DeleteExpense(int index) {
+            try {
+                if (index >= 0 && index < expenseManager.Expenses.Count) {
+                    expenseManager.Expenses.RemoveAt(index);
+                    expenseManager.SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJson() {
+            try {
+                // Get project root directory by going up from current directory
+                string currentDir = System.AppDomain.CurrentDomain.BaseDirectory;
+                string projectRoot = GetProjectRootDirectory(currentDir);
+                
+                if (projectRoot == null) {
+                    return false;
+                }
+
+                string jsonPath = System.IO.Path.Combine(projectRoot, "Data", "User", "expenses.json");
+                
+                if (!File.Exists(jsonPath)) {
+                    return false;
+                }
+
+                string json = File.ReadAllText(jsonPath);
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                List<Expense> loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                
+                if (loadedExpenses != null && loadedExpenses.Count > 0) {
+                    // Clear current expenses and add loaded ones
+                    expenseManager.Expenses.Clear();
+                    
+                    foreach (Expense expense in loadedExpenses) {
+                        expenseManager.Expenses.Add(expense);
+                    }
+                    
+                    // Save to CSV for backup
+                    expenseManager.SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJsonWithDetails(out string message, out int loadedCount) {
+            message = "";
+            loadedCount = 0;
+            
+            try {
+                // Get project root directory by going up from current directory
+                string currentDir = System.AppDomain.CurrentDomain.BaseDirectory;
+                string projectRoot = GetProjectRootDirectory(currentDir);
+                
+                // Debug information
+                string debugInfo = $"Current Dir: {currentDir}\n";
+                debugInfo += $"Project Root: {projectRoot ?? "NOT FOUND"}\n";
+                
+                if (projectRoot == null) {
+                    // Try absolute path as fallback
+                    string[] fallbackPaths = {
+                        @"E:\Projects\ExpenseManager\ExpenseManager\Data\User\expenses.json",
+                        System.IO.Path.Combine(currentDir, "Data", "User", "expenses.json"),
+                        System.IO.Path.Combine(currentDir, "..", "..", "Data", "User", "expenses.json"),
+                        System.IO.Path.Combine(currentDir, "..", "..", "..", "Data", "User", "expenses.json")
+                    };
+                    
+                    string foundPath = null;
+                    foreach (string fallbackPath in fallbackPaths) {
+                        if (File.Exists(fallbackPath)) {
+                            foundPath = fallbackPath;
+                            break;
+                        }
+                    }
+                    
+                    if (foundPath != null) {
+                        projectRoot = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(foundPath))); // Get parent of User/Data
+                        debugInfo += $"Found via fallback: {foundPath}\n";
+                    } else {
+                        debugInfo += "Tried fallback paths:\n";
+                        foreach (string path in fallbackPaths) {
+                            debugInfo += $"  - {path} (exists: {File.Exists(path)})\n";
+                        }
+                        message = $"Could not find project root directory\n\n{debugInfo}";
+                        return false;
+                    }
+                }
+
+                string jsonPath = System.IO.Path.Combine(projectRoot, "Data", "User", "expenses.json");
+                debugInfo += $"JSON Path: {jsonPath}\n";
+                debugInfo += $"JSON Exists: {File.Exists(jsonPath)}\n";
+                
+                if (!File.Exists(jsonPath)) {
+                    message = $"JSON file not found\n\n{debugInfo}";
+                    return false;
+                }
+
+                // Read file with UTF-8 encoding to handle special characters
+                string json = File.ReadAllText(jsonPath, System.Text.Encoding.UTF8);
+                
+                // Validate JSON is not empty
+                if (string.IsNullOrWhiteSpace(json)) {
+                    message = "JSON file is empty";
+                    return false;
+                }
+                
+                // Check if JSON starts with array bracket
+                json = json.Trim();
+                if (!json.StartsWith("[")) {
+                    message = "JSON file must contain an array of expenses";
+                    return false;
+                }
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true,
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip
+                };
+                
+                List<Expense> loadedExpenses;
+                try {
+                    loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                } catch (JsonException jsonEx) {
+                    // Try to fix common JSON issues
+                    string fixedJson = FixJsonIssues(json);
+                    try {
+                        loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(fixedJson, options);
+                        message += " (JSON was auto-fixed) ";
+                    } catch {
+                        message = $"JSON parsing failed: {jsonEx.Message}\n\n{debugInfo}";
+                        return false;
+                    }
+                }
+                
+                if (loadedExpenses == null || loadedExpenses.Count == 0) {
+                    message = "No valid expenses found in JSON file";
+                    return false;
+                }
+
+                // Validate and clean data
+                List<Expense> validExpenses = new List<Expense>();
+                foreach (Expense expense in loadedExpenses) {
+                    if (ValidateExpenseData(expense)) {
+                        // Clean up data
+                        CleanExpenseData(expense);
+                        validExpenses.Add(expense);
+                    }
+                }
+
+                if (validExpenses.Count == 0) {
+                    message = "No valid expenses found after validation";
+                    return false;
+                }
+
+                // Clear current expenses and add loaded ones
+                expenseManager.Expenses.Clear();
+                
+                foreach (Expense expense in validExpenses) {
+                    expenseManager.Expenses.Add(expense);
+                }
+                
+                loadedCount = validExpenses.Count;
+                
+                // Save to CSV for backup
+                expenseManager.SaveExpensesToFile();
+                
+                message = $"Successfully loaded {loadedCount} expenses from: {jsonPath}";
+                return true;
+                
+            } catch (Exception ex) {
+                message = $"Error loading JSON: {ex.Message}\n\nStack trace: {ex.StackTrace}";
+                return false;
+            }
+        }
+
+        private string GetProjectRootDirectory(string currentDir) {
+            // Look for project markers (like .csproj files, Data folder, etc.)
+            string dir = currentDir;
+            
+            // Go up directories until we find project root
+            while (!string.IsNullOrEmpty(dir)) {
+                // Check if this directory contains ExpenseManager.csproj or Data folder
+                if (Directory.Exists(System.IO.Path.Combine(dir, "Data")) ||
+                    File.Exists(System.IO.Path.Combine(dir, "ExpenseManager.csproj")) ||
+                    Directory.Exists(System.IO.Path.Combine(dir, "Views"))) {
+                    return dir;
+                }
+                
+                // Try parent directory
+                DirectoryInfo parent = Directory.GetParent(dir);
+                if (parent == null) break;
+                dir = parent.FullName;
+            }
+            
+            // If not found, try relative paths from current directory
+            string[] relativePaths = {
+                ".",
+                "..",
+                "..\\..", 
+                "..\\..\\..",
+                "..\\..\\ExpenseManager",
+                "..\\..\\..\\ExpenseManager"
+            };
+            
+            foreach (string relativePath in relativePaths) {
+                try {
+                    string testPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDir, relativePath));
+                    if (Directory.Exists(System.IO.Path.Combine(testPath, "Data")) ||
+                        File.Exists(System.IO.Path.Combine(testPath, "ExpenseManager.csproj")) ||
+                        Directory.Exists(System.IO.Path.Combine(testPath, "Views"))) {
+                        return testPath;
+                    }
+                } catch {
+                    // Ignore path errors
+                }
+            }
+            
+            // Last resort - try to find based on assembly location
+            try {
+                string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                DirectoryInfo assemblyDir = new DirectoryInfo(System.IO.Path.GetDirectoryName(assemblyLocation));
+                
+                // Go up from bin directory
+                DirectoryInfo projectDir = assemblyDir.Parent?.Parent; // bin/Debug -> project root
+                if (projectDir != null && 
+                    (Directory.Exists(System.IO.Path.Combine(projectDir.FullName, "Data")) ||
+                     File.Exists(System.IO.Path.Combine(projectDir.FullName, "ExpenseManager.csproj")))) {
+                    return projectDir.FullName;
+                }
+            } catch {
+                // Ignore assembly location errors
+            }
+            
+            return null;
+        }
+
+        private bool ValidateExpense(decimal amount, string description, string category) {
+            if (amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(description)) return false;
+            if (string.IsNullOrWhiteSpace(category)) return false;
+            return true;
+        }
+
+        private bool ValidateExpenseData(Expense expense) {
+            // Add validation logic for expense data (e.g., check for negative amounts, invalid dates, etc.)
+            if (expense.Amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(expense.Description)) return false;
+            if (string.IsNullOrWhiteSpace(expense.Category)) return false;
+            return true;
+        }
+
+        private void CleanExpenseData(Expense expense) {
+            // Trim strings and remove any unwanted characters
+            expense.Description = expense.Description?.Trim();
+            expense.Category = expense.Category?.Trim();
+            
+            // Ensure amount is always positive
+            if (expense.Amount < 0) expense.Amount = 0;
+        }
+
+        private string FixJsonIssues(string json) {
+            // Fix common JSON issues, such as missing commas, trailing commas, and comments
+            // This is a simplistic fixer and may not cover all cases
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"},[\s]*}", "}}"); // Remove trailing commas before closing }
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"],[\s]*}", "]"); // Remove trailing commas before closing ]
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"//.*?$([\r\n]|$)", "", System.Text.RegularExpressions.RegexOptions.Multiline); // Remove single-line comments
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"/\*.*?\*/", "", System.Text.RegularExpressions.RegexOptions.Singleline); // Remove multi-line comments
+            return json;
+        }
+    }
+}

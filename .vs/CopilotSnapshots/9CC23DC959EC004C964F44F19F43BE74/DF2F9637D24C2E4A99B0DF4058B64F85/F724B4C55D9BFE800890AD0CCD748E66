@@ -1,0 +1,150 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using ExpenseManager.Controllers;
+
+namespace ExpenseManager.Views {
+    public partial class AddExpenseWindow : Window {
+        private ExpenseController expenseController;
+        private PredictionController predictionController;
+
+        public AddExpenseWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            predictionController = new PredictionController();
+            
+            SetupEventHandlers();
+            InitializeForm();
+        }
+
+        private void SetupEventHandlers() {
+            PredictButton.Click += PredictButton_Click;
+            SaveButton.Click += SaveButton_Click;
+            CancelButton.Click += CancelButton_Click;
+        }
+
+        private void InitializeForm() {
+            // Set default values
+            AmountTextBox.Text = "";
+            DescriptionTextBox.Text = "";
+            CategoryComboBox.SelectedIndex = 0; // Select "Food" by default
+        }
+
+        private void PredictButton_Click(object sender, RoutedEventArgs e) {
+            string description = DescriptionTextBox.Text.Trim();
+            
+            if (string.IsNullOrEmpty(description)) {
+                MessageBox.Show("Please enter a description first!", "Info", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try {
+                string predicted = predictionController.PredictCategory(description);
+                
+                // Map Vietnamese prediction to ComboBox items
+                string mappedCategory = MapPredictionToComboBox(predicted);
+                
+                // Find and select the predicted category
+                for (int i = 0; i < CategoryComboBox.Items.Count; i++) {
+                    ComboBoxItem item = CategoryComboBox.Items[i] as ComboBoxItem;
+                    if (item.Content.ToString().Contains(mappedCategory)) {
+                        CategoryComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+                
+                MessageBox.Show($"🔮 ML Prediction: {predicted}\n🎯 Mapped to: {mappedCategory}\n\nCategory auto-selected!", "Smart Prediction", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+            } catch (Exception ex) {
+                MessageBox.Show($"Prediction error: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private string MapPredictionToComboBox(string prediction) {
+            // Map Vietnamese ML predictions to ComboBox display names
+            string pred = prediction.ToLower();
+            
+            if (pred.Contains("an uong") || pred.Contains("anuong") ||
+                pred.Contains("com") || pred.Contains("pho") || pred.Contains("banh") || 
+                pred.Contains("tra") || pred.Contains("ca phe") || pred.Contains("nuoc")) {
+                return "Food";
+            } else if (pred.Contains("mua sam") || pred.Contains("muasam") ||
+                      pred.Contains("mua") || pred.Contains("sach") || pred.Contains("ao") || 
+                      pred.Contains("quan") || pred.Contains("giay") || pred.Contains("but")) {
+                return "Shopping";
+            } else if (pred.Contains("giai tri") || pred.Contains("giaitri") ||
+                      pred.Contains("choi") || pred.Contains("xem") || pred.Contains("phim")) {
+                return "Entertainment";
+            } else if (pred.Contains("transport") || pred.Contains("xe") || pred.Contains("taxi") || 
+                      pred.Contains("grab") || pred.Contains("xang")) {
+                return "Transportation";
+            } else if (pred.Contains("utilities") || pred.Contains("dien") || pred.Contains("nuoc") || 
+                      pred.Contains("internet") || pred.Contains("tien nha")) {
+                return "Utilities";
+            } else if (pred.Contains("health") || pred.Contains("benh") || pred.Contains("thuoc") || 
+                      pred.Contains("bac si")) {
+                return "Healthcare";
+            } else if (pred.Contains("education") || pred.Contains("hoc") || pred.Contains("truong") || 
+                      pred.Contains("sach")) {
+                return "Education";
+            } else {
+                return "Others";
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                // Validate amount
+                if (string.IsNullOrWhiteSpace(AmountTextBox.Text)) {
+                    MessageBox.Show("Please enter amount!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+                
+                decimal amount;
+                if (!decimal.TryParse(AmountTextBox.Text, out amount) || amount <= 0) {
+                    MessageBox.Show("Please enter a valid amount greater than 0!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+
+                // Validate description
+                string description = DescriptionTextBox.Text.Trim();
+                if (string.IsNullOrEmpty(description)) {
+                    MessageBox.Show("Please enter description!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DescriptionTextBox.Focus();
+                    return;
+                }
+
+                // Get category from ComboBox
+                ComboBoxItem selectedItem = CategoryComboBox.SelectedItem as ComboBoxItem;
+                string category = selectedItem?.Content.ToString() ?? "Others";
+
+                // Add expense
+                if (expenseController.AddExpense(amount, description, category)) {
+                    MessageBox.Show($"✅ Expense saved successfully!\n\n💰 Amount: {amount:N0} VND\n📝 Description: {description}\n📂 Category: {category}", 
+                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                } else {
+                    MessageBox.Show("❌ Failed to add expense. Please try again.", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show($"Error: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;
+            this.Close();
+        }
+    }
+}

@@ -1,0 +1,71 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Controllers {
+    public class PredictionController {
+        private ExpensePredictor predictor;
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+
+        public PredictionController() {
+            SetupClassifiers();
+        }
+
+        private void SetupClassifiers() {
+            classifiers = new List<IExpenseClassifier>();
+            
+            // Add MLClassifier with trained model
+            mlClassifier = new MLClassifier();
+            try {
+                // Load training data and train model
+                mlClassifier.LoadTrainingData();
+                mlClassifier.Train(mlClassifier.getTrainingData(), 100, true); // 100 epochs
+                classifiers.Add(mlClassifier);
+            } catch {
+                // Fallback to rule-based if ML fails
+                RuleBasedClassifier ruleClassifier = new RuleBasedClassifier();
+                classifiers.Add(ruleClassifier);
+            }
+
+            // Initialize predictor
+            predictor = new ExpensePredictor(classifiers);
+        }
+
+        public string PredictCategory(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Others";
+            }
+
+            string prediction = predictor.Predict(description);
+            
+            // Map Vietnamese predictions to English for UI
+            return MapVietnameseToEnglish(prediction);
+        }
+
+        private string MapVietnameseToEnglish(string vietnamesePrediction) {
+            string pred = vietnamesePrediction.ToLower();
+            
+            if (pred.Contains("anuong") || pred.Contains("an uong")) {
+                return "Food";
+            } else if (pred.Contains("muasam") || pred.Contains("mua sam")) {
+                return "Shopping";
+            } else if (pred.Contains("giaitri") || pred.Contains("giai tri")) {
+                return "Entertainment";
+            } else {
+                return "Others";
+            }
+        }
+
+        public List<string> GetAvailableCategories() {
+            return new List<string> { "Food", "Shopping", "Entertainment", "Transportation", "Utilities", "Healthcare", "Education", "Others" };
+        }
+
+        public Dictionary<string, double> GetPredictionConfidence(string description) {
+            // Future implementation for showing confidence scores
+            var confidence = new Dictionary<string, double>();
+            string predicted = PredictCategory(description);
+            confidence[predicted] = 0.85; // Placeholder
+            return confidence;
+        }
+    }
+}

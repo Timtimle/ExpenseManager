@@ -1,0 +1,47 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Services.Prediction {
+    public class ExpensePredictor {
+        private List<IExpenseClassifier> classifiers;
+
+        public ExpensePredictor(List<IExpenseClassifier> classifiers) {
+            this.classifiers = classifiers;
+        }
+
+        public string Predict(string description) {
+            foreach (var classifier in classifiers) {
+                string ans = classifier.Classify(description);
+                if (ans != "Khac")
+                    return ans;
+            }
+            return "Khac";
+        }
+
+        // Version mới trả về PredictionResult với thông tin chi tiết
+        public PredictionResult PredictWithDetails(string description) {
+            foreach (IExpenseClassifier classifier in classifiers) {
+                string result = classifier.Classify(description);
+                if (result != "Khac") {
+                    string methodName = classifier.GetType().Name;
+                    double confidence = CalculateConfidence(result, description);
+                    return new PredictionResult(result, confidence, methodName);
+                }
+            }
+            
+            return new PredictionResult("Khac", 0.0, "Default");
+        }
+
+        private double CalculateConfidence(string category, string description) {
+            // Tính confidence dựa vào độ dài mô tả và category
+            if (string.IsNullOrWhiteSpace(description)) return 0.0;
+            
+            // Simple confidence calculation
+            double baseConfidence = category != "Khac" ? 0.75 : 0.25;
+            double lengthFactor = System.Math.Min(description.Length / 50.0, 1.0);
+            
+            return baseConfidence * (0.5 + 0.5 * lengthFactor);
+        }
+    }
+}

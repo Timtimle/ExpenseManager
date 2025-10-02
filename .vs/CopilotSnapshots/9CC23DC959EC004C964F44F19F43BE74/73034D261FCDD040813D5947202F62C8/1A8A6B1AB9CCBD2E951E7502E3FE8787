@@ -1,0 +1,68 @@
+﻿using System;
+using System.Windows;
+using ExpenseManager.Controllers;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Views {
+    public partial class AddExpenseWindow : Window {
+        private ExpenseController expenseController;
+        private PredictionController predictionController;
+
+        public AddExpenseWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            predictionController = new PredictionController();
+            
+            LoadCategories();
+            SetupEventHandlers();
+        }
+
+        private void LoadCategories() {
+            CategoryComboBox.Items.Add("Ăn Uống");
+            CategoryComboBox.Items.Add("Mua Sắm");
+            CategoryComboBox.Items.Add("Giải Trí");
+            CategoryComboBox.Items.Add("Khác");
+            CategoryComboBox.SelectedIndex = 0;
+        }
+
+        private void SetupEventHandlers() {
+            PredictButton.Click += PredictButton_Click;
+            SaveButton.Click += SaveButton_Click;
+            CancelButton.Click += CancelButton_Click;
+        }
+
+        private void PredictButton_Click(object sender, RoutedEventArgs e) {
+            string description = DescriptionTextBox.Text.Trim();
+            if (!string.IsNullOrEmpty(description)) {
+                string predicted = predictionController.PredictCategory(description);
+                CategoryComboBox.Text = predicted;
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                decimal amount = decimal.Parse(AmountTextBox.Text);
+                string description = DescriptionTextBox.Text.Trim();
+                string category = CategoryComboBox.Text;
+
+                if (expenseController.AddExpense(amount, description, category)) {
+                    MessageBox.Show("Đã thêm chi tiêu thành công!", "Thành công", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                } else {
+                    MessageBox.Show("Không thể thêm chi tiêu. Vui lòng kiểm tra lại thông tin.", 
+                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;
+            this.Close();
+        }
+    }
+}

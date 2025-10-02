@@ -1,0 +1,135 @@
+﻿using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using ExpenseManager.Controllers;
+using ExpenseManager.Services.Prediction;
+using ExpenseManager.Utils;
+
+namespace ExpenseManager.Views {
+    public partial class AddExpenseWindow : Window {
+        private ExpenseController expenseController;
+
+        public AddExpenseWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            InitializeForm();
+        }
+
+        private void SetupEventHandlers() {
+            PredictButton.Click += PredictButton_Click;
+            SaveButton.Click += SaveButton_Click;
+            CancelButton.Click += CancelButton_Click;
+        }
+
+        private void InitializeForm() {
+            // Set default values
+            AmountTextBox.Text = "";
+            DescriptionTextBox.Text = "";
+            CategoryComboBox.SelectedIndex = 0; // Select "Food" by default
+        }
+
+        private void PredictButton_Click(object sender, RoutedEventArgs e) {
+            string description = DescriptionTextBox.Text.Trim();
+            
+            if (string.IsNullOrEmpty(description)) {
+                MessageBox.Show("Nhập mô tả trước!", "Thông báo", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try {
+                string modelFile = "Data/Models/trained_model.json";
+                MLClassifier mlr = new MLClassifier();
+
+                if (File.Exists(modelFile)) {
+                    mlr.LoadModel(modelFile);
+                } else {
+                    mlr.LoadTrainingData();
+                    mlr.Train(mlr.getTrainingData(), 100, true);
+                    mlr.SaveModel(modelFile);
+                }
+
+                Vietnamese vietnamese = new Vietnamese();
+                string inputNoDiacritics = vietnamese.RemoveDiacritics(description);
+                string category = mlr.Classify(inputNoDiacritics);
+
+                // Tìm và chọn category trong ComboBox
+                string categoryToFind = "";
+                if (category.ToLower().Contains("anuong")) categoryToFind = "Food";
+                else if (category.ToLower().Contains("muasam")) categoryToFind = "Shopping"; 
+                else if (category.ToLower().Contains("giaitri")) categoryToFind = "Entertainment";
+                else categoryToFind = "Others";
+                
+                for (int i = 0; i < CategoryComboBox.Items.Count; i++) {
+                    ComboBoxItem item = CategoryComboBox.Items[i] as ComboBoxItem;
+                    if (item.Content.ToString().Contains(categoryToFind)) {
+                        CategoryComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+
+                MessageBox.Show($"Dự đoán: {category}", "ML Prediction", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                // Validate amount
+                if (string.IsNullOrWhiteSpace(AmountTextBox.Text)) {
+                    MessageBox.Show("Please enter amount!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+                
+                decimal amount;
+                if (!decimal.TryParse(AmountTextBox.Text, out amount) || amount <= 0) {
+                    MessageBox.Show("Please enter a valid amount greater than 0!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+
+                // Validate description
+                string description = DescriptionTextBox.Text.Trim();
+                if (string.IsNullOrEmpty(description)) {
+                    MessageBox.Show("Please enter description!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DescriptionTextBox.Focus();
+                    return;
+                }
+
+                // Get category from ComboBox
+                ComboBoxItem selectedItem = CategoryComboBox.SelectedItem as ComboBoxItem;
+                string category = selectedItem?.Content.ToString() ?? "Others";
+
+                // Add expense
+                if (expenseController.AddExpense(amount, description, category)) {
+                    MessageBox.Show($"✅ Expense saved successfully!\n\n💰 Amount: {amount:N0} VND\n📝 Description: {description}\n📂 Category: {category}", 
+                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                } else {
+                    MessageBox.Show("❌ Failed to add expense. Please try again.", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show($"Error: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;
+            this.Close();
+        }
+    }
+}

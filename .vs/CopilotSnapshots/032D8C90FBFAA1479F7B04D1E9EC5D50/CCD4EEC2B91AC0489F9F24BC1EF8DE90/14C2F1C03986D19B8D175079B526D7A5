@@ -1,0 +1,45 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Services {
+    public class ExpenseManager {
+        private List<Expense> expenses = new List<Expense>();
+        private string filePath = "expenses.csv";
+
+        public List<Expense> Expenses => expenses;
+
+        public void AddExpense(Expense expense) {
+            // Thêm vào đầu list thay vì cuối để hiện trên đầu DataGrid
+            expenses.Insert(0, expense);
+            SaveExpensesToFile();
+        }
+
+        public decimal GetTotal() => Expenses.Sum(x => x.Amount);
+
+        public void SaveExpensesToFile() {
+            // Simple CSV-like format for .NET Framework 4.7.2 compatibility
+            using (StreamWriter sw = new StreamWriter(filePath)) {
+                sw.WriteLine("Amount,Description,Date,Category");
+                foreach (var expense in expenses) {
+                    sw.WriteLine($"{expense.Amount},{expense.Description},{expense.Date},{expense.Category}");
+                }
+            }
+        }
+
+        public void LoadExpensesFromFile() {
+            if (File.Exists(filePath)) {
+                string[] lines = File.ReadAllLines(filePath);
+                expenses = new List<Expense>();
+                
+                for (int i = 1; i < lines.Length; i++) { // Skip header
+                    string[] parts = lines[i].Split(',');
+                    if (parts.Length >= 4) {
+                        expenses.Add(new Expense(decimal.Parse(parts[0]), parts[1], System.DateTime.Parse(parts[2]), parts[3]));
+                    }
+                }
+            }
+        }
+    }
+}

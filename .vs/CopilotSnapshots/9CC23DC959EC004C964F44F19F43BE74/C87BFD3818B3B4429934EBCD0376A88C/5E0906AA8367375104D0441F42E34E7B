@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using ExpenseManager.Models;
+using ExpenseManager.Services;
+using ExpenseManager.Classifiers;
+using ExpenseManager.Interfaces;
+
+namespace ExpenseManager {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window {
+        public MainWindow() {
+            InitializeComponent();
+            TestExpenseManager();
+        }
+
+        private void TestExpenseManager() {
+            try {
+                // Test ExpenseManager
+                ExpenseManager.Services.ExpenseManager expenseManager = new ExpenseManager.Services.ExpenseManager();
+
+                // Thêm vài expense test
+                expenseManager.AddExpense(new Expense(50000, "Ăn cơm trưa", DateTime.Now, "Ăn Uống"));
+                expenseManager.AddExpense(new Expense(200000, "Mua booo", DateTime.Now, "Mua Sắm"));
+                expenseManager.AddExpense(new Expense(100000, "Xem phim", DateTime.Now, "Giải Trí"));
+
+                // Test RuleBasedClassifier
+                RuleBasedClassifier ruleClassifier = new RuleBasedClassifier();
+                string category1 = ruleClassifier.Classify("ăn cơm");
+                string category2 = ruleClassifier.Classify("mua giày");
+                string category3 = ruleClassifier.Classify("xem phim");
+
+                // Test ExpensePredictor
+                List<IExpenseClassifier> classifiers = new List<IExpenseClassifier> { ruleClassifier };
+                ExpensePredictor predictor = new ExpensePredictor(classifiers);
+                string predicted = predictor.Predict("uống cà phê");
+
+                // Hiển thị kết quả
+                string result = $"✅ TEST THÀNH CÔNG!\n\n" +
+                               $"📊 ExpenseManager:\n" +
+                               $"- Tổng chi tiêu: {expenseManager.GetTotal():C}\n" +
+                               $"- Số expense: {expenseManager.Expenses.Count}\n\n" +
+                               $"🤖 RuleBasedClassifier:\n" +
+                               $"- 'ăn cơm' → {category1}\n" +
+                               $"- 'mua cooo' → {category2}\n" +
+                               $"- 'xem phim' → {category3}\n\n" +
+                               $"🎯 ExpensePredictor:\n" +
+                               $"- 'uống cà phê' → {predicted}\n\n" +
+                               $"💾 File lưu tại: expenses.csv";
+
+                MessageBox.Show(result, "Test Backend Logic", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
+            catch (Exception ex) {
+                MessageBox.Show($"❌ LỖI: {ex.Message}\n\n{ex.StackTrace}", "Test Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+}

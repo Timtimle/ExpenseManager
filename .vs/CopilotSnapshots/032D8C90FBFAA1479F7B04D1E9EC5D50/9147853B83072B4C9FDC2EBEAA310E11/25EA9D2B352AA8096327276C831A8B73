@@ -1,0 +1,73 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Services.Prediction {
+    public class ExpensePredictor {
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+        private RuleBasedClassifier ruleBasedClassifier;
+
+        public ExpensePredictor(List<IExpenseClassifier> classifiers) {
+            this.classifiers = classifiers;
+            
+            // Identify specific classifiers
+            foreach (IExpenseClassifier classifier in classifiers) {
+                if (classifier is MLClassifier) {
+                    mlClassifier = classifier as MLClassifier;
+                } else if (classifier is RuleBasedClassifier) {
+                    ruleBasedClassifier = classifier as RuleBasedClassifier;
+                }
+            }
+        }
+
+        // Sequential prediction: Rule-based first, nếu "Khac" thì ML
+        public string Predict(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Khac";
+            }
+
+            // 1. Thử Rule-based trước (nhanh)
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    return ruleResult; // Rule-based found match -> return ngay
+                }
+            }
+
+            // 2. Rule-based trả về "Khac" -> thử ML
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                return mlResult; // ML result (có thể là category hoặc "Khac")
+            }
+
+            // 3. Không có classifier nào hoạt động
+            return "Khac";
+        }
+
+        // Enhanced prediction với detailed result
+        public PredictionResult PredictWithDetails(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return new PredictionResult("Khac", 0.0, "EmptyInput");
+            }
+
+            // 1. Thử Rule-based trước
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    return new PredictionResult(ruleResult, 0.85, "RuleBasedClassifier");
+                }
+            }
+
+            // 2. Rule-based failed -> thử ML
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                double confidence = mlResult != "Khac" ? 0.75 : 0.0;
+                return new PredictionResult(mlResult, confidence, "MLClassifier");
+            }
+
+            // 3. Cả 2 đều fail
+            return new PredictionResult("Khac", 0.0, "NoMatch");
+        }
+    }
+}

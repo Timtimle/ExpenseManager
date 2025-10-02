@@ -1,0 +1,14 @@
+﻿{
+  "Categories": [
+    "Ăn Uống",
+    "Mua Sắm", 
+    "Giải Trí",
+    "Khác"
+  ],
+  "CategoryKeywords": {
+    "Ăn Uống": ["ăn", "uống", "cơm", "cà phê", "trà", "nước", "bánh", "phở"],
+    "Mua Sắm": ["mua", "giày", "quần", "áo", "shopee", "tiki", "lazada", "tiktok"],
+    "Giải Trí": ["xem", "phim", "game", "hát", "nhạc", "du lịch", "karaoke"],
+    "Khác": []
+  }
+}

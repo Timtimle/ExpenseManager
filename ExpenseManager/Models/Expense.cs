@@ -1,0 +1,19 @@
+using System;
+
+namespace ExpenseManager.Models {
+    public class Expense {
+        public decimal Amount { get; set; }
+        public string Description { get; set; }
+        public DateTime Date { get; set; }
+        public string Category { get; set; }
+
+        public Expense() { }
+
+        public Expense(decimal amount, string description, DateTime date, string category) {
+            Amount = amount;
+            Description = description;
+            Date = date;
+            Category = category;
+        }
+    }
+}

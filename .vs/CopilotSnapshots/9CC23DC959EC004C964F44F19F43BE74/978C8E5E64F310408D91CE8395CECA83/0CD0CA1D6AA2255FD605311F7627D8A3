@@ -1,0 +1,93 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using ExpenseManager.Controllers;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            LoadExpenses();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            
+            // Window control buttons
+            MinimizeButton.Click += (s, e) => this.WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => this.Close();
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            this.DragMove();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            AddExpenseWindow addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                LoadExpenses(); // Refresh list after adding
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            LoadExpenses();
+        }
+
+        private void LoadExpenses() {
+            try {
+                var expenses = expenseController.GetAllExpenses();
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary stats
+                TotalExpensesLabel.Content = expenseController.GetTotalExpenses().ToString("C");
+                TotalItemsLabel.Content = expenses.Count.ToString();
+                ExpenseCountLabel.Content = $"{expenses.Count} items";
+                
+                // Calculate monthly and daily totals
+                var today = DateTime.Today;
+                var thisMonth = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year);
+                var todayExpenses = expenses.Where(e => e.Date.Date == today);
+                
+                MonthlyLabel.Content = thisMonth.Sum(e => e.Amount).ToString("C");
+                TodayLabel.Content = todayExpenses.Sum(e => e.Amount).ToString("C");
+                
+                // Update AI tip based on data
+                UpdateAITip(expenses);
+                
+            } catch (Exception ex) {
+                MessageBox.Show($"Error loading expenses: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateAITip(System.Collections.Generic.List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                AITipLabel.Text = "Start adding your expenses to get smart insights!";
+                return;
+            }
+
+            var today = DateTime.Today;
+            var thisMonth = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year).Sum(e => e.Amount);
+            var lastMonth = expenses.Where(e => e.Date.Month == today.AddMonths(-1).Month).Sum(e => e.Amount);
+
+            if (lastMonth > 0) {
+                var change = ((double)(thisMonth - lastMonth) / (double)lastMonth) * 100;
+                if (change < 0) {
+                    AITipLabel.Text = $"Great! You saved {Math.Abs(change):F1}% compared to last month! 🎉";
+                } else {
+                    AITipLabel.Text = $"You spent {change:F1}% more this month. Consider reviewing your budget! 💡";
+                }
+            } else {
+                AITipLabel.Text = "Keep tracking your expenses to see monthly comparisons! 📊";
+            }
+        }
+    }
+}

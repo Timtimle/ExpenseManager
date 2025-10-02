@@ -1,0 +1,51 @@
+﻿using System;
+using System.Windows;
+using ExpenseManager.Controllers;
+using ExpenseManager.Views;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            LoadExpenses();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            AddExpenseWindow addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                LoadExpenses(); // Refresh list after adding
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            LoadExpenses();
+        }
+
+        private void LoadExpenses() {
+            try {
+                var expenses = expenseController.GetAllExpenses();
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary
+                TotalExpensesLabel.Content = expenseController.GetTotalExpenses().ToString("C");
+                TotalItemsLabel.Content = expenses.Count.ToString();
+                
+                StatusLabel.Content = $"Loaded {expenses.Count} expenses";
+            } catch (Exception ex) {
+                MessageBox.Show($"Error loading expenses: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                StatusLabel.Content = "Error loading expenses";
+            }
+        }
+    }
+}

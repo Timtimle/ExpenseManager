@@ -1,0 +1,206 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Services {
+    public class ExpenseManager {
+        private List<Expense> expenses = new List<Expense>();
+        private string csvFilePath = "expenses.csv";
+        private string jsonFilePath = @"..\..\Data\User\expenses.json";
+        private AppSettings settings;
+
+        public List<Expense> Expenses => expenses;
+
+        public ExpenseManager() {
+            settings = LoadAppSettings();
+            LoadExpensesFromFile();
+        }
+
+        private AppSettings LoadAppSettings() {
+            try {
+                string settingsPath = @"..\..\Data\Config\settings.json";
+                if (File.Exists(settingsPath)) {
+                    string json = File.ReadAllText(settingsPath);
+                    return JsonSerializer.Deserialize<AppSettings>(json);
+                }
+            } catch { }
+            
+            AppSettings defaultSettings = new AppSettings();
+            SaveAppSettings(defaultSettings); // Save default settings
+            return defaultSettings;
+        }
+
+        private void SaveAppSettings(AppSettings settings) {
+            try {
+                string settingsPath = @"..\..\Data\Config\settings.json";
+                string directory = Path.GetDirectoryName(settingsPath);
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+                
+                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(settingsPath, json);
+            } catch { }
+        }
+
+        // Thêm expense với validation sử dụng AppSettings
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (!ValidateExpense(amount, description, category)) {
+                return false;
+            }
+
+            try {
+                Expense expense = new Expense(amount, description, DateTime.Now, category ?? settings.DefaultCategory);
+                expenses.Insert(0, expense); // Thêm vào đầu list
+                
+                if (settings.AutoSave) {
+                    SaveExpensesToFile();
+                }
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        // Method mới: Thêm expense từ ExpenseData (cho ML training)
+        public bool AddExpenseFromData(ExpenseData expenseData) {
+            if (expenseData == null) return false;
+            
+            try {
+                // Convert ExpenseData to Expense
+                Expense expense = new Expense(0, expenseData.Text, DateTime.Now, expenseData.Label);
+                expenses.Insert(0, expense);
+                
+                if (settings.AutoSave) {
+                    SaveExpensesToFile();
+                }
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        // Method mới: Convert Expenses to ExpenseData for ML training
+        public List<ExpenseData> GetExpensesAsTrainingData() {
+            return expenses.Select(e => new ExpenseData(e.Category, e.Description)).ToList();
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenses;
+        }
+
+        public decimal GetTotalExpenses() {
+            return expenses.Sum(x => x.Amount);
+        }
+
+        // Enhanced với filtering by date range
+        public List<Expense> GetExpensesByDateRange(DateTime startDate, DateTime endDate) {
+            return expenses.Where(e => e.Date >= startDate && e.Date <= endDate).ToList();
+        }
+
+        // Enhanced với filtering by category
+        public List<Expense> GetExpensesByCategory(string category) {
+            return expenses.Where(e => e.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        public bool DeleteExpense(int index) {
+            try {
+                if (index >= 0 && index < expenses.Count) {
+                    expenses.RemoveAt(index);
+                    if (settings.AutoSave) {
+                        SaveExpensesToFile();
+                    }
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJson() {
+            try {
+                if (!File.Exists(jsonFilePath)) {
+                    return false;
+                }
+
+                string json = File.ReadAllText(jsonFilePath, System.Text.Encoding.UTF8);
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                List<Expense> loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                
+                if (loadedExpenses != null && loadedExpenses.Count > 0) {
+                    expenses.Clear();
+                    expenses.AddRange(loadedExpenses);
+                    
+                    if (settings.AutoSave) {
+                        SaveExpensesToFile();
+                    }
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public void SaveExpensesToFile() {
+            try {
+                using (StreamWriter sw = new StreamWriter(csvFilePath)) {
+                    sw.WriteLine("Amount,Description,Date,Category");
+                    foreach (Expense expense in expenses) {
+                        sw.WriteLine($"{expense.Amount},{expense.Description},{expense.Date.ToString(settings.DateFormat)},{expense.Category}");
+                    }
+                }
+            } catch (Exception) {
+                // Log error if needed
+            }
+        }
+
+        public void LoadExpensesFromFile() {
+            try {
+                if (File.Exists(csvFilePath)) {
+                    string[] lines = File.ReadAllLines(csvFilePath);
+                    expenses.Clear();
+                    
+                    for (int i = 1; i < lines.Length; i++) { // Skip header
+                        string[] parts = lines[i].Split(',');
+                        if (parts.Length >= 4) {
+                            decimal amount = decimal.Parse(parts[0]);
+                            string description = parts[1];
+                            DateTime date = DateTime.Parse(parts[2]);
+                            string category = parts[3];
+                            
+                            expenses.Add(new Expense(amount, description, date, category));
+                        }
+                    }
+                }
+            } catch (Exception) {
+                // Log error if needed
+            }
+        }
+
+        // Method mới: Get/Set AppSettings
+        public AppSettings GetSettings() {
+            return settings;
+        }
+
+        public void UpdateSettings(AppSettings newSettings) {
+            settings = newSettings;
+            SaveAppSettings(settings);
+        }
+
+        private bool ValidateExpense(decimal amount, string description, string category) {
+            if (amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(description)) return false;
+            if (string.IsNullOrWhiteSpace(category)) return false;
+            return true;
+        }
+    }
+}

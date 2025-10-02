@@ -1,0 +1,14 @@
+﻿{
+  "Categories": [
+    "An Uong",
+    "Mua Sam", 
+    "Giai Tri",
+    "Khac"
+  ],
+  "CategoryKeywords": {
+    "An Uong": ["an", "uong", "com", "ca phe", "tra", "nuoc", "banh", "pho"],
+    "Mua Sam": ["mua", "giay", "quan", "ao", "shopee", "tiki", "lazada", "tiktok"],
+    "Giai Tri": ["xem", "phim", "game", "hat", "nhac", "du lich", "karaoke"],
+    "Khac": []
+  }
+}

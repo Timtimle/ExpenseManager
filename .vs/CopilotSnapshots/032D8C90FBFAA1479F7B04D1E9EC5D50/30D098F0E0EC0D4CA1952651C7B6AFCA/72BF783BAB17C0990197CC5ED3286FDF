@@ -1,0 +1,235 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using ExpenseManager.Controllers;
+using System.Collections.Generic;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            SetupEventHandlers();
+            LoadExpenses();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            LoadJsonButton.Click += LoadJsonButton_Click;
+            
+            // Window controls
+            MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => Close();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            AddExpenseWindow addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+
+                LoadExpenses();
+            }
+        }
+
+        private void LoadJsonButton_Click(object sender, RoutedEventArgs e) {
+            LoadExpensesFromJson();
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            MessageBoxResult result = MessageBox.Show(
+                "Load from JSON file?\n\nData/User/expenses.json", 
+                "Load Data", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            
+            if (result == MessageBoxResult.Yes) LoadExpensesFromJson();
+            else if (result == MessageBoxResult.No) {
+                LoadExpenses();
+                MessageBox.Show("Loaded from CSV.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        private void LoadExpenses() {
+            try {
+                List<ExpenseManager.Models.Expense> expenses = expenseController.GetAllExpenses();
+                
+                // Force refresh DataGrid để đảm bảo hiển thị data mới
+                ExpenseDataGrid.ItemsSource = null;
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                UpdateSummaryStats(expenses);
+                UpdateCharts(expenses);
+            } catch (Exception ex) {
+                ShowError($"Error loading expenses: {ex.Message}");
+            }
+        }
+
+        private void LoadExpensesFromJson() {
+            try {
+                string jsonPath = @"..\..\Data\User\expenses.json";
+
+                if (!System.IO.File.Exists(jsonPath)) {
+                    MessageBox.Show($"File không tồn tại: {jsonPath}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                string json = System.IO.File.ReadAllText(jsonPath, System.Text.Encoding.UTF8);
+                
+                var options = new System.Text.Json.JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                var loadedExpenses = System.Text.Json.JsonSerializer.Deserialize<List<ExpenseManager.Models.Expense>>(json, options);
+                
+                if (loadedExpenses != null && loadedExpenses.Count > 0) {
+                    // Clear và add vào ExpenseManager
+                    expenseController.GetAllExpenses().Clear();
+                    foreach (var expense in loadedExpenses) {
+                        expenseController.GetAllExpenses().Add(expense);
+                    }
+                    
+                    LoadExpenses(); // Refresh UI
+                    MessageBox.Show($"✅ Đã load {loadedExpenses.Count} expense từ:\n{jsonPath}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                } else {
+                    MessageBox.Show("File JSON rỗng hoặc không hợp lệ", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi load JSON: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateSummaryStats(List<ExpenseManager.Models.Expense> expenses) {
+            TotalExpensesLabel.Text = expenseController.GetTotalExpenses().ToString("N0") + " VND";
+            TotalItemsLabel.Text = expenses.Count.ToString();
+            ExpenseCountLabel.Text = $"{expenses.Count} items";
+            
+            DateTime today = DateTime.Today;
+            decimal monthlyTotal = GetMonthlyTotal(expenses, today);
+            decimal todayTotal = GetTodayTotal(expenses, today);
+            
+            MonthlyLabel.Text = monthlyTotal.ToString("N0") + " VND";
+            TodayLabel.Text = todayTotal.ToString("N0") + " VND";
+        }
+
+        private void UpdateCharts(List<ExpenseManager.Models.Expense> expenses) {
+            UpdateCategoryChart(expenses);
+            UpdateTrendSummary(expenses);
+        }
+
+        private void UpdateCategoryChart(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                SetEmptyCategoryLabels();
+                return;
+            }
+
+            decimal total = expenses.Sum(e => e.Amount);
+            CategoryTotals totals = CalculateCategoryTotals(expenses);
+            
+            // Update labels
+            FoodPercentLabel.Text = FormatCategoryLabel("Food", totals.Food, total);
+            ShoppingPercentLabel.Text = FormatCategoryLabel("Shopping", totals.Shopping, total);
+            EntertainmentPercentLabel.Text = FormatCategoryLabel("Entertainment", totals.Entertainment, total);
+            OthersPercentLabel.Text = FormatCategoryLabel("Others", totals.Others, total);
+        }
+
+        private void UpdateTrendSummary(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                TrendSummaryLabel.Text = "Add expenses to see trends";
+                return;
+            }
+
+            UpdateMonthLabels();
+            
+            DateTime today = DateTime.Today;
+            decimal thisMonth = GetMonthlyTotal(expenses, today);
+            decimal lastMonth = GetMonthlyTotal(expenses, today.AddMonths(-1));
+
+            if (lastMonth > 0) {
+                decimal change = ((thisMonth - lastMonth) / lastMonth) * 100;
+                string trend = change > 0 ? "📈" : "📉";
+                TrendSummaryLabel.Text = $"{trend} {Math.Abs(change):F1}% vs last month";
+            } else {
+                TrendSummaryLabel.Text = $"💰 This month: {thisMonth:N0} VND";
+            }
+        }
+        private decimal GetMonthlyTotal(List<ExpenseManager.Models.Expense> expenses, DateTime date) {
+            return expenses.Where(e => e.Date.Month == date.Month && e.Date.Year == date.Year).Sum(e => e.Amount);
+        }
+
+        private decimal GetTodayTotal(List<ExpenseManager.Models.Expense> expenses, DateTime today) {
+            return expenses.Where(e => e.Date.Date == today).Sum(e => e.Amount);
+        }
+
+        private void SetEmptyCategoryLabels() {
+            FoodPercentLabel.Text = "Food: 0%";
+            ShoppingPercentLabel.Text = "Shopping: 0%";
+            EntertainmentPercentLabel.Text = "Entertainment: 0%";
+            OthersPercentLabel.Text = "Others: 0%";
+        }
+
+        private string FormatCategoryLabel(string category, decimal amount, decimal total) {
+            decimal percent = total > 0 ? (amount / total) * 100 : 0;
+            return $"{category}: {percent:F1}% ({amount:N0} VND)";
+        }
+
+        private void UpdateMonthLabels() {
+            DateTime today = DateTime.Today;
+            Month1Label.Text = today.AddMonths(-5).ToString("MMM");
+            Month2Label.Text = today.AddMonths(-4).ToString("MMM");
+            Month3Label.Text = today.AddMonths(-3).ToString("MMM");
+            Month4Label.Text = today.AddMonths(-2).ToString("MMM");
+            Month5Label.Text = today.AddMonths(-1).ToString("MMM");
+            Month6Label.Text = today.ToString("MMM");
+        }
+
+        private void ShowError(string message) {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private CategoryTotals CalculateCategoryTotals(List<ExpenseManager.Models.Expense> expenses) {
+            string[] foodKeywords = {"com", "pho", "banh", "tra", "ca phe", "nuoc", "chao", "hu tieu", "mien", "xeo", "khot"};
+            string[] shoppingKeywords = {"mua", "sach", "ao", "quan", "giay", "but", "vo", "balo", "usb", "chuot", "tap", "den", "pin", "tai nghe"};
+            string[] entertainmentKeywords = {"choi", "xem", "phim", "giai", "di choi"};
+
+            decimal foodTotal = expenses.Where(e => HasKeyword(e, foodKeywords) || 
+                e.Category.ToLower().Contains("food") || e.Category.Contains("🍽️") || 
+                e.Category.ToLower().Contains("ăn") || e.Category.ToLower().Contains("an")).Sum(e => e.Amount);
+                
+            decimal shoppingTotal = expenses.Where(e => HasKeyword(e, shoppingKeywords) || 
+                e.Category.ToLower().Contains("shopping") || e.Category.Contains("🛍️") || 
+                e.Category.ToLower().Contains("mua")).Sum(e => e.Amount);
+                
+            decimal entertainmentTotal = expenses.Where(e => HasKeyword(e, entertainmentKeywords) || 
+                e.Category.ToLower().Contains("entertainment") || e.Category.Contains("🎮") || 
+                e.Category.ToLower().Contains("giải")).Sum(e => e.Amount);
+
+            decimal total = expenses.Sum(e => e.Amount);
+            decimal othersTotal = total - foodTotal - shoppingTotal - entertainmentTotal;
+
+            return new CategoryTotals {
+                Food = foodTotal,
+                Shopping = shoppingTotal,
+                Entertainment = entertainmentTotal,
+                Others = othersTotal
+            };
+        }
+
+        private bool HasKeyword(ExpenseManager.Models.Expense expense, string[] keywords) {
+            foreach (string keyword in keywords) {
+                if (expense.Description.ToLower().Contains(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private class CategoryTotals {
+            public decimal Food { get; set; }
+            public decimal Shopping { get; set; }
+            public decimal Entertainment { get; set; }
+            public decimal Others { get; set; }
+        }
+
+    }
+}

@@ -1,0 +1,11 @@
+﻿namespace SmartExpense.Models {
+    public class ExpenseData {
+        public string Label { get; set; }
+        public string Text { get; set; }
+
+        public ExpenseData(string Label, string Text) {
+            this.Text = Text;
+            this.Label = Label;
+        }
+    }
+}

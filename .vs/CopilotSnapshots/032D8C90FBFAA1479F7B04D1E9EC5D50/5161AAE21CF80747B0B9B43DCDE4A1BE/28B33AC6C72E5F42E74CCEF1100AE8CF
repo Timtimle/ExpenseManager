@@ -1,0 +1,92 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using ExpenseManager.Controllers;
+using ExpenseManager.Factories;
+using ExpenseManager.Models;
+using ExpenseManager.Services;
+
+namespace ExpenseManager.ViewModels {
+    public class MainWindowViewModel : INotifyPropertyChanged {
+        private readonly ExpenseController expenseController;
+        private readonly ExpenseAnalyticsService analyticsService;
+        private List<Expense> expenses;
+        private string totalExpensesText;
+        private string totalItemsText;
+
+        public MainWindowViewModel() {
+            expenseController = ServiceFactory.CreateExpenseController();
+            analyticsService = ServiceFactory.CreateAnalyticsService();
+            LoadExpenses();
+        }
+
+        // ✅ PROPERTIES WITH NOTIFICATION
+        public List<Expense> Expenses {
+            get => expenses;
+            set {
+                expenses = value;
+                OnPropertyChanged(nameof(Expenses));
+            }
+        }
+
+        public string TotalExpensesText {
+            get => totalExpensesText;
+            set {
+                totalExpensesText = value;
+                OnPropertyChanged(nameof(TotalExpensesText));
+            }
+        }
+
+        public string TotalItemsText {
+            get => totalItemsText;
+            set {
+                totalItemsText = value;
+                OnPropertyChanged(nameof(TotalItemsText));
+            }
+        }
+
+        // ✅ BUSINESS LOGIC ENCAPSULATION
+        public void LoadExpenses() {
+            try {
+                Expenses = expenseController.GetAllExpenses();
+                UpdateSummaryStats();
+            } catch (Exception ex) {
+                // Handle error
+                OnError?.Invoke($"Error loading expenses: {ex.Message}");
+            }
+        }
+
+        public ExpenseAnalyticsService.CategoryTotals GetCategoryTotals() {
+            return analyticsService.CalculateCategoryTotals(Expenses);
+        }
+
+        public string FormatCategoryLabel(string category, decimal amount, decimal total) {
+            return analyticsService.FormatCategoryLabel(category, amount, total);
+        }
+
+        private void UpdateSummaryStats() {
+            if (Expenses == null) return;
+
+            TotalExpensesText = expenseController.GetTotalExpenses().ToString("N0") + " VND";
+            TotalItemsText = Expenses.Count.ToString();
+
+            DateTime today = DateTime.Today;
+            decimal monthlyTotal = analyticsService.GetMonthlyTotal(Expenses, today);
+            decimal todayTotal = analyticsService.GetTodayTotal(Expenses, today);
+
+            MonthlyTotal = monthlyTotal.ToString("N0") + " VND";
+            TodayTotal = todayTotal.ToString("N0") + " VND";
+        }
+
+        public string MonthlyTotal { get; private set; }
+        public string TodayTotal { get; private set; }
+
+        // ✅ EVENTS
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event Action<string> OnError;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}

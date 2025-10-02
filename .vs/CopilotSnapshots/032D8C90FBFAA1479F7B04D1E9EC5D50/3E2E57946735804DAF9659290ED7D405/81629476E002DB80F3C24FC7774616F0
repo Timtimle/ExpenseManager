@@ -1,0 +1,57 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Utils {
+    public class CategoryHelper {
+        private static readonly string categoriesFilePath = @"..\..\Data\categories.json";
+
+        // Basic category data
+        public static List<string> GetDefaultCategories() {
+            return new List<string> { "An Uong", "Mua Sam", "Giai Tri", "Khac" };
+        }
+
+        public static Dictionary<string, string> GetCategoryIcons() {
+            return new Dictionary<string, string> {
+                { "An uong", "???" },
+                { "Mua sam", "???" },
+                { "Giai tri", "??" },
+                { "Khac", "??" }
+            };
+        }
+
+        public static Dictionary<string, string> GetCategoryDisplayNames() {
+            return new Dictionary<string, string> {
+                { "An Uong", "??? ?n u?ng" },
+                { "Mua Sam", "??? Mua s?m" },
+                { "Giai Tri", "?? Gi?i trí" },
+                { "Khac", "?? Khác" }
+            };
+        }
+
+        // Helper methods
+        public static string GetCategoryIcon(string category) {
+            Dictionary<string, string> icons = GetCategoryIcons();
+            return icons.ContainsKey(category) ? icons[category] : "??";
+        }
+
+        public static string GetCategoryDisplayName(string category) {
+            Dictionary<string, string> displayNames = GetCategoryDisplayNames();
+            return displayNames.ContainsKey(category) ? displayNames[category] : category;
+        }
+
+        // Simplified - ch? basic structure
+        private static CategoryConfig CreateBasicCategoryConfig() {
+            CategoryConfig categoryConfig = new CategoryConfig();
+            categoryConfig.Categories = GetDefaultCategories();
+            categoryConfig.CategoryIcons = GetCategoryIcons();
+            categoryConfig.CategoryDisplayNames = GetCategoryDisplayNames();
+            
+            // Keywords s? ???c qu?n lý b?i RuleBasedClassifier
+            categoryConfig.CategoryKeywords = new Dictionary<string, List<string>>();
+            
+            return categoryConfig;
+        }
+    }
+}

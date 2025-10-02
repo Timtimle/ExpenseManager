@@ -1,0 +1,28 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Windows;
+using SmartExpense.Models;
+
+namespace SmartExpense.Utils {
+    public class DBG {
+        string filePath = "DBG_output.txt";
+
+        public void Out(List<ExpenseData> data) {
+            using (StreamWriter sw = new StreamWriter(filePath, false)) {
+                foreach (var val in data) {
+                    sw.WriteLine("Label : " + val.Label + " - Text: " + val.Text);
+                }
+            }
+            MessageBox.Show($"?ã xu?t d? li?u ra: {filePath}");
+        }
+
+        public void Out(List<string> data) {
+            using (StreamWriter sw = new StreamWriter(filePath, false)) {
+                foreach (var val in data) {
+                    sw.WriteLine(val);
+                }
+            }
+            MessageBox.Show($"?ã xu?t d? li?u ra: {filePath}");
+        }
+    }
+}

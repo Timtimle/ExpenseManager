@@ -1,0 +1,243 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using ExpenseManager.Controllers;
+using System.Collections.Generic;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            SetupEventHandlers();
+            RefreshData();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            ResetButton.Click += ResetButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            LoadJsonButton.Click += LoadJsonButton_Click;
+            
+            MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => Close();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            var addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                System.Threading.Thread.Sleep(100); // Wait for file save
+                RefreshData();
+            }
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e) {
+            var result = MessageBox.Show("⚠️ Delete ALL expenses?\n\nThis cannot be undone!", 
+                "Reset All", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                
+            if (result == MessageBoxResult.Yes) {
+                ClearAllData();
+                RefreshData();
+                MessageBox.Show("✅ All data cleared!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            var result = MessageBox.Show("YES: Load JSON\nNO: Refresh Data\nCANCEL: Export JSON", 
+                "Data Operations", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                
+            switch (result) {
+                case MessageBoxResult.Yes: LoadFromJson(); break;
+                case MessageBoxResult.No: RefreshData(); break;
+                case MessageBoxResult.Cancel: ExportToJson(); break;
+            }
+        }
+
+        private void LoadJsonButton_Click(object sender, RoutedEventArgs e) {
+            LoadFromJson();
+        }
+
+        private void RefreshData() {
+            try {
+                // Get fresh data
+                expenseController = new ExpenseController();
+                var expenses = expenseController.GetAllExpenses();
+                
+                // Update DataGrid
+                ExpenseDataGrid.ItemsSource = null;
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary stats
+                UpdateSummaryStats(expenses);
+                UpdateCharts(expenses);
+                
+            } catch (Exception ex) {
+                ShowError($"Error refreshing data: {ex.Message}");
+            }
+        }
+
+        private void UpdateSummaryStats(List<ExpenseManager.Models.Expense> expenses) {
+            var total = expenseController.GetTotalExpenses();
+            var today = DateTime.Today;
+            
+            TotalExpensesLabel.Text = $"{total:N0} VND";
+            TotalItemsLabel.Text = expenses.Count.ToString();
+            ExpenseCountLabel.Text = $"{expenses.Count} items";
+            
+            var monthlyTotal = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year).Sum(e => e.Amount);
+            var todayTotal = expenses.Where(e => e.Date.Date == today).Sum(e => e.Amount);
+            
+            MonthlyLabel.Text = $"{monthlyTotal:N0} VND";
+            TodayLabel.Text = $"{todayTotal:N0} VND";
+        }
+
+        private void UpdateCharts(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                SetEmptyChartLabels();
+                return;
+            }
+
+            var categoryTotals = CalculateCategoryTotals(expenses);
+            var total = expenses.Sum(e => e.Amount);
+            
+            // Update category percentages only
+            FoodPercentLabel.Text = FormatCategoryLabel("Food", categoryTotals.Food, total);
+            ShoppingPercentLabel.Text = FormatCategoryLabel("Shopping", categoryTotals.Shopping, total);
+            EntertainmentPercentLabel.Text = FormatCategoryLabel("Entertainment", categoryTotals.Entertainment, total);
+            OthersPercentLabel.Text = FormatCategoryLabel("Others", categoryTotals.Others, total);
+        }
+
+        private CategoryTotals CalculateCategoryTotals(List<ExpenseManager.Models.Expense> expenses) {
+            var foodKeywords = new[] {"com", "pho", "banh", "tra", "ca phe", "nuoc"};
+            var shoppingKeywords = new[] {"mua", "sach", "ao", "quan", "giay", "but"};
+            var entertainmentKeywords = new[] {"choi", "xem", "phim", "giai"};
+
+            var foodTotal = expenses.Where(e => HasKeyword(e, foodKeywords) || 
+                e.Category.ToLower().Contains("food") || e.Category.Contains("🍽️")).Sum(e => e.Amount);
+                
+            var shoppingTotal = expenses.Where(e => HasKeyword(e, shoppingKeywords) || 
+                e.Category.ToLower().Contains("shopping") || e.Category.Contains("🛍️")).Sum(e => e.Amount);
+                
+            var entertainmentTotal = expenses.Where(e => HasKeyword(e, entertainmentKeywords) || 
+                e.Category.ToLower().Contains("entertainment") || e.Category.Contains("🎮")).Sum(e => e.Amount);
+
+            var total = expenses.Sum(e => e.Amount);
+            
+            return new CategoryTotals {
+                Food = foodTotal,
+                Shopping = shoppingTotal,
+                Entertainment = entertainmentTotal,
+                Others = total - foodTotal - shoppingTotal - entertainmentTotal
+            };
+        }
+
+        private void LoadFromJson() {
+            try {
+                var jsonPath = @"..\..\Data\User\expenses.json";
+                if (!System.IO.File.Exists(jsonPath)) {
+                    ShowError("JSON file not found");
+                    return;
+                }
+                
+                var jsonBytes = System.IO.File.ReadAllBytes(jsonPath);
+                var json = System.Text.Encoding.UTF8.GetString(jsonBytes).Trim('\uFEFF', '\u200B');
+                
+                if (!json.StartsWith("[") && !json.StartsWith("{")) {
+                    ShowError("Invalid JSON format");
+                    return;
+                }
+                
+                var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var loadedExpenses = System.Text.Json.JsonSerializer.Deserialize<List<ExpenseManager.Models.Expense>>(json, options);
+                
+                if (loadedExpenses?.Count > 0) {
+                    expenseController.GetAllExpenses().Clear();
+                    foreach (var expense in loadedExpenses) {
+                        expenseController.AddExpense(expense.Amount, expense.Description, expense.Category);
+                    }
+                    RefreshData();
+                    ShowSuccess($"Loaded {loadedExpenses.Count} expenses from JSON");
+                } else {
+                    ShowError("JSON file is empty or invalid");
+                }
+                
+            } catch (Exception ex) {
+                ShowError($"JSON load error: {ex.Message}");
+            }
+        }
+
+        private void ExportToJson() {
+            try {
+                var expenses = expenseController.GetAllExpenses();
+                if (expenses.Count == 0) {
+                    ShowError("No expenses to export");
+                    return;
+                }
+                
+                var jsonPath = @"..\..\Data\User\expenses.json";
+                var directory = System.IO.Path.GetDirectoryName(jsonPath);
+                if (!System.IO.Directory.Exists(directory)) {
+                    System.IO.Directory.CreateDirectory(directory);
+                }
+                
+                var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+                var json = System.Text.Json.JsonSerializer.Serialize(expenses, options);
+                System.IO.File.WriteAllText(jsonPath, json, new System.Text.UTF8Encoding(false));
+                
+                ShowSuccess($"Exported {expenses.Count} expenses to JSON");
+                
+            } catch (Exception ex) {
+                ShowError($"Export error: {ex.Message}");
+            }
+        }
+
+        private void ClearAllData() {
+            expenseController.GetAllExpenses().Clear();
+            
+            var csvPath = "expenses.csv";
+            if (System.IO.File.Exists(csvPath)) {
+                System.IO.File.Delete(csvPath);
+            }
+            
+            var jsonPath = @"..\..\Data\User\expenses.json";
+            if (System.IO.File.Exists(jsonPath)) {
+                System.IO.File.Delete(jsonPath);
+            }
+        }
+
+        private void SetEmptyChartLabels() {
+            FoodPercentLabel.Text = "Food: 0%";
+            ShoppingPercentLabel.Text = "Shopping: 0%";
+            EntertainmentPercentLabel.Text = "Entertainment: 0%";
+            OthersPercentLabel.Text = "Others: 0%";
+            TrendSummaryLabel.Text = "Add expenses to see trends";
+        }
+
+        private string FormatCategoryLabel(string category, decimal amount, decimal total) {
+            var percent = total > 0 ? (amount / total) * 100 : 0;
+            return $"{category}: {percent:F1}% ({amount:N0} VND)";
+        }
+
+        private bool HasKeyword(ExpenseManager.Models.Expense expense, string[] keywords) {
+            return keywords.Any(keyword => expense.Description.ToLower().Contains(keyword));
+        }
+
+        private void ShowError(string message) {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void ShowSuccess(string message) {
+            MessageBox.Show(message, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private class CategoryTotals {
+            public decimal Food { get; set; }
+            public decimal Shopping { get; set; }
+            public decimal Entertainment { get; set; }
+            public decimal Others { get; set; }
+        }
+    }
+}

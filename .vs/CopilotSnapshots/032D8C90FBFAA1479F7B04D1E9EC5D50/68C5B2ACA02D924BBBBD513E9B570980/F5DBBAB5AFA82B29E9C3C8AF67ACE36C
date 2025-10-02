@@ -1,0 +1,80 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using ExpenseManager.Services.Prediction;
+using ExpenseManager.Utils;
+
+namespace ExpenseManager.Services.Prediction {
+    public class RuleBasedClassifier : IExpenseClassifier {
+        private Dictionary<string, List<string>> categoryRules;
+        
+        public RuleBasedClassifier() {
+            InitializeRules();
+        }
+
+        private void InitializeRules() {
+            // Rule-based keywords cho từng category
+            categoryRules = new Dictionary<string, List<string>> {
+                {
+                    "An Uong", 
+                    new List<string> { "an", "uong", "com", "pho", "banh", "tra", "ca phe", "nuoc", "chao", "hu tieu", "mien", "xeo", "khot", "nem", "bun", "mi" }
+                },
+                {
+                    "Mua Sam", 
+                    new List<string> { "mua", "giay", "quan", "ao", "shopee", "tiki", "lazada", "tiktok", "but", "vo", "balo", "usb", "chuot", "tap", "den", "pin", "tai nghe", "dien thoai" }
+                },
+                {
+                    "Giai Tri", 
+                    new List<string> { "xem", "phim", "game", "hat", "nhac", "choi", "di choi", "rap", "cinema", "zing", "spotify", "netflix", "youtube" }
+                }
+            };
+        }
+
+        public string Classify(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Khac";
+            }
+
+            string lowerDescription = description.ToLower();
+            
+            // Tính điểm cho mỗi category
+            Dictionary<string, int> scores = new Dictionary<string, int>();
+            
+            foreach (var categoryRule in categoryRules) {
+                string category = categoryRule.Key;
+                List<string> keywords = categoryRule.Value;
+                
+                int score = 0;
+                foreach (string keyword in keywords) {
+                    if (lowerDescription.Contains(keyword)) {
+                        score += keyword.Length; // Longer keywords get higher score
+                    }
+                }
+                
+                if (score > 0) {
+                    scores[category] = score;
+                }
+            }
+            
+            // Return category với score cao nhất
+            if (scores.Count > 0) {
+                return scores.OrderByDescending(kvp => kvp.Value).First().Key;
+            }
+            
+            return "Khac";
+        }
+
+        // Method để get rules (for debugging or configuration)
+        public Dictionary<string, List<string>> GetRules() {
+            return new Dictionary<string, List<string>>(categoryRules);
+        }
+
+        // Method để add keyword động
+        public void AddKeyword(string category, string keyword) {
+            if (categoryRules.ContainsKey(category)) {
+                if (!categoryRules[category].Contains(keyword.ToLower())) {
+                    categoryRules[category].Add(keyword.ToLower());
+                }
+            }
+        }
+    }
+}

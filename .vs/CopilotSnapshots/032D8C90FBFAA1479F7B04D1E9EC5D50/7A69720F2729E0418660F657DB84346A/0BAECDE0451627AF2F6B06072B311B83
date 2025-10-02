@@ -1,0 +1,12 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Utils {
+    public class DBG {
+        public void Out(List<ExpenseData> data) {
+            foreach (ExpenseData item in data) {
+                System.Console.WriteLine($"Label: {item.Label}, Text: {item.Text}");
+            }
+        }
+    }
+}

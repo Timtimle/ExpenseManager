@@ -1,0 +1,138 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+using ExpenseManager.Services;
+
+namespace ExpenseManager.Controllers {
+    public class ExpenseController {
+        private ExpenseManager.Services.ExpenseManager expenseManager;
+
+        public ExpenseController() {
+            expenseManager = new ExpenseManager.Services.ExpenseManager();
+            expenseManager.LoadExpensesFromFile();
+        }
+
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (!ValidateExpense(amount, description, category)) {
+                return false;
+            }
+
+            try {
+                Expense expense = new Expense(amount, description, DateTime.Now, category);
+                expenseManager.AddExpense(expense);
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenseManager.Expenses;
+        }
+
+        public decimal GetTotalExpenses() {
+            return expenseManager.GetTotal();
+        }
+
+        public bool DeleteExpense(int index) {
+            try {
+                if (index >= 0 && index < expenseManager.Expenses.Count) {
+                    expenseManager.Expenses.RemoveAt(index);
+                    expenseManager.SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJson() {
+            try {
+                string jsonPath = "Data/User/expenses.json";
+                if (File.Exists(jsonPath)) {
+                    string json = File.ReadAllText(jsonPath);
+                    
+                    JsonSerializerOptions options = new JsonSerializerOptions {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    
+                    List<Expense> loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                    
+                    if (loadedExpenses != null && loadedExpenses.Count > 0) {
+                        // Clear current expenses and add loaded ones
+                        expenseManager.Expenses.Clear();
+                        
+                        foreach (Expense expense in loadedExpenses) {
+                            expenseManager.Expenses.Add(expense);
+                        }
+                        
+                        // Save to CSV for backup
+                        expenseManager.SaveExpensesToFile();
+                        return true;
+                    }
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJsonWithDetails(out string message, out int loadedCount) {
+            message = "";
+            loadedCount = 0;
+            
+            try {
+                string jsonPath = "Data/User/expenses.json";
+                if (!File.Exists(jsonPath)) {
+                    message = "JSON file not found at Data/User/expenses.json";
+                    return false;
+                }
+
+                string json = File.ReadAllText(jsonPath);
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                List<Expense> loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                
+                if (loadedExpenses == null || loadedExpenses.Count == 0) {
+                    message = "No expenses found in JSON file";
+                    return false;
+                }
+
+                // Clear current expenses and add loaded ones
+                expenseManager.Expenses.Clear();
+                
+                foreach (Expense expense in loadedExpenses) {
+                    expenseManager.Expenses.Add(expense);
+                }
+                
+                loadedCount = loadedExpenses.Count;
+                
+                // Save to CSV for backup
+                expenseManager.SaveExpensesToFile();
+                
+                message = $"Successfully loaded {loadedCount} expenses from JSON";
+                return true;
+                
+            } catch (JsonException jsonEx) {
+                message = $"JSON parsing error: {jsonEx.Message}";
+                return false;
+            } catch (Exception ex) {
+                message = $"Error loading JSON: {ex.Message}";
+                return false;
+            }
+        }
+
+        private bool ValidateExpense(decimal amount, string description, string category) {
+            if (amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(description)) return false;
+            if (string.IsNullOrWhiteSpace(category)) return false;
+            return true;
+        }
+    }
+}

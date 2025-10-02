@@ -1,0 +1,166 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using ExpenseManager.Controllers;
+
+namespace ExpenseManager.Views {
+    public partial class AddExpenseWindow : Window {
+        private ExpenseController expenseController;
+        private PredictionController predictionController;
+
+        public AddExpenseWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            predictionController = new PredictionController();
+            
+            SetupEventHandlers();
+            SetupPlaceholders();
+        }
+
+        private void SetupEventHandlers() {
+            PredictButton.Click += PredictButton_Click;
+            SaveButton.Click += SaveButton_Click;
+            CancelButton.Click += CancelButton_Click;
+            
+            // Clear placeholder text when focused
+            AmountTextBox.GotFocus += (s, e) => {
+                if (AmountTextBox.Text == "0") {
+                    AmountTextBox.Text = "";
+                }
+            };
+            
+            DescriptionTextBox.GotFocus += (s, e) => {
+                if (DescriptionTextBox.Text == "Enter expense description...") {
+                    DescriptionTextBox.Text = "";
+                }
+            };
+            
+            // Restore placeholder if empty
+            AmountTextBox.LostFocus += (s, e) => {
+                if (string.IsNullOrWhiteSpace(AmountTextBox.Text)) {
+                    AmountTextBox.Text = "0";
+                }
+            };
+            
+            DescriptionTextBox.LostFocus += (s, e) => {
+                if (string.IsNullOrWhiteSpace(DescriptionTextBox.Text)) {
+                    DescriptionTextBox.Text = "Enter expense description...";
+                }
+            };
+        }
+
+        private void SetupPlaceholders() {
+            // Set initial placeholder values
+            AmountTextBox.Text = "0";
+            DescriptionTextBox.Text = "Enter expense description...";
+        }
+
+        private void PredictButton_Click(object sender, RoutedEventArgs e) {
+            string description = DescriptionTextBox.Text.Trim();
+            
+            // Don't predict on placeholder text
+            if (string.IsNullOrEmpty(description) || description == "Enter expense description...") {
+                MessageBox.Show("Please enter a description first!", "Info", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try {
+                string predicted = predictionController.PredictCategory(description);
+                
+                // Map prediction to ComboBox items
+                string mappedCategory = MapPredictionToComboBox(predicted);
+                
+                // Find and select the predicted category
+                foreach (ComboBoxItem item in CategoryComboBox.Items) {
+                    if (item.Content.ToString().Contains(mappedCategory)) {
+                        CategoryComboBox.SelectedItem = item;
+                        break;
+                    }
+                }
+                
+                MessageBox.Show($"AI Prediction: {mappedCategory}", "AI Category Prediction", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+            } catch (Exception ex) {
+                MessageBox.Show($"Prediction error: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private string MapPredictionToComboBox(string prediction) {
+            // Map AI predictions to ComboBox display names
+            string pred = prediction.ToLower();
+            
+            if (pred.Contains("food") || pred.Contains("anuong") || pred.Contains("an uong")) {
+                return "Food";
+            } else if (pred.Contains("shopping") || pred.Contains("muasam") || pred.Contains("mua sam")) {
+                return "Shopping";
+            } else if (pred.Contains("entertainment") || pred.Contains("giaitri") || pred.Contains("giai tri")) {
+                return "Entertainment";
+            } else if (pred.Contains("transport")) {
+                return "Transportation";
+            } else if (pred.Contains("utilities")) {
+                return "Utilities";
+            } else if (pred.Contains("health")) {
+                return "Healthcare";
+            } else if (pred.Contains("education")) {
+                return "Education";
+            } else {
+                return "Others";
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                // Validate amount
+                if (AmountTextBox.Text == "0" || string.IsNullOrWhiteSpace(AmountTextBox.Text)) {
+                    MessageBox.Show("Please enter a valid amount!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                
+                decimal amount = decimal.Parse(AmountTextBox.Text);
+                if (amount <= 0) {
+                    MessageBox.Show("Amount must be greater than 0!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Validate description
+                string description = DescriptionTextBox.Text.Trim();
+                if (string.IsNullOrEmpty(description) || description == "Enter expense description...") {
+                    MessageBox.Show("Please enter a description!", "Validation Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Get category from ComboBox
+                ComboBoxItem selectedItem = CategoryComboBox.SelectedItem as ComboBoxItem;
+                string category = selectedItem?.Content.ToString() ?? "Others";
+
+                // Add expense
+                if (expenseController.AddExpense(amount, description, category)) {
+                    MessageBox.Show($"✅ Expense saved successfully!\n\n💰 Amount: {amount:N0} VND\n📝 Description: {description}\n📂 Category: {category}", 
+                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                } else {
+                    MessageBox.Show("❌ Failed to add expense. Please check your input.", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (FormatException) {
+                MessageBox.Show("Please enter a valid number for amount!", "Format Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            } catch (Exception ex) {
+                MessageBox.Show($"Unexpected error: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;
+            this.Close();
+        }
+    }
+}

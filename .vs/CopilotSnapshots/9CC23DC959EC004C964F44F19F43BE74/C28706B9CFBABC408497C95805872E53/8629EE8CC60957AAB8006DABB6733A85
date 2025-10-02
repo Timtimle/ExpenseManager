@@ -1,0 +1,825 @@
+﻿<Window x:Class="ExpenseManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpenseManager.Views"
+        mc:Ignorable="d"
+        Title="💰Expense Manager" Height="750" Width="1300"
+        WindowStartupLocation="CenterScreen"
+        Background="White">
+
+	<Window.Resources>
+		<!-- Clean Card Style -->
+		<Style x:Key="CleanCard" TargetType="Border">
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="CornerRadius" Value="12"/>
+			<Setter Property="Padding" Value="20"/>
+			<Setter Property="BorderBrush" Value="#e1e8ed"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="#1abc9c" BlurRadius="20" 
+                                      ShadowDepth="2" Opacity="0.08"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Modern Button Style -->
+		<Style x:Key="ModernButton" TargetType="Button">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" CornerRadius="18" Padding="20,12">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#667eea" Offset="0"/>
+									<GradientStop Color="#764ba2" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Effect">
+									<Setter.Value>
+										<DropShadowEffect Color="#667eea" BlurRadius="20" ShadowDepth="0" Opacity="0.3"/>
+									</Setter.Value>
+								</Setter>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.02" ScaleY="1.02"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+
+		<!-- Clean Icon Button -->
+		<Style x:Key="CleanIcon" TargetType="Button">
+			<Setter Property="Width" Value="42"/>
+			<Setter Property="Height" Value="42"/>
+			<Setter Property="Background" Value="#f8f9fa"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="21">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Background" Value="#e9ecef"/>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Clean Stats Card -->
+		<Style x:Key="CleanStats" TargetType="Border">
+			<Setter Property="CornerRadius" Value="16"/>
+			<Setter Property="Padding" Value="24,20"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#e1e8ed"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="#6c757d" BlurRadius="15" ShadowDepth="2" Opacity="0.05"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Clean DataGrid -->
+		<Style x:Key="CleanDataGrid" TargetType="DataGrid">
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#e1e8ed"/>
+			<Setter Property="GridLinesVisibility" Value="None"/>
+			<Setter Property="RowBackground" Value="White"/>
+			<Setter Property="AlternatingRowBackground" Value="#f8f9fa"/>
+			<Setter Property="CanUserAddRows" Value="False"/>
+			<Setter Property="CanUserDeleteRows" Value="False"/>
+			<Setter Property="AutoGenerateColumns" Value="False"/>
+			<Setter Property="SelectionMode" Value="Single"/>
+			<Setter Property="HeadersVisibility" Value="Column"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Foreground" Value="#495057"/>
+		</Style>
+		
+		<!-- Action Button -->
+		<Style x:Key="ActionButton" TargetType="Button">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" CornerRadius="10" Padding="16,10">
+							<Border.Background>
+								<SolidColorBrush Color="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background.Color}"/>
+							</Border.Background>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Opacity" Value="0.85"/>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.02" ScaleY="1.02"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+	</Window.Resources>
+
+	<!-- Main Clean Container -->
+	<Border Background="White" CornerRadius="12" Margin="5">
+		<Border.Effect>
+			<DropShadowEffect Color="#6c757d" BlurRadius="25" ShadowDepth="3" Opacity="0.08"/>
+		</Border.Effect>
+		
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="65"/>   <!-- Clean Header -->
+				<RowDefinition Height="*"/>    <!-- Main Content -->
+			</Grid.RowDefinitions>
+
+			<!-- 🌟 CLEAN HEADER BAR 🌟 -->
+			<Border Grid.Row="0" CornerRadius="12,12,0,0" Background="White"
+                    BorderBrush="#e1e8ed" BorderThickness="0,0,0,1">
+				<Grid Margin="25,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<!-- App Title với Your Logo -->
+					<StackPanel Grid.Column="0" Orientation="Horizontal"
+                                VerticalAlignment="Center">
+						<!-- Logo Image -->
+						<Border Width="40" Height="40" Margin="0,0,15,0" CornerRadius="20">
+							<Border.Background>
+								<ImageBrush ImageSource="../Images/kawaii_logo.jpg" 
+                                            Stretch="UniformToFill"/>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#667eea" BlurRadius="12" ShadowDepth="0" Opacity="0.3"/>
+							</Border.Effect>
+						</Border>
+						<StackPanel>
+							<TextBlock Text="💰Expense Manager" FontSize="20"
+                                       FontWeight="Bold" Foreground="#2d3748"/>
+							<TextBlock Text="✨ Your smart finance companion" FontSize="11"
+                                       Foreground="#718096" Margin="0,-2,0,0"/>
+						</StackPanel>
+					</StackPanel>
+
+					<!-- Clean Window Controls -->
+					<StackPanel Grid.Column="1" Orientation="Horizontal">
+						<Button x:Name="MinimizeButton" Content="─"
+                                Style="{StaticResource CleanIcon}"
+                                Foreground="#6c757d" FontSize="12" FontWeight="Bold"/>
+						<Button x:Name="MaximizeButton" Content="☐"
+                                Style="{StaticResource CleanIcon}"
+                                Foreground="#6c757d" FontSize="10" Margin="5,0"/>
+						<Button x:Name="CloseButton" Content="✕"
+                                Style="{StaticResource CleanIcon}"
+                                Background="#dc3545"
+                                Foreground="White" FontSize="11" FontWeight="Bold"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+
+			<!-- 🌿 MAIN CONTENT AREA 🌿 -->
+			<Border Grid.Row="1" Background="#f8f9fa" CornerRadius="0,0,12,12">
+                <Grid Margin="25,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Search & Actions -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Stats Cards -->
+                        <RowDefinition Height="*"/>
+                        <!-- Content -->
+                    </Grid.RowDefinitions>
+
+                    <!-- 🔍 CLEAN SEARCH & ACTIONS 🔍 -->
+                    <Grid Grid.Row="0" Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Clean Search Bar -->
+                        <Border Grid.Column="0" Background="White" CornerRadius="16"
+                                Height="48" Margin="0,0,20,0"
+                                BorderBrush="#e1e8ed" BorderThickness="1">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#6c757d" BlurRadius="8" ShadowDepth="1" Opacity="0.05"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="🔍" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Name="SearchTextBox"
+                                         Background="Transparent" BorderThickness="0"
+                                         VerticalAlignment="Center" FontSize="14"
+                                         Foreground="#495057" FontWeight="Normal"
+                                         Text="Search your expenses..."/>
+                                <ComboBox Grid.Column="2" Name="CategoryFilterComboBox"
+                                          Width="150" Margin="0,0,15,0" Background="Transparent"
+                                          BorderThickness="0" FontSize="13" Foreground="#6c757d">
+                                    <ComboBoxItem Content="All Categories"/>
+                                    <ComboBoxItem Content="🍽️ Food"/>
+                                    <ComboBoxItem Content="🛍️ Shopping"/>
+                                    <ComboBoxItem Content="🎮 Entertainment"/>
+                                    <ComboBoxItem Content="📦 Others"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Name="AddExpenseButton" Content="➕ Add Expense"
+                                    Style="{StaticResource ModernButton}"
+                                    Margin="0,0,10,0"/>
+                            <Button Name="LoadJsonButton" Content="📄 JSON"
+                                    Style="{StaticResource CleanIcon}" Width="60" Height="42"
+                                    Background="#6f42c1" Foreground="White"
+                                    Margin="0,0,10,0"/>
+                            <Button Name="RefreshButton" Content="🔄"
+                                    Style="{StaticResource CleanIcon}"
+                                    Background="#28a745" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 🎨 CLEAN STATS CARDS 🎨 -->
+                    <Grid Grid.Row="1" Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Total Expenses - Blue -->
+                        <Border Grid.Column="0" Style="{StaticResource CleanStats}" Background="#667eea">
+                            <StackPanel>
+                                <TextBlock Text="💰" FontSize="28" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Total Expenses" FontSize="12"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+                                <TextBlock Name="TotalExpensesLabel" Text="$0.00"
+                                           FontSize="20" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- This Month - Green -->
+                        <Border Grid.Column="2" Style="{StaticResource CleanStats}" Background="#28a745">
+                            <StackPanel>
+                                <TextBlock Text="🌸" FontSize="28" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="This Month" FontSize="12"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+                                <TextBlock Name="MonthlyLabel" Text="$0.00"
+                                           FontSize="20" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Total Items - Orange -->
+                        <Border Grid.Column="4" Style="{StaticResource CleanStats}" Background="#fd7e14">
+                            <StackPanel>
+                                <TextBlock Text="📊" FontSize="28" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Total Items" FontSize="12"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+                                <TextBlock Name="TotalItemsLabel" Text="0"
+                                           FontSize="20" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Today - Purple -->
+                        <Border Grid.Column="6" Style="{StaticResource CleanStats}" Background="#6f42c1">
+                            <StackPanel>
+                                <TextBlock Text="🌙" FontSize="28" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Today" FontSize="12"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+                                <TextBlock Name="TodayLabel" Text="$0.00"
+                                           FontSize="20" FontWeight="Bold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- 📊 MAIN CONTENT 📊 -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="360"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- LEFT: Clean Expense Table -->
+                        <Border Grid.Column="0" Style="{StaticResource CleanCard}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Clean Table Header -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal"
+                                            Margin="0,0,0,18">
+                                    <TextBlock Text="📝 Your Expenses" FontSize="18"
+                                               FontWeight="SemiBold" Foreground="#2d3748"/>
+                                    <Border Background="#667eea" CornerRadius="10"
+                                            Padding="8,4" Margin="15,0,0,0">
+                                        <TextBlock Name="ExpenseCountLabel" Text="0 items"
+                                                   Foreground="White" FontSize="11" FontWeight="Medium"/>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Clean Data Grid -->
+                                <DataGrid Grid.Row="1" Name="ExpenseDataGrid"
+                                          Style="{StaticResource CleanDataGrid}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="💰 Amount"
+                                                          Binding="{Binding Amount, StringFormat={}{0:C}}"
+                                                          Width="110">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="Background" Value="#f8f9fa"/>
+                                                    <Setter Property="Foreground" Value="#495057"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="FontSize" Value="12"/>
+                                                    <Setter Property="Padding" Value="12,10"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <DataGridTextColumn Header="📝 Description"
+                                                          Binding="{Binding Description}"
+                                                          Width="*">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="Background" Value="#f8f9fa"/>
+                                                    <Setter Property="Foreground" Value="#495057"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="FontSize" Value="12"/>
+                                                    <Setter Property="Padding" Value="12,10"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <DataGridTextColumn Header="📂 Category"
+                                                          Binding="{Binding Category}"
+                                                          Width="130">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="Background" Value="#f8f9fa"/>
+                                                    <Setter Property="Foreground" Value="#495057"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="FontSize" Value="12"/>
+                                                    <Setter Property="Padding" Value="12,10"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <DataGridTextColumn Header="📅 Date"
+                                                          Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}"
+                                                          Width="100">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="Background" Value="#f8f9fa"/>
+                                                    <Setter Property="Foreground" Value="#495057"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="FontSize" Value="12"/>
+                                                    <Setter Property="Padding" Value="12,10"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+
+                        <!-- RIGHT: Charts & Analytics -->
+                        <StackPanel Grid.Column="2">
+                            <!-- Expense Chart -->
+                            <Border Style="{StaticResource CleanCard}" Margin="0,0,0,18">
+                                <StackPanel>
+                                    <TextBlock Text="📊 Expense Analytics" FontSize="16"
+                                               FontWeight="SemiBold" Foreground="#2d3748"
+                                               Margin="0,0,0,15"/>
+
+                                    <!-- Category Distribution Chart -->
+                                    <Grid Height="180" Margin="0,0,0,15">
+                                        <Border Background="#f8f9fa" CornerRadius="8"
+                                                BorderBrush="#e1e8ed" BorderThickness="1">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <!-- Chart Title -->
+                                                <TextBlock Grid.Row="0" Text="Category Breakdown"
+                                                           FontSize="12" FontWeight="Medium"
+                                                           Foreground="#6c757d" Margin="10,8,10,5"
+                                                           HorizontalAlignment="Center"/>
+                                                
+                                                <!-- Pie Chart with Data -->
+                                                <Grid Grid.Row="1" Margin="10">
+                                                    <Ellipse Width="120" Height="120"
+                                                             HorizontalAlignment="Center"
+                                                             VerticalAlignment="Center">
+                                                        <Ellipse.Fill>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                <GradientStop Color="#667eea" Offset="0"/>
+                                                                <GradientStop Color="#28a745" Offset="0.3"/>
+                                                                <GradientStop Color="#fd7e14" Offset="0.6"/>
+                                                                <GradientStop Color="#6f42c1" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                    <TextBlock Text="📊" FontSize="24" 
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="White"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Legend with Percentages -->
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                            <Ellipse Width="8" Height="8" Fill="#667eea" Margin="0,0,8,0"/>
+                                            <TextBlock Name="FoodPercentLabel" Text="Food: 0%" FontSize="10" Foreground="#6c757d"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                            <Ellipse Width="8" Height="8" Fill="#28a745" Margin="0,0,8,0"/>
+                                            <TextBlock Name="ShoppingPercentLabel" Text="Shopping: 0%" FontSize="10" Foreground="#6c757d"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                            <Ellipse Width="8" Height="8" Fill="#fd7e14" Margin="0,0,8,0"/>
+                                            <TextBlock Name="EntertainmentPercentLabel" Text="Entertainment: 0%" FontSize="10" Foreground="#6c757d"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                            <Ellipse Width="8" Height="8" Fill="#6f42c1" Margin="0,0,8,0"/>
+                                            <TextBlock Name="OthersPercentLabel" Text="Others: 0%" FontSize="10" Foreground="#6c757d"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Monthly Trend Chart -->
+                            <Border Style="{StaticResource CleanCard}" Margin="0,0,0,18">
+                                <StackPanel>
+                                    <TextBlock Text="📈 Last 6 Months" FontSize="16"
+                                               FontWeight="SemiBold" Foreground="#2d3748"
+                                               Margin="0,0,0,12"/>
+
+                                    <!-- Line Chart with Dynamic Data -->
+                                    <Grid Height="120">
+                                        <Border Background="#f8f9fa" CornerRadius="8"
+                                                BorderBrush="#e1e8ed" BorderThickness="1">
+                                            <Grid Margin="10">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <!-- Chart Area -->
+                                                <Canvas Grid.Row="0" Name="TrendChart" Height="80">
+                                                    <!-- Chart will be drawn dynamically -->
+                                                </Canvas>
+                                                
+                                                <!-- Month Labels -->
+                                                <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                                                           HorizontalAlignment="Center" Margin="0,5,0,0">
+                                                    <TextBlock Name="Month1Label" Text="Jan" FontSize="8" Foreground="#6c757d" Margin="15,0"/>
+                                                    <TextBlock Name="Month2Label" Text="Feb" FontSize="8" Foreground="#6c757d" Margin="15,0"/>
+                                                    <TextBlock Name="Month3Label" Text="Mar" FontSize="8" Foreground="#6c757d" Margin="15,0"/>
+                                                    <TextBlock Name="Month4Label" Text="Apr" FontSize="8" Foreground="#6c757d" Margin="15,0"/>
+                                                    <TextBlock Name="Month5Label" Text="May" FontSize="8" Foreground="#6c757d" Margin="15,0"/>
+                                                    <TextBlock Name="Month6Label" Text="Jun" FontSize="8" Foreground="#6c757d" Margin="15,0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                    
+                                    <!-- Trend Summary -->
+                                    <TextBlock Name="TrendSummaryLabel" 
+                                               Text="Add more data to see trends"
+                                               FontSize="10" Foreground="#6c757d" 
+                                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Quick Actions -->
+                            <Border Style="{StaticResource CleanCard}">
+                                <StackPanel>
+                                    <TextBlock Text="⚡ Quick Actions" FontSize="16"
+                                               FontWeight="SemiBold" Foreground="#2d3748"
+                                               Margin="0,0,0,12"/>
+
+                                    <Button Content="📊 View Reports"
+                                            Background="#6f42c1"
+                                            Style="{StaticResource ActionButton}"
+                                            Margin="0,0,0,10"/>
+
+                                    <Button Content="📤 Export Data"
+                                            Background="#28a745"
+                                            Style="{StaticResource ActionButton}"
+                                            Margin="0,0,0,10"/>
+
+                                    <Button Content="📈 Budget Plans"
+                                            Background="#fd7e14"
+                                            Style="{StaticResource ActionButton}"
+                                            Margin="0,0,0,10"/>
+
+                                    <Button Content="⚙️ Settings"
+                                            Background="#6c757d"
+                                            Style="{StaticResource ActionButton}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+		</Grid>
+	</Border>
+</Window>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

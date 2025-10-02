@@ -1,0 +1,9 @@
+﻿using System.Collections.Generic;
+
+namespace SmartExpense.Models {
+    public class ModelData {
+        public List<string> Vocabulary { get; set; }
+        public Dictionary<string, List<double>> Weights { get; set; }
+        public Dictionary<string, double> Bias { get; set; }
+    }
+}

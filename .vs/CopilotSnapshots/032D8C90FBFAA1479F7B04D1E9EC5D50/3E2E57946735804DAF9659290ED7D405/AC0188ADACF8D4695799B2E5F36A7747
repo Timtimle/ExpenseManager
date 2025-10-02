@@ -1,0 +1,27 @@
+﻿using ExpenseManager.Controllers;
+using ExpenseManager.Repository;
+using ExpenseManager.Repository.Interface;
+using ExpenseManager.Services.Prediction;
+using System.Collections.Generic;
+
+namespace ExpenseManager.Factories {
+    public class ServiceFactory {
+        // ? DEPENDENCY INJECTION PATTERN  
+        public static ExpenseController CreateExpenseController() {
+            IExpenseRepository repository = new ExpenseRepository();
+            return new ExpenseController(repository);
+        }
+
+        public static PredictionController CreatePredictionController() {
+            return new PredictionController();
+        }
+
+        public static ExpensePredictor CreateExpensePredictor() {
+            List<IExpenseClassifier> classifiers = new List<IExpenseClassifier> {
+                new RuleBasedClassifier(),
+                new MLClassifier()
+            };
+            return new ExpensePredictor(classifiers);
+        }
+    }
+}}

@@ -1,0 +1,133 @@
+﻿using ExpenseManager.Controllers;
+using ExpenseManager.Services.Prediction;
+using ExpenseManager.Utils;
+using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
+
+namespace ExpenseManager.Views {
+    public partial class AddExpenseWindow : Window {
+        private ExpenseController expenseController;
+
+        public AddExpenseWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            InitializeForm();
+        }
+
+        // Constructor mới để nhận ExpenseController từ MainWindow
+        public AddExpenseWindow(ExpenseController controller) {
+            InitializeComponent();
+            expenseController = controller;
+            
+            SetupEventHandlers();
+            InitializeForm();
+        }
+
+        private void SetupEventHandlers() {
+            PredictButton.Click += PredictButton_Click;
+            SaveButton.Click += SaveButton_Click;
+            CancelButton.Click += CancelButton_Click;
+        }
+
+        private void InitializeForm() {
+            AmountTextBox.Text = "";
+            DescriptionTextBox.Text = "";
+            CategoryComboBox.SelectedIndex = 0;
+        }
+
+        private void PredictButton_Click(object sender, RoutedEventArgs e) {
+            string description = DescriptionTextBox.Text.Trim();
+            
+            if (string.IsNullOrEmpty(description)) {
+                MessageBox.Show("Nhập mô tả trước!", "Thông báo", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try {
+                string modelFile = @"..\..\Data\Models\trained_model.json";
+                
+                MLClassifier mlr = new MLClassifier();
+
+                if (File.Exists(modelFile)) {
+                    mlr.LoadModel(modelFile);
+                    MessageBox.Show("ok");
+                } else {
+                    mlr.LoadTrainingData();
+                    mlr.Train(mlr.getTrainingData(), 100, true);
+                    mlr.SaveModel(modelFile);
+                }
+
+                Vietnamese vietnamese = new Vietnamese();
+                string inputNoDiacritics = vietnamese.RemoveDiacritics(description);
+                string category = mlr.Classify(inputNoDiacritics);
+
+                string categoryToFind = null;
+                if (category == "Ăn uống") categoryToFind = "Ăn uống";
+                else if (category == "Giải trí") categoryToFind = "Giải trí";
+                else if (category == "Mua sắm") categoryToFind = "Mua sắm";
+                else categoryToFind = "Others";
+
+                for (int i = 0; i < CategoryComboBox.Items.Count; i++) {
+                    ComboBoxItem item = CategoryComboBox.Items[i] as ComboBoxItem;
+                    if (item.Content.ToString().Contains(categoryToFind)) {
+                        CategoryComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+
+                MessageBox.Show($"Dự đoán: {category}", "ML Prediction", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                if (string.IsNullOrWhiteSpace(AmountTextBox.Text)) {
+                    MessageBox.Show("Nhập số tiền!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+                
+                decimal amount;
+                if (!decimal.TryParse(AmountTextBox.Text, out amount) || amount <= 0) {
+                    MessageBox.Show("Nhập số tiền hợp lệ!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+
+                string description = DescriptionTextBox.Text.Trim();
+                if (string.IsNullOrEmpty(description)) {
+                    MessageBox.Show("Nhập mô tả!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DescriptionTextBox.Focus();
+                    return;
+                }
+
+                ComboBoxItem selectedItem = CategoryComboBox.SelectedItem as ComboBoxItem;
+                string category = selectedItem?.Content.ToString() ?? "Others";
+
+                if (expenseController.AddExpense(amount, description, category)) {
+                    MessageBox.Show($"✅ Lưu thành công!\n\n💰 Số tiền: {amount:N0} VND\n📝 Mô tả: {description}\n📂 Loại: {category}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                } else {
+                    MessageBox.Show("❌ Lưu thất bại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;
+            this.Close();
+        }
+    }
+}  

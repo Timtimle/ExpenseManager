@@ -1,0 +1,152 @@
+﻿<Window x:Class="ExpenseManager.Views.AddExpenseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpenseManager.Views"
+        mc:Ignorable="d"
+        Title="💰 Add New Expense" Height="480" Width="500" 
+        WindowStartupLocation="CenterScreen"
+        Background="White" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!-- Simple TextBox Style -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#e1e8ed"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2d3748"/>
+        </Style>
+
+        <!-- Simple ComboBox Style -->
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#e1e8ed"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Foreground" Value="#2d3748"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+
+        <!-- Primary Button Style -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#667eea"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Secondary Button Style -->
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#f8f9fa"/>
+            <Setter Property="Foreground" Value="#6c757d"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#e1e8ed"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Predict Button Style -->
+        <Style x:Key="PredictButton" TargetType="Button">
+            <Setter Property="Background" Value="#28a745"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Container -->
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Header -->
+            <RowDefinition Height="30"/>    <!-- Spacing -->
+            <RowDefinition Height="Auto"/>  <!-- Amount -->
+            <RowDefinition Height="20"/>    <!-- Spacing -->
+            <RowDefinition Height="Auto"/>  <!-- Description -->
+            <RowDefinition Height="20"/>    <!-- Spacing -->
+            <RowDefinition Height="Auto"/>  <!-- Category -->
+            <RowDefinition Height="30"/>    <!-- Spacing -->
+            <RowDefinition Height="Auto"/>  <!-- Buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- 🌟 HEADER 🌟 -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center">
+            <TextBlock Text="💰" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <TextBlock Text="Add New Expense" FontSize="20" FontWeight="Bold" 
+                      Foreground="#2d3748" HorizontalAlignment="Center"/>
+            <TextBlock Text="Track your spending easily" FontSize="12" 
+                      Foreground="#718096" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <!-- 💰 AMOUNT INPUT 💰 -->
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="💰 Amount (VND)" FontSize="14" FontWeight="Bold" 
+                      Foreground="#2d3748" Margin="0,0,0,8"/>
+            <TextBox Name="AmountTextBox" Style="{StaticResource ModernTextBox}"
+                     Text="" TextAlignment="Right"/>
+        </StackPanel>
+
+        <!-- 📝 DESCRIPTION INPUT 📝 -->
+        <StackPanel Grid.Row="4">
+            <TextBlock Text="📝 Description" FontSize="14" FontWeight="Bold" 
+                      Foreground="#2d3748" Margin="0,0,0,8"/>
+            <TextBox Name="DescriptionTextBox" Style="{StaticResource ModernTextBox}"
+                     Text=""/>
+        </StackPanel>
+
+        <!-- 📂 CATEGORY INPUT 📂 -->
+        <StackPanel Grid.Row="6">
+            <TextBlock Text="📂 Category" FontSize="14" FontWeight="Bold" 
+                      Foreground="#2d3748" Margin="0,0,0,8"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <ComboBox Grid.Column="0" Name="CategoryComboBox" 
+                          Style="{StaticResource ModernComboBox}">
+                    <ComboBoxItem Content="🍽️ Food"/>
+                    <ComboBoxItem Content="🛍️ Shopping"/>
+                    <ComboBoxItem Content="🎮 Entertainment"/>
+                    <ComboBoxItem Content="📦 Others"/>
+                </ComboBox>
+                
+                <Button Grid.Column="2" Name="PredictButton" 
+                        Content="🔮 Predict" Width="80"
+                        Style="{StaticResource PredictButton}"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- 🎯 ACTION BUTTONS 🎯 -->
+        <Grid Grid.Row="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0" Name="CancelButton" Content="❌ Cancel"
+                    Style="{StaticResource SecondaryButton}"/>
+                    
+            <Button Grid.Column="2" Name="SaveButton" Content="💾 Save"
+                    Style="{StaticResource PrimaryButton}"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,163 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Controllers {
+    public class PredictionController {
+        private ExpensePredictor predictor;
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+        private string modelPath = "Data/Models/trained_model.json";
+        private string modelDirectory = "Data/Models";
+
+        public PredictionController() {
+            SetupClassifiers();
+        }
+
+        private void SetupClassifiers() {
+            classifiers = new List<IExpenseClassifier>();
+            
+            // Ensure model directory exists
+            EnsureModelDirectoryExists();
+            
+            // Add MLClassifier with trained model
+            mlClassifier = new MLClassifier();
+            
+            try {
+                // Try to load existing trained model first
+                if (File.Exists(modelPath)) {
+                    Console.WriteLine("Loading existing trained model...");
+                    mlClassifier.LoadModel(modelPath);
+                    Console.WriteLine("? Model loaded successfully!");
+                } else {
+                    Console.WriteLine("No existing model found. Training new model...");
+                    TrainAndSaveModel();
+                }
+                
+                classifiers.Add(mlClassifier);
+            } catch (Exception ex) {
+                Console.WriteLine($"? ML Model error: {ex.Message}");
+                // Fallback to rule-based if ML fails
+                RuleBasedClassifier ruleClassifier = new RuleBasedClassifier();
+                classifiers.Add(ruleClassifier);
+            }
+
+            // Initialize predictor
+            predictor = new ExpensePredictor(classifiers);
+        }
+
+        private void EnsureModelDirectoryExists() {
+            try {
+                if (!Directory.Exists(modelDirectory)) {
+                    Directory.CreateDirectory(modelDirectory);
+                    Console.WriteLine($"?? Created model directory: {modelDirectory}");
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"?? Could not create model directory: {ex.Message}");
+            }
+        }
+
+        private void TrainAndSaveModel() {
+            try {
+                // Load training data and train model
+                mlClassifier.LoadTrainingData();
+                
+                var trainingData = mlClassifier.getTrainingData();
+                Console.WriteLine($"?? Loaded {trainingData.Count} training samples");
+                
+                // Train with 100 epochs
+                Console.WriteLine("?? Training model (100 epochs)...");
+                mlClassifier.Train(trainingData, 100, true);
+                
+                // Save trained model
+                mlClassifier.SaveModel(modelPath);
+                Console.WriteLine($"?? Model saved to: {modelPath}");
+                
+                // Create training info file
+                CreateTrainingInfo(trainingData.Count);
+                
+            } catch (Exception ex) {
+                Console.WriteLine($"? Training failed: {ex.Message}");
+                throw;
+            }
+        }
+
+        private void CreateTrainingInfo(int trainingCount) {
+            try {
+                var trainingInfo = new {
+                    TrainingDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    TrainingSamples = trainingCount,
+                    Epochs = 100,
+                    ModelVersion = "1.0",
+                    Categories = new[] { "An Uong", "Mua Sam", "Giai Tri", "Khac" },
+                    Notes = "Vietnamese expense category classification model"
+                };
+
+                string infoPath = Path.Combine(modelDirectory, "training_info.json");
+                string json = System.Text.Json.JsonSerializer.Serialize(trainingInfo, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(infoPath, json);
+                
+                Console.WriteLine($"?? Training info saved to: {infoPath}");
+            } catch (Exception ex) {
+                Console.WriteLine($"?? Could not save training info: {ex.Message}");
+            }
+        }
+
+        public string PredictCategory(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Khac";
+            }
+
+            // Tr?c ti?p return Vietnamese prediction t? ML model
+            return predictor.Predict(description);
+        }
+
+        public List<string> GetAvailableCategories() {
+            return CategoryHelper.GetDefaultCategories();
+        }
+
+        // Method mới trả về category info
+        public Dictionary<string, string> GetCategoryInfo() {
+            return new Dictionary<string, string> {
+                { "categories", string.Join(",", CategoryHelper.GetDefaultCategories()) },
+                { "icons", string.Join(",", CategoryHelper.GetCategoryIcons().Values) },
+                { "displayNames", string.Join(",", CategoryHelper.GetCategoryDisplayNames().Values) }
+            };
+        }
+
+        public Dictionary<string, double> GetPredictionConfidence(string description) {
+            // Future implementation for showing confidence scores
+            var confidence = new Dictionary<string, double>();
+            string predicted = PredictCategory(description);
+            confidence[predicted] = 0.85; // Placeholder
+            return confidence;
+        }
+
+        public void RetrainModel() {
+            try {
+                Console.WriteLine("?? Retraining model...");
+                TrainAndSaveModel();
+                Console.WriteLine("? Model retrained successfully!");
+            } catch (Exception ex) {
+                Console.WriteLine($"? Retraining failed: {ex.Message}");
+            }
+        }
+
+        public bool IsModelTrained() {
+            return File.Exists(modelPath);
+        }
+
+        public string GetModelInfo() {
+            string infoPath = Path.Combine(modelDirectory, "training_info.json");
+            if (File.Exists(infoPath)) {
+                try {
+                    return File.ReadAllText(infoPath);
+                } catch {
+                    return "Model info not available";
+                }
+            }
+            return "No model info found";
+        }
+    }
+}

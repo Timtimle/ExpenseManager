@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Services {
+    public class ExpenseAnalyticsService {
+        public class CategoryTotals {
+            public decimal Food { get; set; }
+            public decimal Shopping { get; set; }
+            public decimal Entertainment { get; set; }
+            public decimal Others { get; set; }
+        }
+
+        public CategoryTotals CalculateCategoryTotals(List<Expense> expenses) {
+            if (expenses == null || expenses.Count == 0) {
+                return new CategoryTotals();
+            }
+
+            string[] foodKeywords = {"com", "pho", "banh", "tra", "ca phe", "nuoc", "chao", "hu tieu", "mien", "xeo", "khot"};
+            string[] shoppingKeywords = {"mua", "sach", "ao", "quan", "giay", "but", "vo", "balo", "usb", "chuot", "tap", "den", "pin", "tai nghe"};
+            string[] entertainmentKeywords = {"choi", "xem", "phim", "giai", "di choi"};
+
+            decimal foodTotal = expenses.Where(e => HasKeyword(e, foodKeywords) || 
+                e.Category.ToLower().Contains("food") || e.Category.Contains("🍽️") || 
+                e.Category.ToLower().Contains("ăn") || e.Category.ToLower().Contains("an")).Sum(e => e.Amount);
+                
+            decimal shoppingTotal = expenses.Where(e => HasKeyword(e, shoppingKeywords) || 
+                e.Category.ToLower().Contains("shopping") || e.Category.Contains("🛍️") || 
+                e.Category.ToLower().Contains("mua")).Sum(e => e.Amount);
+                
+            decimal entertainmentTotal = expenses.Where(e => HasKeyword(e, entertainmentKeywords) || 
+                e.Category.ToLower().Contains("entertainment") || e.Category.Contains("🎮") || 
+                e.Category.ToLower().Contains("giải")).Sum(e => e.Amount);
+
+            decimal total = expenses.Sum(e => e.Amount);
+            decimal othersTotal = total - foodTotal - shoppingTotal - entertainmentTotal;
+
+            return new CategoryTotals {
+                Food = foodTotal,
+                Shopping = shoppingTotal,
+                Entertainment = entertainmentTotal,
+                Others = othersTotal
+            };
+        }
+
+        public decimal GetMonthlyTotal(List<Expense> expenses, DateTime date) {
+            return expenses.Where(e => e.Date.Month == date.Month && e.Date.Year == date.Year).Sum(e => e.Amount);
+        }
+
+        public decimal GetTodayTotal(List<Expense> expenses, DateTime today) {
+            return expenses.Where(e => e.Date.Date == today).Sum(e => e.Amount);
+        }
+
+        public string FormatCategoryLabel(string category, decimal amount, decimal total) {
+            decimal percent = total > 0 ? (amount / total) * 100 : 0;
+            return $"{category}: {percent:F1}% ({amount:N0} VND)";
+        }
+
+        private bool HasKeyword(Expense expense, string[] keywords) {
+            foreach (string keyword in keywords) {
+                if (expense.Description.ToLower().Contains(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+}

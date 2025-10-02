@@ -1,0 +1,168 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using ExpenseManager.Controllers;
+using System.Collections.Generic;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            SetupEventHandlers();
+            RefreshData();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            ResetButton.Click += ResetButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            LoadJsonButton.Click += LoadJsonButton_Click;
+            
+            MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => Close();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            var addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                System.Threading.Thread.Sleep(100); // Wait for file save
+                RefreshData();
+            }
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e) {
+            var result = MessageBox.Show("⚠️ Delete ALL expenses?\n\nThis cannot be undone!", 
+                "Reset All", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                
+            if (result == MessageBoxResult.Yes) {
+                ClearAllData();
+                RefreshData();
+                MessageBox.Show("✅ All data cleared!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            var result = MessageBox.Show("YES: Load JSON\nNO: Refresh Data\nCANCEL: Export JSON", 
+                "Data Operations", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                
+            switch (result) {
+                case MessageBoxResult.Yes: LoadFromJson(); break;
+                case MessageBoxResult.No: RefreshData(); break;
+                case MessageBoxResult.Cancel: ExportToJson(); break;
+            }
+        }
+
+        private void LoadJsonButton_Click(object sender, RoutedEventArgs e) {
+            LoadFromJson();
+        }
+
+        private void RefreshData() {
+            try {
+                // Get fresh data
+                expenseController = new ExpenseController();
+                var expenses = expenseController.GetAllExpenses();
+                
+                // Update DataGrid
+                ExpenseDataGrid.ItemsSource = null;
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary stats
+                UpdateSummaryStats(expenses);
+                UpdateCharts(expenses);
+                
+            } catch (Exception ex) {
+                ShowError($"Error refreshing data: {ex.Message}");
+            }
+        }
+
+        private void UpdateSummaryStats(List<ExpenseManager.Models.Expense> expenses) {
+            var total = expenseController.GetTotalExpenses();
+            var today = DateTime.Today;
+            
+            TotalExpensesLabel.Text = $"{total:N0} VND";
+            TotalItemsLabel.Text = expenses.Count.ToString();
+            ExpenseCountLabel.Text = $"{expenses.Count} items";
+            
+            var monthlyTotal = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year).Sum(e => e.Amount);
+            var todayTotal = expenses.Where(e => e.Date.Date == today).Sum(e => e.Amount);
+            
+            MonthlyLabel.Text = $"{monthlyTotal:N0} VND";
+            TodayLabel.Text = $"{todayTotal:N0} VND";
+        }
+
+        private void UpdateCharts(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                SetEmptyChartLabels();
+                SetEmptyChartBars();
+                return;
+            }
+
+            var categoryTotals = CalculateCategoryTotals(expenses);
+            var total = expenses.Sum(e => e.Amount);
+            
+            // Update category percentages
+            FoodPercentLabel.Text = FormatCategoryLabel("Food", categoryTotals.Food, total);
+            ShoppingPercentLabel.Text = FormatCategoryLabel("Shopping", categoryTotals.Shopping, total);
+            EntertainmentPercentLabel.Text = FormatCategoryLabel("Entertainment", categoryTotals.Entertainment, total);
+            OthersPercentLabel.Text = FormatCategoryLabel("Others", categoryTotals.Others, total);
+            
+            // Update visual chart bars
+            UpdateChartBars(categoryTotals, total);
+        }
+
+        private void UpdateChartBars(CategoryTotals categoryTotals, decimal total) {
+            const double maxBarWidth = 200; // Maximum bar width
+            
+            if (total > 0) {
+                FoodBar.Width = (double)(categoryTotals.Food / total) * maxBarWidth;
+                ShoppingBar.Width = (double)(categoryTotals.Shopping / total) * maxBarWidth;
+                EntertainmentBar.Width = (double)(categoryTotals.Entertainment / total) * maxBarWidth;
+                OthersBar.Width = (double)(categoryTotals.Others / total) * maxBarWidth;
+            } else {
+                SetEmptyChartBars();
+            }
+        }
+
+        private void SetEmptyChartLabels() {
+            FoodPercentLabel.Text = "Food: 0%";
+            ShoppingPercentLabel.Text = "Shopping: 0%";
+            EntertainmentPercentLabel.Text = "Entertainment: 0%";
+            OthersPercentLabel.Text = "Others: 0%";
+        }
+
+        private void SetEmptyChartBars() {
+            FoodBar.Width = 0;
+            ShoppingBar.Width = 0;
+            EntertainmentBar.Width = 0;
+            OthersBar.Width = 0;
+        }
+
+        private string FormatCategoryLabel(string category, decimal amount, decimal total) {
+            var percent = total > 0 ? (amount / total) * 100 : 0;
+            return $"{category}: {percent:F1}% ({amount:N0} VND)";
+        }
+
+        private bool HasKeyword(ExpenseManager.Models.Expense expense, string[] keywords) {
+            return keywords.Any(keyword => expense.Description.ToLower().Contains(keyword));
+        }
+
+        private void ShowError(string message) {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void ShowSuccess(string message) {
+            MessageBox.Show(message, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private class CategoryTotals {
+            public decimal Food { get; set; }
+            public decimal Shopping { get; set; }
+            public decimal Entertainment { get; set; }
+            public decimal Others { get; set; }
+        }
+    }
+}

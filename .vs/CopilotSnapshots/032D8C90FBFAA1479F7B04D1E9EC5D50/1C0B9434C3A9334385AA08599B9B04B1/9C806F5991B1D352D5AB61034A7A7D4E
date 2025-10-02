@@ -1,0 +1,237 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Services.Prediction {
+    public class ExpensePredictor {
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+        private RuleBasedClassifier ruleBasedClassifier;
+
+        public ExpensePredictor(List<IExpenseClassifier> classifiers) {
+            this.classifiers = classifiers;
+            
+            // Identify specific classifiers for advanced features
+            foreach (IExpenseClassifier classifier in classifiers) {
+                if (classifier is MLClassifier) {
+                    mlClassifier = classifier as MLClassifier;
+                } else if (classifier is RuleBasedClassifier) {
+                    ruleBasedClassifier = classifier as RuleBasedClassifier;
+                }
+            }
+        }
+
+        // Original simple prediction
+        public string Predict(string description) {
+            foreach (IExpenseClassifier classifier in classifiers) {
+                string result = classifier.Classify(description);
+                if (result != "Khac") {
+                    return result;
+                }
+            }
+            return "Khac";
+        }
+
+        // Enhanced prediction với detailed result
+        public PredictionResult PredictWithDetails(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return new PredictionResult("Khac", 0.0, "Default");
+            }
+
+            // Dictionary để lưu results từ từng classifier
+            Dictionary<string, PredictionInfo> predictions = new Dictionary<string, PredictionInfo>();
+
+            // 1. Thử Rule-based trước (nhanh)
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    predictions["RuleBased"] = new PredictionInfo {
+                        Category = ruleResult,
+                        Confidence = CalculateRuleBasedConfidence(description, ruleResult),
+                        Method = "RuleBasedClassifier"
+                    };
+                }
+            }
+
+            // 2. Thử ML classifier (chính xác hơn)
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                if (mlResult != "Khac") {
+                    predictions["ML"] = new PredictionInfo {
+                        Category = mlResult,
+                        Confidence = CalculateMLConfidence(description, mlResult),
+                        Method = "MLClassifier"
+                    };
+                }
+            }
+
+            // 3. Combine results và chọn best prediction
+            return CombinePredictions(predictions, description);
+        }
+
+        // Ensemble method - kết hợp 2 thuật toán
+        public PredictionResult EnsemblePredict(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return new PredictionResult("Khac", 0.0, "Default");
+            }
+
+            Dictionary<string, double> categoryScores = new Dictionary<string, double>();
+
+            // Rule-based vote (weight = 0.3)
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    double ruleConfidence = CalculateRuleBasedConfidence(description, ruleResult);
+                    categoryScores[ruleResult] = categoryScores.GetValueOrDefault(ruleResult, 0.0) + (ruleConfidence * 0.3);
+                }
+            }
+
+            // ML vote (weight = 0.7 - higher weight vì ML thường chính xác hơn)
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                if (mlResult != "Khac") {
+                    double mlConfidence = CalculateMLConfidence(description, mlResult);
+                    categoryScores[mlResult] = categoryScores.GetValueOrDefault(mlResult, 0.0) + (mlConfidence * 0.7);
+                }
+            }
+
+            // Return category với highest ensemble score
+            if (categoryScores.Count > 0) {
+                var bestPrediction = categoryScores.OrderByDescending(kvp => kvp.Value).First();
+                return new PredictionResult(bestPrediction.Key, bestPrediction.Value, "EnsembleMethod");
+            }
+
+            return new PredictionResult("Khac", 0.0, "Default");
+        }
+
+        // Compare predictions từ các algorithms
+        public PredictionComparison ComparePredictions(string description) {
+            PredictionComparison comparison = new PredictionComparison {
+                Description = description,
+                Predictions = new List<PredictionResult>()
+            };
+
+            // Rule-based prediction
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                double ruleConfidence = CalculateRuleBasedConfidence(description, ruleResult);
+                comparison.Predictions.Add(new PredictionResult(ruleResult, ruleConfidence, "RuleBasedClassifier"));
+            }
+
+            // ML prediction
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                double mlConfidence = CalculateMLConfidence(description, mlResult);
+                comparison.Predictions.Add(new PredictionResult(mlResult, mlConfidence, "MLClassifier"));
+            }
+
+            // Ensemble prediction
+            PredictionResult ensembleResult = EnsemblePredict(description);
+            comparison.Predictions.Add(ensembleResult);
+            comparison.RecommendedPrediction = ensembleResult;
+
+            return comparison;
+        }
+
+        // Helper methods
+        private PredictionResult CombinePredictions(Dictionary<string, PredictionInfo> predictions, string description) {
+            if (predictions.Count == 0) {
+                return new PredictionResult("Khac", 0.0, "NoMatch");
+            }
+
+            // Nếu cả 2 algorithms đều predict cùng category -> high confidence
+            if (predictions.Count == 2 && 
+                predictions["RuleBased"].Category == predictions["ML"].Category) {
+                
+                string category = predictions["RuleBased"].Category;
+                double avgConfidence = (predictions["RuleBased"].Confidence + predictions["ML"].Confidence) / 2.0;
+                return new PredictionResult(category, System.Math.Min(avgConfidence * 1.2, 1.0), "BothAlgorithms");
+            }
+
+            // Nếu chỉ ML predict -> medium-high confidence
+            if (predictions.ContainsKey("ML")) {
+                PredictionInfo mlPred = predictions["ML"];
+                return new PredictionResult(mlPred.Category, mlPred.Confidence, mlPred.Method);
+            }
+
+            // Nếu chỉ Rule-based predict -> medium confidence  
+            if (predictions.ContainsKey("RuleBased")) {
+                PredictionInfo rulePred = predictions["RuleBased"];
+                return new PredictionResult(rulePred.Category, rulePred.Confidence * 0.8, rulePred.Method);
+            }
+
+            return new PredictionResult("Khac", 0.0, "NoMatch");
+        }
+
+        private double CalculateRuleBasedConfidence(string description, string category) {
+            if (ruleBasedClassifier == null || category == "Khac") return 0.0;
+
+            // Rule-based confidence dựa trên số keywords match
+            Dictionary<string, List<string>> rules = ruleBasedClassifier.GetRules();
+            if (!rules.ContainsKey(category)) return 0.5;
+
+            string lowerDescription = description.ToLower();
+            List<string> keywords = rules[category];
+            int matches = 0;
+            int totalKeywordLength = 0;
+
+            foreach (string keyword in keywords) {
+                if (lowerDescription.Contains(keyword)) {
+                    matches++;
+                    totalKeywordLength += keyword.Length;
+                }
+            }
+
+            if (matches == 0) return 0.3; // Base confidence nếu classify được
+
+            // Confidence tăng theo số matches và keyword length
+            double confidence = 0.5 + (matches * 0.1) + (totalKeywordLength * 0.01);
+            return System.Math.Min(confidence, 0.95); // Cap at 95%
+        }
+
+        private double CalculateMLConfidence(string description, string category) {
+            if (mlClassifier == null || category == "Khac") return 0.0;
+
+            // ML confidence giả định cao hơn rule-based (do training)
+            double baseConfidence = 0.75;
+            
+            // Tăng confidence dựa trên length của description (more context = better prediction)
+            double lengthFactor = System.Math.Min(description.Length / 50.0, 0.2);
+            
+            return System.Math.Min(baseConfidence + lengthFactor, 0.95);
+        }
+
+        // Get statistics về performance của các algorithms
+        public PredictorStats GetPredictorStats() {
+            return new PredictorStats {
+                TotalClassifiers = classifiers.Count,
+                HasMLClassifier = mlClassifier != null,
+                HasRuleBasedClassifier = ruleBasedClassifier != null,
+                MLModelTrained = mlClassifier != null && mlClassifier.getVocabulary().Count > 0,
+                RuleBasedRuleCount = ruleBasedClassifier?.GetRules().Sum(kvp => kvp.Value.Count) ?? 0
+            };
+        }
+    }
+
+    // Helper classes
+    public class PredictionInfo {
+        public string Category { get; set; }
+        public double Confidence { get; set; }
+        public string Method { get; set; }
+    }
+
+    public class PredictionComparison {
+        public string Description { get; set; }
+        public List<PredictionResult> Predictions { get; set; }
+        public PredictionResult RecommendedPrediction { get; set; }
+    }
+
+    public class PredictorStats {
+        public int TotalClassifiers { get; set; }
+        public bool HasMLClassifier { get; set; }
+        public bool HasRuleBasedClassifier { get; set; }
+        public bool MLModelTrained { get; set; }
+        public int RuleBasedRuleCount { get; set; }
+    }
+}

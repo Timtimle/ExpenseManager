@@ -1,0 +1,155 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using ExpenseManager.Controllers;
+using System.Collections.Generic;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            SetupEventHandlers();
+            RefreshAllData();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += (s, e) => {
+                AddExpenseWindow addWindow = new AddExpenseWindow();
+                if (addWindow.ShowDialog() == true) {
+                    System.Threading.Thread.Sleep(100);
+                    RefreshAllData();
+                }
+            };
+            
+            ResetButton.Click += (s, e) => {
+                if (MessageBox.Show("⚠️ Delete ALL expenses?", "Reset All", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes) {
+                    expenseController.GetAllExpenses().Clear();
+                    if (System.IO.File.Exists("expenses.csv")) System.IO.File.Delete("expenses.csv");
+                    if (System.IO.File.Exists(@"..\..\Data\User\expenses.json")) System.IO.File.Delete(@"..\..\Data\User\expenses.json");
+                    RefreshAllData();
+                    MessageBox.Show("✅ Reset complete!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            };
+            
+            RefreshButton.Click += (s, e) => {
+                var result = MessageBox.Show("YES: Load JSON\nNO: Refresh\nCANCEL: Export JSON", "Options", MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Yes) LoadJson();
+                else if (result == MessageBoxResult.No) RefreshAllData();
+                else if (result == MessageBoxResult.Cancel) ExportJson();
+            };
+            
+            LoadJsonButton.Click += (s, e) => LoadJson();
+            MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => Close();
+        }
+
+        private void RefreshAllData() {
+            try {
+                expenseController = new ExpenseController();
+                var expenses = expenseController.GetAllExpenses();
+                ExpenseDataGrid.ItemsSource = null;
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                TotalExpensesLabel.Text = expenseController.GetTotalExpenses().ToString("N0") + " VND";
+                TotalItemsLabel.Text = expenses.Count.ToString();
+                ExpenseCountLabel.Text = $"{expenses.Count} items";
+                
+                DateTime today = DateTime.Today;
+                MonthlyLabel.Text = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year).Sum(e => e.Amount).ToString("N0") + " VND";
+                TodayLabel.Text = expenses.Where(e => e.Date.Date == today).Sum(e => e.Amount).ToString("N0") + " VND";
+                
+                UpdateCharts(expenses);
+            } catch (Exception ex) {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateCharts(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                FoodPercentLabel.Text = "Food: 0%";
+                ShoppingPercentLabel.Text = "Shopping: 0%";
+                EntertainmentPercentLabel.Text = "Entertainment: 0%";
+                OthersPercentLabel.Text = "Others: 0%";
+                TrendSummaryLabel.Text = "Add expenses to see trends";
+                return;
+            }
+
+            decimal total = expenses.Sum(e => e.Amount);
+            string[] foodKeys = {"com", "pho", "banh", "tra", "ca phe"};
+            string[] shopKeys = {"mua", "sach", "ao", "quan", "giay"};
+            string[] entKeys = {"choi", "xem", "phim", "giai"};
+
+            decimal food = expenses.Where(e => HasKeyword(e, foodKeys) || e.Category.ToLower().Contains("food") || e.Category.Contains("🍽️")).Sum(e => e.Amount);
+            decimal shop = expenses.Where(e => HasKeyword(e, shopKeys) || e.Category.ToLower().Contains("shopping") || e.Category.Contains("🛍️")).Sum(e => e.Amount);
+            decimal ent = expenses.Where(e => HasKeyword(e, entKeys) || e.Category.ToLower().Contains("entertainment") || e.Category.Contains("🎮")).Sum(e => e.Amount);
+            decimal others = total - food - shop - ent;
+
+            FoodPercentLabel.Text = $"Food: {(total > 0 ? (food / total) * 100 : 0):F1}% ({food:N0} VND)";
+            ShoppingPercentLabel.Text = $"Shopping: {(total > 0 ? (shop / total) * 100 : 0):F1}% ({shop:N0} VND)";
+            EntertainmentPercentLabel.Text = $"Entertainment: {(total > 0 ? (ent / total) * 100 : 0):F1}% ({ent:N0} VND)";
+            OthersPercentLabel.Text = $"Others: {(total > 0 ? (others / total) * 100 : 0):F1}% ({others:N0} VND)";
+
+            DateTime today = DateTime.Today;
+            decimal thisMonth = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year).Sum(e => e.Amount);
+            decimal lastMonth = expenses.Where(e => e.Date.Month == today.AddMonths(-1).Month && e.Date.Year == today.AddMonths(-1).Year).Sum(e => e.Amount);
+            
+            if (lastMonth > 0) {
+                decimal change = ((thisMonth - lastMonth) / lastMonth) * 100;
+                TrendSummaryLabel.Text = $"{(change > 0 ? "📈" : "📉")} {Math.Abs(change):F1}% vs last month";
+            } else {
+                TrendSummaryLabel.Text = $"💰 This month: {thisMonth:N0} VND";
+            }
+
+            Month1Label.Text = today.AddMonths(-5).ToString("MMM");
+            Month2Label.Text = today.AddMonths(-4).ToString("MMM");
+            Month3Label.Text = today.AddMonths(-3).ToString("MMM");
+            Month4Label.Text = today.AddMonths(-2).ToString("MMM");
+            Month5Label.Text = today.AddMonths(-1).ToString("MMM");
+            Month6Label.Text = today.ToString("MMM");
+        }
+
+        private void LoadJson() {
+            try {
+                string path = @"..\..\Data\User\expenses.json";
+                if (!System.IO.File.Exists(path)) { MessageBox.Show("File not found", "Error"); return; }
+                
+                string json = System.Text.Encoding.UTF8.GetString(System.IO.File.ReadAllBytes(path)).Trim('\uFEFF', '\u200B');
+                if (!json.StartsWith("[") && !json.StartsWith("{")) { MessageBox.Show("Invalid JSON", "Error"); return; }
+                
+                var expenses = System.Text.Json.JsonSerializer.Deserialize<List<ExpenseManager.Models.Expense>>(json, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (expenses?.Count > 0) {
+                    expenseController.GetAllExpenses().Clear();
+                    foreach (var e in expenses) expenseController.AddExpense(e.Amount, e.Description, e.Category);
+                    RefreshAllData();
+                    MessageBox.Show($"✅ Loaded {expenses.Count} expenses", "Success");
+                }
+            } catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}", "Error"); }
+        }
+
+        private void ExportJson() {
+            try {
+                var expenses = expenseController.GetAllExpenses();
+                if (expenses.Count == 0) { MessageBox.Show("No data to export"); return; }
+                
+                string path = @"..\..\Data\User\expenses.json";
+                string dir = System.IO.Path.GetDirectoryName(path);
+                if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir);
+                
+                string json = System.Text.Json.JsonSerializer.Serialize(expenses, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                System.IO.File.WriteAllText(path, json, new System.Text.UTF8Encoding(false));
+                MessageBox.Show($"✅ Exported {expenses.Count} expenses", "Success");
+            } catch (Exception ex) { MessageBox.Show($"Error: {ex.Message}", "Error"); }
+        }
+
+        private bool HasKeyword(ExpenseManager.Models.Expense expense, string[] keywords) {
+            foreach (string keyword in keywords) {
+                if (expense.Description.ToLower().Contains(keyword)) return true;
+            }
+            return false;
+        }
+    }
+}

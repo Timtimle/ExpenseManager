@@ -1,0 +1,17 @@
+using System.Collections.Generic;
+
+namespace ExpenseManager.Models {
+    public class CategoryConfig {
+        public List<string> Categories { get; set; }
+        public Dictionary<string, List<string>> CategoryKeywords { get; set; }
+        public Dictionary<string, string> CategoryIcons { get; set; }
+        public Dictionary<string, string> CategoryDisplayNames { get; set; }
+
+        public CategoryConfig() {
+            Categories = new List<string>();
+            CategoryKeywords = new Dictionary<string, List<string>>();
+            CategoryIcons = new Dictionary<string, string>();
+            CategoryDisplayNames = new Dictionary<string, string>();
+        }
+    }
+}

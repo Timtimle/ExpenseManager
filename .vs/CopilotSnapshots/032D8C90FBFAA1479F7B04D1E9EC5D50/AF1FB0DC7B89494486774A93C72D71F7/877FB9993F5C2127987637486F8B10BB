@@ -1,0 +1,151 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+using ExpenseManager.Utils;
+
+namespace ExpenseManager.Controllers {
+    public class PredictionController {
+        private ExpensePredictor predictor;
+        private string modelDirectory;
+        private string modelPath;
+        private AppSettings settings;
+
+        public PredictionController() {
+            settings = LoadAppSettings();
+            modelDirectory = @"..\..\Data\Models";
+            modelPath = Path.Combine(modelDirectory, "trained_model.json");
+            
+            Directory.CreateDirectory(modelDirectory);
+            InitializePredictors();
+        }
+
+        private AppSettings LoadAppSettings() {
+            try {
+                string settingsPath = @"..\..\Data\Config\settings.json";
+                if (File.Exists(settingsPath)) {
+                    string json = File.ReadAllText(settingsPath);
+                    return System.Text.Json.JsonSerializer.Deserialize<AppSettings>(json);
+                }
+            } catch { }
+            
+            return new AppSettings(); // Default settings
+        }
+
+        private void InitializePredictors() {
+            List<IExpenseClassifier> classifiers = new List<IExpenseClassifier>();
+            
+            MLClassifier mlClassifier = new MLClassifier();
+            
+            if (File.Exists(modelPath)) {
+                mlClassifier.LoadModel(modelPath);
+            } else if (settings.EnableMLPrediction) {
+                TrainAndSaveModel();
+            }
+            
+            classifiers.Add(mlClassifier);
+            classifiers.Add(new RuleBasedClassifier());
+            
+            predictor = new ExpensePredictor(classifiers);
+        }
+
+        private void TrainAndSaveModel() {
+            try {
+                MLClassifier mlClassifier = new MLClassifier();
+                mlClassifier.LoadTrainingData();
+                
+                List<ExpenseData> trainingData = mlClassifier.getTrainingData();
+                Console.WriteLine($"📚 Loaded {trainingData.Count} training samples");
+                
+                Console.WriteLine($"🔥 Training model ({settings.TrainingEpochs} epochs)...");
+                mlClassifier.Train(trainingData, settings.TrainingEpochs, true);
+                
+                mlClassifier.SaveModel(modelPath);
+                Console.WriteLine($"💾 Model saved to: {modelPath}");
+                
+                CreateTrainingInfo(trainingData.Count);
+                
+            } catch (Exception ex) {
+                Console.WriteLine($"❌ Training failed: {ex.Message}");
+                throw;
+            }
+        }
+
+        private void CreateTrainingInfo(int trainingCount) {
+            try {
+                // Sử dụng ModelData để lưu training info
+                ModelData trainingInfo = new ModelData {
+                    TrainingEpochs = settings.TrainingEpochs,
+                    Version = "2.0"
+                };
+
+                // Thêm metadata
+                Dictionary<string, object> metadata = new Dictionary<string, object> {
+                    ["TrainingDate"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    ["TrainingSamples"] = trainingCount,
+                    ["Categories"] = new[] { "An Uong", "Mua Sam", "Giai Tri", "Khac" },
+                    ["Notes"] = "Vietnamese expense category classification model",
+                    ["LearningRate"] = settings.LearningRate
+                };
+
+                string infoPath = Path.Combine(modelDirectory, "training_info.json");
+                string json = System.Text.Json.JsonSerializer.Serialize(metadata, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(infoPath, json);
+                
+                Console.WriteLine($"📋 Training info saved to: {infoPath}");
+            } catch (Exception ex) {
+                Console.WriteLine($"⚠️ Could not save training info: {ex.Message}");
+            }
+        }
+
+        public PredictionResult PredictCategory(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return new PredictionResult("Khac", 0.0, "Default");
+            }
+
+            return predictor.PredictWithDetails(description);
+        }
+
+        public List<CategoryData> GetAvailableCategories() {
+            return new List<CategoryData> {
+                new CategoryData("An Uong", "🍽️ Ăn uống", "🍽️", new List<string> { "com", "pho", "tra", "ca phe" }),
+                new CategoryData("Mua Sam", "🛍️ Mua sắm", "🛍️", new List<string> { "mua", "giay", "ao", "quan" }),
+                new CategoryData("Giai Tri", "🎮 Giải trí", "🎮", new List<string> { "phim", "game", "nhac" }),
+                new CategoryData("Khac", "📦 Khác", "📦", new List<string>())
+            };
+        }
+
+        public void RetrainModel() {
+            try {
+                Console.WriteLine("🔄 Retraining model...");
+                TrainAndSaveModel();
+                InitializePredictors(); // Reload với model mới
+                Console.WriteLine("✅ Model retrained successfully!");
+            } catch (Exception ex) {
+                Console.WriteLine($"❌ Retraining failed: {ex.Message}");
+            }
+        }
+
+        public bool IsModelTrained() {
+            return File.Exists(modelPath);
+        }
+
+        public ModelData GetModelInfo() {
+            if (File.Exists(modelPath)) {
+                try {
+                    MLClassifier ml = new MLClassifier();
+                    ml.LoadModel(modelPath);
+                    
+                    // Return actual ModelData instead of string
+                    return new ModelData {
+                        Version = "2.0",
+                        TrainingEpochs = settings.TrainingEpochs,
+                        Vocabulary = ml.getVocabulary()
+                    };
+                } catch { }
+            }
+            return null;
+        }
+    }
+}

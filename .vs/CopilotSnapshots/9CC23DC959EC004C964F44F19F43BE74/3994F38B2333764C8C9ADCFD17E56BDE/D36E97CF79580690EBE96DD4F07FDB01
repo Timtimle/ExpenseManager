@@ -1,0 +1,60 @@
+﻿        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        
+                        <Label Grid.Row="0" Grid.Column="0" Content="📊 Total Items:" 
+                               FontWeight="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="1" Name="TotalItemsLabel" 
+                               Content="0" HorizontalAlignment="Right"/>
+                        
+                        <Label Grid.Row="1" Grid.Column="0" Content="📈 This Month:" 
+                               FontWeight="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="1" Name="MonthlyLabel" 
+                               Content="$0.00" HorizontalAlignment="Right"/>
+                        
+                        <Label Grid.Row="2" Grid.Column="0" Content="📅 Today:" 
+                               FontWeight="Bold"/>
+                        <Label Grid.Row="2" Grid.Column="1" Name="TodayLabel" 
+                               Content="$0.00" HorizontalAlignment="Right"/>
+                    </Grid>
+                    
+                    <!-- Category Filter -->
+                    <Label Content="Filter by Category" FontWeight="Bold" 
+                           Margin="0,20,0,5"/>
+                    <ComboBox Name="CategoryFilterComboBox" 
+                              Background="White" BorderBrush="#CED4DA" 
+                              Padding="10,8">
+                        <ComboBoxItem Content="All Categories"/>
+                        <ComboBoxItem Content="Food & Drinks"/>
+                        <ComboBoxItem Content="Shopping"/>
+                        <ComboBoxItem Content="Entertainment"/>
+                        <ComboBoxItem Content="Others"/>
+                    </ComboBox>
+                    
+                    <!-- Quick Actions -->
+                    <Label Content="Quick Actions" FontWeight="Bold" 
+                           Margin="0,20,0,10"/>
+                    <StackPanel>
+                        <Button Content="📊 View Reports" Background="#17A2B8" 
+                                Foreground="White" Padding="10,8" BorderThickness="0" 
+                                Margin="0,0,0,5"/>
+                        <Button Content="📤 Export Data" Background="#6C757D" 
+                                Foreground="White" Padding="10,8" BorderThickness="0" 
+                                Margin="0,0,0,5"/>
+                        <Button Content="⚙️ Settings" Background="#FFC107" 
+                                Foreground="Black" Padding="10,8" BorderThickness="0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+        
+        <!-- STATUS BAR -->
+        <StatusBar Grid.Row="2" Background="#E9ECEF" Height="30" 
+                   Margin="0,10,0,0">
+            <StatusBarItem>
+                <Label Name="StatusLabel" Content="Ready" FontSize="12"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <Label Content="v1.0.0" FontSize="12" Foreground="#6C757D"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

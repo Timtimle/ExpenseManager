@@ -1,0 +1,44 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Controllers {
+    public class PredictionController {
+        private ExpensePredictor predictor;
+        private List<IExpenseClassifier> classifiers;
+
+        public PredictionController() {
+            SetupClassifiers();
+        }
+
+        private void SetupClassifiers() {
+            classifiers = new List<IExpenseClassifier>();
+            
+            // Add RuleBasedClassifier
+            RuleBasedClassifier ruleClassifier = new RuleBasedClassifier();
+            classifiers.Add(ruleClassifier);
+
+            // Initialize predictor
+            predictor = new ExpensePredictor(classifiers);
+        }
+
+        public string PredictCategory(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Khac";
+            }
+
+            return predictor.Predict(description);
+        }
+
+        public List<string> GetAvailableCategories() {
+            return new List<string> { "An Uong", "Mua Sam", "Giai Tri", "Khac" };
+        }
+
+        public Dictionary<string, double> GetPredictionConfidence(string description) {
+            // Future implementation for showing confidence scores
+            var confidence = new Dictionary<string, double>();
+            string predicted = PredictCategory(description);
+            confidence[predicted] = 0.85; // Placeholder
+            return confidence;
+        }
+    }
+}}

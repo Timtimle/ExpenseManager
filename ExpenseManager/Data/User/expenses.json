@@ -1,0 +1,26 @@
+[
+  {
+    "Amount": 500000,
+    "Description": "\u0111i ng\u1EE7",
+    "Date": "2025-10-30T00:00:00",
+    "Category": "\uD83D\uDCE6 Others"
+  },
+  {
+    "Amount": 50000,
+    "Description": "\u0103n chu\u1ED1i",
+    "Date": "2025-10-29T00:00:00",
+    "Category": "\uD83C\uDF7D\uFE0F Food"
+  },
+  {
+    "Amount": 10000,
+    "Description": "mua k\u1EB9o",
+    "Date": "2025-10-05T00:00:00",
+    "Category": "\uD83C\uDF7D\uFE0F Food"
+  },
+  {
+    "Amount": 5000,
+    "Description": "mua b\u00E1nh",
+    "Date": "2025-11-06T00:00:00",
+    "Category": "\uD83C\uDF7D\uFE0F Food"
+  }
+]

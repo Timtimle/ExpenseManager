@@ -1,0 +1,78 @@
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace ExpenseManager.Models {
+    public class CategoryConfig {
+        private readonly List<string> categories;
+        private readonly Dictionary<string, List<string>> categoryKeywords;
+        private readonly Dictionary<string, string> categoryIcons;
+        private readonly Dictionary<string, string> categoryDisplayNames;
+
+        public CategoryConfig() {
+            categories = new List<string>();
+            categoryKeywords = new Dictionary<string, List<string>>();
+            categoryIcons = new Dictionary<string, string>();
+            categoryDisplayNames = new Dictionary<string, string>();
+        }
+
+        // ✅ ENCAPSULATED - Read-only access
+        public ReadOnlyCollection<string> Categories => categories.AsReadOnly();
+        public IReadOnlyDictionary<string, List<string>> CategoryKeywords => categoryKeywords;
+        public IReadOnlyDictionary<string, string> CategoryIcons => categoryIcons;
+        public IReadOnlyDictionary<string, string> CategoryDisplayNames => categoryDisplayNames;
+
+        // ✅ CONTROLLED MUTATION
+        public void AddCategory(string category) {
+            if (!string.IsNullOrWhiteSpace(category) && !categories.Contains(category)) {
+                categories.Add(category);
+            }
+        }
+
+        public void AddKeyword(string category, string keyword) {
+            if (categories.Contains(category) && !string.IsNullOrWhiteSpace(keyword)) {
+                if (!categoryKeywords.ContainsKey(category)) {
+                    categoryKeywords[category] = new List<string>();
+                }
+                if (!categoryKeywords[category].Contains(keyword)) {
+                    categoryKeywords[category].Add(keyword);
+                }
+            }
+        }
+
+        public void SetIcon(string category, string icon) {
+            if (categories.Contains(category) && !string.IsNullOrWhiteSpace(icon)) {
+                categoryIcons[category] = icon;
+            }
+        }
+
+        public void SetDisplayName(string category, string displayName) {
+            if (categories.Contains(category) && !string.IsNullOrWhiteSpace(displayName)) {
+                categoryDisplayNames[category] = displayName;
+            }
+        }
+
+        // ✅ INTERNAL INITIALIZATION
+        internal void InitializeWithDefaults(List<string> defaultCategories, 
+                                            Dictionary<string, List<string>> defaultKeywords,
+                                            Dictionary<string, string> defaultIcons,
+                                            Dictionary<string, string> defaultDisplayNames) {
+            categories.Clear();
+            categories.AddRange(defaultCategories);
+            
+            categoryKeywords.Clear();
+            foreach (var kvp in defaultKeywords) {
+                categoryKeywords[kvp.Key] = new List<string>(kvp.Value);
+            }
+            
+            categoryIcons.Clear();
+            foreach (var kvp in defaultIcons) {
+                categoryIcons[kvp.Key] = kvp.Value;
+            }
+            
+            categoryDisplayNames.Clear();
+            foreach (var kvp in defaultDisplayNames) {
+                categoryDisplayNames[kvp.Key] = kvp.Value;
+            }
+        }
+    }
+}

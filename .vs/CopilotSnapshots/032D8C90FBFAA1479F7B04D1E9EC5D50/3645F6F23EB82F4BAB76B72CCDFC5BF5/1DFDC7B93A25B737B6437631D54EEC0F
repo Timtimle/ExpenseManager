@@ -1,0 +1,53 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+using ExpenseManager.Repository.Interface;
+using ExpenseManager.Utils;
+
+namespace ExpenseManager.Utils {
+    public class CategoryHelper {
+        private static readonly string categoriesFilePath = "Data/categories.json";
+
+        public static List<string> GetDefaultCategories() {
+            return new List<string> { "An Uong", "Mua Sam", "Giai Tri", "Khac" };
+        }
+
+        public static CategoryConfig LoadCategories() {
+            if (File.Exists(categoriesFilePath)) {
+                try {
+                    string json = File.ReadAllText(categoriesFilePath);
+                    return JsonSerializer.Deserialize<CategoryConfig>(json);
+                } catch {
+                    return CreateDefaultCategoryConfig();
+                }
+            }
+            return CreateDefaultCategoryConfig();
+        }
+
+        public static void SaveCategories(CategoryConfig categoryConfig) {
+            try {
+                string json = JsonSerializer.Serialize(categoryConfig, new JsonSerializerOptions { WriteIndented = true });
+                string directory = Path.GetDirectoryName(categoriesFilePath);
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+                File.WriteAllText(categoriesFilePath, json);
+            } catch {
+                // Handle save error silently
+            }
+        }
+
+        private static CategoryConfig CreateDefaultCategoryConfig() {
+            CategoryConfig categoryConfig = new CategoryConfig();
+            categoryConfig.Categories = GetDefaultCategories();
+            
+            categoryConfig.CategoryKeywords["An Uong"] = new List<string> { "an", "uong", "com", "ca phe", "tra", "nuoc" };
+            categoryConfig.CategoryKeywords["Mua Sam"] = new List<string> { "mua", "giay", "quan", "ao", "shopee", "tiki" };
+            categoryConfig.CategoryKeywords["Giai Tri"] = new List<string> { "xem", "phim", "game", "hat", "nhac" };
+            categoryConfig.CategoryKeywords["Khac"] = new List<string> { };
+
+            return categoryConfig;
+        }
+    }
+}

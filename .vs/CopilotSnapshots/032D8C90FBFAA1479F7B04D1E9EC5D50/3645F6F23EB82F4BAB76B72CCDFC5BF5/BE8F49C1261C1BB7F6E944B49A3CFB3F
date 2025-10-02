@@ -1,0 +1,123 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Services {
+    public class ExpenseManager {
+        private List<Expense> expenses = new List<Expense>();
+        private string jsonFilePath = @"..\..\Data\User\expenses.json";
+
+        public List<Expense> Expenses => expenses;
+
+        public ExpenseManager() {
+            LoadExpensesFromFile();
+        }
+
+        // Thêm expense với validation
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (!ValidateExpense(amount, description, category)) {
+                return false;
+            }
+
+            try {
+                Expense expense = new Expense(amount, description, DateTime.Now, category);
+                expenses.Insert(0, expense); // Thêm vào đầu list
+                SaveExpensesToFile();
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenses;
+        }
+
+        public decimal GetTotalExpenses() {
+            return expenses.Sum(x => x.Amount);
+        }
+
+        public bool DeleteExpense(int index) {
+            try {
+                if (index >= 0 && index < expenses.Count) {
+                    expenses.RemoveAt(index);
+                    SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJson() {
+            try {
+                if (!File.Exists(jsonFilePath)) {
+                    return false;
+                }
+
+                string json = File.ReadAllText(jsonFilePath, System.Text.Encoding.UTF8);
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                List<Expense> loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                
+                if (loadedExpenses != null && loadedExpenses.Count > 0) {
+                    expenses.Clear();
+                    expenses.AddRange(loadedExpenses);
+                    SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public void SaveExpensesToFile() {
+            try {
+                using (StreamWriter sw = new StreamWriter(csvFilePath)) {
+                    sw.WriteLine("Amount,Description,Date,Category");
+                    foreach (Expense expense in expenses) {
+                        sw.WriteLine($"{expense.Amount},{expense.Description},{expense.Date},{expense.Category}");
+                    }
+                }
+            } catch (Exception) {
+            }
+        }
+
+        public void LoadExpensesFromFile() {
+            try {
+                if (File.Exists(csvFilePath)) {
+                    string[] lines = File.ReadAllLines(csvFilePath);
+                    expenses.Clear();
+                    
+                    for (int i = 1; i < lines.Length; i++) { // Skip header
+                        string[] parts = lines[i].Split(',');
+                        if (parts.Length >= 4) {
+                            decimal amount = decimal.Parse(parts[0]);
+                            string description = parts[1];
+                            DateTime date = DateTime.Parse(parts[2]);
+                            string category = parts[3];
+                            
+                            expenses.Add(new Expense(amount, description, date, category));
+                        }
+                    }
+                }
+            } catch (Exception) {
+            }
+        }
+
+        private bool ValidateExpense(decimal amount, string description, string category) {
+            if (amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(description)) return false;
+            if (string.IsNullOrWhiteSpace(category)) return false;
+            return true;
+        }
+    }
+}

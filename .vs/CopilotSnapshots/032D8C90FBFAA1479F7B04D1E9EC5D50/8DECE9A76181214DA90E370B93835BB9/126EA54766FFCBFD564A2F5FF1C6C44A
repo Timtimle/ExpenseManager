@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Utils {
+    public class DBG {
+        public DBG() { }
+
+        public void Out(List<ExpenseData> data) {
+            Console.WriteLine($"Found {data.Count} elements");
+            using (StreamWriter sw = new StreamWriter("debug.txt")) {
+                foreach (var v in data) {
+                    sw.WriteLine($"{v.Label} | {v.Text}");
+                }
+            }
+        }
+    }
+}

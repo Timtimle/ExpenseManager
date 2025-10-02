@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using ExpenseManager.Models;
+using ExpenseManager.Repository;
+using ExpenseManager.Repository.Interface;
+
+namespace ExpenseManager.Services {
+    public class ExpenseManager {
+        private IExpenseRepository repository;
+
+        public ExpenseManager() {
+            repository = new ExpenseRepository();
+        }
+
+        public ExpenseManager(IExpenseRepository expenseRepository) {
+            repository = expenseRepository;
+        }
+
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (amount <= 0 || string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(category)) {
+                return false;
+            }
+
+            Expense expense = new Expense(amount, description, DateTime.Now, category);
+            return repository.AddExpense(expense);
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return repository.GetAllExpenses();
+        }
+
+        public decimal GetTotalExpenses() {
+            return repository.GetTotalAmount();
+        }
+
+        public bool DeleteExpense(int index) {
+            return repository.DeleteExpense(index);
+        }
+
+        public List<Expense> GetExpensesByCategory(string category) {
+            return repository.GetExpensesByCategory(category);
+        }
+
+        // Convert methods for ML
+        public List<ExpenseData> GetExpensesAsTrainingData() {
+            List<ExpenseData> trainingData = new List<ExpenseData>();
+            List<Expense> expenses = repository.GetAllExpenses();
+            
+            foreach (Expense expense in expenses) {
+                trainingData.Add(new ExpenseData(expense.Category, expense.Description));
+            }
+            
+            return trainingData;
+        }
+    }
+}

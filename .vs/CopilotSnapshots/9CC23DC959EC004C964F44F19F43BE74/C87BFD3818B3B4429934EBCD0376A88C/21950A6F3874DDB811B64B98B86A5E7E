@@ -1,0 +1,21 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Interfaces;
+
+namespace ExpenseManager.Services {
+    public class ExpensePredictor {
+        private List<IExpenseClassifier> classifiers;
+
+        public ExpensePredictor(List<IExpenseClassifier> classifiers) {
+            this.classifiers = classifiers;
+        }
+
+        public string Predict(string description) {
+            foreach (var classifier in classifiers) {
+                string ans = classifier.Classify(description);
+                if (ans != "Khác")
+                    return ans;
+            }
+            return "Khác";
+        }
+    }
+}

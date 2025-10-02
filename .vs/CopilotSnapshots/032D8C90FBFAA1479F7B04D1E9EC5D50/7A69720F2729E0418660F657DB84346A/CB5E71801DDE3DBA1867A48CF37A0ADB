@@ -1,0 +1,44 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Models;
+using ExpenseManager.Repository;
+using ExpenseManager.Repository.Interface;
+
+namespace ExpenseManager.Controllers {
+    public class ExpenseController {
+        private IExpenseRepository expenseRepository;
+
+        public ExpenseController() {
+            expenseRepository = new ExpenseRepository();
+        }
+
+        // Constructor with dependency injection
+        public ExpenseController(IExpenseRepository repository) {
+            expenseRepository = repository;
+        }
+
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (amount <= 0 || string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(category)) {
+                return false;
+            }
+
+            Expense expense = new Expense(amount, description, System.DateTime.Now, category);
+            return expenseRepository.AddExpense(expense);
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenseRepository.GetAllExpenses();
+        }
+
+        public decimal GetTotalExpenses() {
+            return expenseRepository.GetTotalAmount();
+        }
+
+        public bool DeleteExpense(int index) {
+            return expenseRepository.DeleteExpense(index);
+        }
+
+        public List<Expense> GetExpensesByCategory(string category) {
+            return expenseRepository.GetExpensesByCategory(category);
+        }
+    }
+}

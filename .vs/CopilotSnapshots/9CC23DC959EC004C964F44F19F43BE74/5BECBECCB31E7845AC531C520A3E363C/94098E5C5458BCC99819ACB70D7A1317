@@ -1,0 +1,19 @@
+﻿using System;
+
+namespace SmartExpense.Models {
+    public class Expense {
+        public decimal Amount { get; set; }
+        public string Description { get; set; }
+        public DateTime Date { get; set; }
+        public string Category { get; set; }
+
+        public Expense(decimal amount, string description, DateTime date, string category) {
+            this.Amount = amount;
+            this.Description = description;
+            this.Date = date;
+            this.Category = category;
+        }
+
+        public Expense() { }
+    }
+}

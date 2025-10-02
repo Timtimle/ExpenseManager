@@ -1,0 +1,186 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Services.Prediction {
+    public class ExpensePredictor {
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+        private RuleBasedClassifier ruleBasedClassifier;
+
+        public ExpensePredictor(List<IExpenseClassifier> classifiers) {
+            this.classifiers = classifiers;
+            
+            // Identify specific classifiers
+            foreach (IExpenseClassifier classifier in classifiers) {
+                if (classifier is MLClassifier) {
+                    mlClassifier = classifier as MLClassifier;
+                } else if (classifier is RuleBasedClassifier) {
+                    ruleBasedClassifier = classifier as RuleBasedClassifier;
+                }
+            }
+        }
+
+        // Sequential prediction: Rule-based first, nếu "Khac" thì ML
+        public string Predict(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Khac";
+            }
+
+            // 1. Thử Rule-based trước (nhanh)
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    return ruleResult; // Rule-based found match -> return ngay
+                }
+            }
+
+            // 2. Rule-based trả về "Khac" -> thử ML
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                return mlResult; // ML result (có thể là category hoặc "Khac")
+            }
+
+            // 3. Không có classifier nào hoạt động
+            return "Khac";
+        }
+
+        // Enhanced prediction với detailed result
+        public PredictionResult PredictWithDetails(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return new PredictionResult("Khac", 0.0, "EmptyInput");
+            }
+
+            // 1. Thử Rule-based trước
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    double ruleConfidence = CalculateRuleBasedConfidence(description, ruleResult);
+                    return new PredictionResult(ruleResult, ruleConfidence, "RuleBasedClassifier");
+                }
+            }
+
+            // 2. Rule-based failed -> thử ML
+            if (mlClassifier != null) {
+                string mlResult = mlClassifier.Classify(description);
+                double mlConfidence = CalculateMLConfidence(description, mlResult);
+                string method = mlResult != "Khac" ? "MLClassifier" : "MLClassifier_NoMatch";
+                return new PredictionResult(mlResult, mlConfidence, method);
+            }
+
+            // 3. Cả 2 đều fail
+            return new PredictionResult("Khac", 0.0, "NoClassifierAvailable");
+        }
+
+        // Get prediction từ specific algorithm
+        public PredictionResult GetRuleBasedPrediction(string description) {
+            if (ruleBasedClassifier == null) {
+                return new PredictionResult("Khac", 0.0, "RuleBasedNotAvailable");
+            }
+
+            string result = ruleBasedClassifier.Classify(description);
+            double confidence = CalculateRuleBasedConfidence(description, result);
+            return new PredictionResult(result, confidence, "RuleBasedClassifier");
+        }
+
+        public PredictionResult GetMLPrediction(string description) {
+            if (mlClassifier == null) {
+                return new PredictionResult("Khac", 0.0, "MLNotAvailable");
+            }
+
+            string result = mlClassifier.Classify(description);
+            double confidence = CalculateMLConfidence(description, result);
+            return new PredictionResult(result, confidence, "MLClassifier");
+        }
+
+        // Compare cả 2 algorithms
+        public PredictionComparison ComparePredictions(string description) {
+            PredictionComparison comparison = new PredictionComparison {
+                Description = description,
+                Predictions = new List<PredictionResult>()
+            };
+
+            // Rule-based result
+            PredictionResult ruleResult = GetRuleBasedPrediction(description);
+            comparison.Predictions.Add(ruleResult);
+
+            // ML result  
+            PredictionResult mlResult = GetMLPrediction(description);
+            comparison.Predictions.Add(mlResult);
+
+            // Sequential result (recommended)
+            PredictionResult sequentialResult = PredictWithDetails(description);
+            comparison.Predictions.Add(sequentialResult);
+            comparison.RecommendedPrediction = sequentialResult;
+
+            return comparison;
+        }
+
+        // Helper methods
+        private double CalculateRuleBasedConfidence(string description, string category) {
+            if (ruleBasedClassifier == null || category == "Khac") return 0.0;
+
+            Dictionary<string, List<string>> rules = ruleBasedClassifier.GetRules();
+            if (!rules.ContainsKey(category)) return 0.5;
+
+            string lowerDescription = description.ToLower();
+            List<string> keywords = rules[category];
+            int matches = 0;
+            int totalKeywordLength = 0;
+
+            foreach (string keyword in keywords) {
+                if (lowerDescription.Contains(keyword)) {
+                    matches++;
+                    totalKeywordLength += keyword.Length;
+                }
+            }
+
+            if (matches == 0) return 0.3;
+
+            double confidence = 0.5 + (matches * 0.1) + (totalKeywordLength * 0.01);
+            return System.Math.Min(confidence, 0.95);
+        }
+
+        private double CalculateMLConfidence(string description, string category) {
+            if (mlClassifier == null || category == "Khac") return 0.0;
+
+            double baseConfidence = 0.75;
+            double lengthFactor = System.Math.Min(description.Length / 50.0, 0.2);
+            
+            return System.Math.Min(baseConfidence + lengthFactor, 0.95);
+        }
+
+        // Get predictor statistics
+        public PredictorStats GetPredictorStats() {
+            return new PredictorStats {
+                TotalClassifiers = classifiers.Count,
+                HasMLClassifier = mlClassifier != null,
+                HasRuleBasedClassifier = ruleBasedClassifier != null,
+                MLModelTrained = mlClassifier != null && mlClassifier.getVocabulary().Count > 0,
+                RuleBasedRuleCount = ruleBasedClassifier?.GetRules().Sum(kvp => kvp.Value.Count) ?? 0
+            };
+        }
+    }
+
+    // Helper classes
+    public class PredictionInfo {
+        public string Category { get; set; }
+        public double Confidence { get; set; }
+        public string Method { get; set; }
+    }
+
+    public class PredictionComparison {
+        public string Description { get; set; }
+        public List<PredictionResult> Predictions { get; set; }
+        public PredictionResult RecommendedPrediction { get; set; }
+    }
+
+    public class PredictorStats {
+        public int TotalClassifiers { get; set; }
+        public bool HasMLClassifier { get; set; }
+        public bool HasRuleBasedClassifier { get; set; }
+        public bool MLModelTrained { get; set; }
+        public int RuleBasedRuleCount { get; set; }
+    }
+}

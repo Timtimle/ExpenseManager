@@ -1,0 +1,33 @@
+﻿using System.Collections.Generic;
+
+namespace ExpenseManager.Models {
+    // Single category info
+    public class CategoryData {
+        public string Name { get; set; }
+        public string DisplayName { get; set; }
+        public string Icon { get; set; }
+        public List<string> Keywords { get; set; }
+
+        public CategoryData() {
+            Keywords = new List<string>();
+        }
+
+        public CategoryData(string name, string displayName, string icon, List<string> keywords) {
+            Name = name;
+            DisplayName = displayName;
+            Icon = icon;
+            Keywords = keywords ?? new List<string>();
+        }
+    }
+
+    // Category configuration for multiple categories
+    public class CategoryConfig {
+        public List<string> Categories { get; set; }
+        public Dictionary<string, List<string>> CategoryKeywords { get; set; }
+
+        public CategoryConfig() {
+            Categories = new List<string>();
+            CategoryKeywords = new Dictionary<string, List<string>>();
+        }
+    }
+}

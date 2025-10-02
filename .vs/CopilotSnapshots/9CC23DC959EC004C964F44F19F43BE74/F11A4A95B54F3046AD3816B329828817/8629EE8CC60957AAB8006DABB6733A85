@@ -1,0 +1,528 @@
+﻿<Window x:Class="ExpenseManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpenseManager.Views"
+        mc:Ignorable="d"
+        Title="✨ Kawaii Expense Manager" Height="750" Width="1300"
+        WindowStartupLocation="CenterScreen"
+        Background="#2c3e50">
+
+	<Window.Resources>
+		<!-- Soft Anime Card Style -->
+		<Style x:Key="SoftAnimeCard" TargetType="Border">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+						<GradientStop Color="#34495e" Offset="0"/>
+						<GradientStop Color="#2c3e50" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="CornerRadius" Value="15"/>
+			<Setter Property="Padding" Value="20"/>
+			<Setter Property="BorderBrush" Value="#3498db"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="#1abc9c" BlurRadius="15" 
+                                      ShadowDepth="0" Opacity="0.2"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Gentle Button Style -->
+		<Style x:Key="GentleButton" TargetType="Button">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" CornerRadius="20" Padding="20,12">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+									<GradientStop Color="#3498db" Offset="0"/>
+									<GradientStop Color="#2980b9" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Effect">
+									<Setter.Value>
+										<DropShadowEffect Color="#3498db" BlurRadius="20" ShadowDepth="0" Opacity="0.4"/>
+									</Setter.Value>
+								</Setter>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.02" ScaleY="1.02"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+
+		<!-- Soft Icon Button -->
+		<Style x:Key="SoftIcon" TargetType="Button">
+			<Setter Property="Width" Value="45"/>
+			<Setter Property="Height" Value="45"/>
+			<Setter Property="Background" Value="#ecf0f1"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="22">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Background" Value="#bdc3c7"/>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Pastel Stats Card -->
+		<Style x:Key="PastelStats" TargetType="Border">
+			<Setter Property="CornerRadius" Value="20"/>
+			<Setter Property="Padding" Value="25,20"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="#34495e" BlurRadius="20" ShadowDepth="2" Opacity="0.1"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Calm DataGrid -->
+		<Style x:Key="CalmDataGrid" TargetType="DataGrid">
+			<Setter Property="Background" Value="#34495e"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#3498db"/>
+			<Setter Property="GridLinesVisibility" Value="None"/>
+			<Setter Property="RowBackground" Value="#2c3e50"/>
+			<Setter Property="AlternatingRowBackground" Value="#34495e"/>
+			<Setter Property="CanUserAddRows" Value="False"/>
+			<Setter Property="CanUserDeleteRows" Value="False"/>
+			<Setter Property="AutoGenerateColumns" Value="False"/>
+			<Setter Property="SelectionMode" Value="Single"/>
+			<Setter Property="HeadersVisibility" Value="Column"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
+		
+		<!-- Smooth Button -->
+		<Style x:Key="SmoothButton" TargetType="Button">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border" CornerRadius="12" Padding="18,10">
+							<Border.Background>
+								<SolidColorBrush Color="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background.Color}"/>
+							</Border.Background>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="border" Property="Opacity" Value="0.8"/>
+								<Setter TargetName="border" Property="RenderTransform">
+									<Setter.Value>
+										<ScaleTransform ScaleX="1.02" ScaleY="1.02"/>
+									</Setter.Value>
+								</Setter>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+	</Window.Resources>
+
+	<!-- Main Soft Container -->
+	<Border Background="#2c3e50" CornerRadius="15" Margin="8">
+		<Border.Effect>
+			<DropShadowEffect Color="#1abc9c" BlurRadius="30" ShadowDepth="0" Opacity="0.1"/>
+		</Border.Effect>
+		
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="70"/>   <!-- Soft Header -->
+				<RowDefinition Height="*"/>    <!-- Main Content -->
+			</Grid.RowDefinitions>
+
+			<!-- 🌸 SOFT HEADER BAR 🌸 -->
+			<Border Grid.Row="0" CornerRadius="15,15,0,0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="#3498db" Offset="0"/>
+						<GradientStop Color="#2980b9" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid Margin="25,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<!-- Kawaii Title với Logo -->
+					<StackPanel Grid.Column="0" Orientation="Horizontal"
+                                VerticalAlignment="Center">
+						<!-- Logo Image -->
+						<Border Width="45" Height="45" Margin="0,0,15,0" CornerRadius="22">
+							<Border.Background>
+								<ImageBrush ImageSource="Images/kawaii_logo.png" 
+                                            Stretch="UniformToFill"/>
+							</Border.Background>
+							<Border.Effect>
+								<DropShadowEffect Color="#1abc9c" BlurRadius="15" ShadowDepth="0" Opacity="0.5"/>
+							</Border.Effect>
+						</Border>
+						<StackPanel>
+							<TextBlock Text="✨ Kawaii Expense Manager" FontSize="22"
+                                       FontWeight="SemiBold" Foreground="White">
+								<TextBlock.Effect>
+									<DropShadowEffect Color="#2c3e50" BlurRadius="3" ShadowDepth="1" Opacity="0.5"/>
+								</TextBlock.Effect>
+							</TextBlock>
+							<TextBlock Text="🌸 Your friendly finance companion" FontSize="12"
+                                       Foreground="White" Opacity="0.8" Margin="0,-2,0,0"/>
+						</StackPanel>
+					</StackPanel>
+
+					<!-- Soft Window Controls -->
+					<StackPanel Grid.Column="1" Orientation="Horizontal">
+						<Button x:Name="MinimizeButton" Content="−"
+                                Style="{StaticResource SoftIcon}"
+                                Foreground="#7f8c8d" FontSize="14" FontWeight="Bold"/>
+						<Button x:Name="MaximizeButton" Content="□"
+                                Style="{StaticResource SoftIcon}"
+                                Foreground="#7f8c8d" FontSize="11" Margin="5,0"/>
+						<Button x:Name="CloseButton" Content="✕"
+                                Style="{StaticResource SoftIcon}"
+                                Background="#e74c3c"
+                                Foreground="White" FontSize="12" FontWeight="Bold"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+
+			<!-- 🌱 MAIN CONTENT AREA 🌱 -->
+			<Border Grid.Row="1" Background="#2c3e50" CornerRadius="0,0,15,15">
+				<Grid Margin="25,20">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>  <!-- Search & Actions -->
+						<RowDefinition Height="Auto"/>  <!-- Stats Cards -->
+						<RowDefinition Height="*"/>     <!-- Content -->
+					</Grid.RowDefinitions>
+
+					<!-- 🔍 GENTLE SEARCH & ACTIONS 🔍 -->
+					<Grid Grid.Row="0" Margin="0,0,0,25">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- Soft Search Bar -->
+						<Border Grid.Column="0" Background="#34495e" CornerRadius="20"
+                                Height="50" Margin="0,0,20,0"
+                                BorderBrush="#3498db" BorderThickness="1">
+							<Border.Effect>
+								<DropShadowEffect Color="#1abc9c" BlurRadius="10" ShadowDepth="0" Opacity="0.1"/>
+							</Border.Effect>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="50"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+
+								<TextBlock Grid.Column="0" Text="🔍" FontSize="18"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								<TextBox Grid.Column="1" Name="SearchTextBox"
+                                         Background="Transparent" BorderThickness="0"
+                                         VerticalAlignment="Center" FontSize="14"
+                                         Foreground="#ecf0f1" FontWeight="Normal"
+                                         Text="Search your expenses..."/>
+								<ComboBox Grid.Column="2" Name="CategoryFilterComboBox"
+                                          Width="160" Margin="0,0,15,0" Background="Transparent"
+                                          BorderThickness="0" FontSize="13" Foreground="#ecf0f1">
+									<ComboBoxItem Content="All Categories"/>
+									<ComboBoxItem Content="🍽️ Food"/>
+									<ComboBoxItem Content="🛍️ Shopping"/>
+									<ComboBoxItem Content="🎮 Entertainment"/>
+									<ComboBoxItem Content="📦 Others"/>
+								</ComboBox>
+							</Grid>
+						</Border>
+
+						<!-- Gentle Action Buttons -->
+						<StackPanel Grid.Column="1" Orientation="Horizontal">
+							<Button Name="AddExpenseButton" Content="➕ Add Expense"
+                                    Style="{StaticResource GentleButton}"
+                                    Margin="0,0,10,0"/>
+							<Button Name="RefreshButton" Content="🔄"
+                                    Style="{StaticResource SoftIcon}"
+                                    Background="#1abc9c" Foreground="White"/>
+						</StackPanel>
+					</Grid>
+
+					<!-- 🌈 PASTEL STATS CARDS 🌈 -->
+					<Grid Grid.Row="1" Margin="0,0,0,25">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="15"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="15"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="15"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- Total Expenses - Soft Blue -->
+						<Border Grid.Column="0" Style="{StaticResource PastelStats}"
+                                BorderBrush="#3498db" Background="#3498db">
+							<StackPanel>
+								<TextBlock Text="💰" FontSize="30" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+								<TextBlock Text="Total Expenses" FontSize="13"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+								<TextBlock Name="TotalExpensesLabel" Text="$0.00"
+                                           FontSize="22" FontWeight="SemiBold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+
+						<!-- This Month - Soft Green -->
+						<Border Grid.Column="2" Style="{StaticResource PastelStats}"
+                                BorderBrush="#2ecc71" Background="#2ecc71">
+							<StackPanel>
+								<TextBlock Text="🌸" FontSize="30" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+								<TextBlock Text="This Month" FontSize="13"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+								<TextBlock Name="MonthlyLabel" Text="$0.00"
+                                           FontSize="22" FontWeight="SemiBold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+
+						<!-- Total Items - Soft Orange -->
+						<Border Grid.Column="4" Style="{StaticResource PastelStats}"
+                                BorderBrush="#f39c12" Background="#f39c12">
+							<StackPanel>
+								<TextBlock Text="📊" FontSize="30" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+								<TextBlock Text="Total Items" FontSize="13"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+								<TextBlock Name="TotalItemsLabel" Text="0"
+                                           FontSize="22" FontWeight="SemiBold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+
+						<!-- Today - Soft Purple -->
+						<Border Grid.Column="6" Style="{StaticResource PastelStats}"
+                                BorderBrush="#9b59b6" Background="#9b59b6">
+							<StackPanel>
+								<TextBlock Text="🌙" FontSize="30" HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+								<TextBlock Text="Today" FontSize="13"
+                                           Foreground="White" HorizontalAlignment="Center"
+                                           FontWeight="Medium"/>
+								<TextBlock Name="TodayLabel" Text="$0.00"
+                                           FontSize="22" FontWeight="SemiBold"
+                                           Foreground="White" HorizontalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+					</Grid>
+
+					<!-- 📊 MAIN CONTENT 📊 -->
+					<Grid Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*"/>
+							<ColumnDefinition Width="25"/>
+							<ColumnDefinition Width="380"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- LEFT: Soft Expense Table -->
+						<Border Grid.Column="0" Style="{StaticResource SoftAnimeCard}">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition Height="*"/>
+								</Grid.RowDefinitions>
+
+								<!-- Gentle Table Header -->
+								<StackPanel Grid.Row="0" Orientation="Horizontal"
+                                            Margin="0,0,0,20">
+									<TextBlock Text="📝 Your Expenses" FontSize="18"
+                                               FontWeight="Medium" Foreground="#ecf0f1"/>
+									<Border Background="#3498db" CornerRadius="12"
+                                            Padding="10,5" Margin="15,0,0,0">
+										<TextBlock Name="ExpenseCountLabel" Text="0 items"
+                                                   Foreground="White" FontSize="12" FontWeight="Medium"/>
+									</Border>
+								</StackPanel>
+
+								<!-- Calm Data Grid -->
+								<DataGrid Grid.Row="1" Name="ExpenseDataGrid"
+                                          Style="{StaticResource CalmDataGrid}">
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="💰 Amount"
+                                                          Binding="{Binding Amount, StringFormat={}{0:C}}"
+                                                          Width="120">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#3498db"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Medium"/>
+													<Setter Property="FontSize" Value="13"/>
+													<Setter Property="Padding" Value="15,12"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+
+										<DataGridTextColumn Header="📝 Description"
+                                                          Binding="{Binding Description}"
+                                                          Width="*">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#3498db"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Medium"/>
+													<Setter Property="FontSize" Value="13"/>
+													<Setter Property="Padding" Value="15,12"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+
+										<DataGridTextColumn Header="📂 Category"
+                                                          Binding="{Binding Category}"
+                                                          Width="140">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#3498db"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Medium"/>
+													<Setter Property="FontSize" Value="13"/>
+													<Setter Property="Padding" Value="15,12"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+
+										<DataGridTextColumn Header="📅 Date"
+                                                          Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}"
+                                                          Width="110">
+											<DataGridTextColumn.HeaderStyle>
+												<Style TargetType="DataGridColumnHeader">
+													<Setter Property="Background" Value="#3498db"/>
+													<Setter Property="Foreground" Value="White"/>
+													<Setter Property="FontWeight" Value="Medium"/>
+													<Setter Property="FontSize" Value="13"/>
+													<Setter Property="Padding" Value="15,12"/>
+													<Setter Property="BorderThickness" Value="0"/>
+												</Style>
+											</DataGridTextColumn.HeaderStyle>
+										</DataGridTextColumn>
+									</DataGrid.Columns>
+								</DataGrid>
+							</Grid>
+						</Border>
+
+						<!-- RIGHT: Gentle Actions -->
+						<StackPanel Grid.Column="2">
+							<!-- AI Gentle Insights -->
+							<Border Style="{StaticResource SoftAnimeCard}" Margin="0,0,0,20">
+								<StackPanel>
+									<TextBlock Text="🤖 Smart Insights" FontSize="16"
+                                               FontWeight="Medium" Foreground="#ecf0f1"
+                                               Margin="0,0,0,15"/>
+
+									<Border Background="#2ecc71" CornerRadius="12"
+                                            Padding="15,12" Margin="0,0,0,15">
+										<StackPanel>
+											<TextBlock Text="💡 Tip" FontSize="13"
+                                                       Foreground="White" FontWeight="Medium"/>
+											<TextBlock Name="AITipLabel"
+                                                       Text="Start tracking to see helpful insights! 🌸"
+                                                       FontSize="12" Foreground="White"
+                                                       TextWrapping="Wrap" Margin="0,5,0,0"/>
+										</StackPanel>
+									</Border>
+
+									<Button Content="🎯 View More Insights"
+                                            Background="#3498db"
+                                            Style="{StaticResource SmoothButton}"/>
+								</StackPanel>
+							</Border>
+
+							<!-- Gentle Quick Actions -->
+							<Border Style="{StaticResource SoftAnimeCard}">
+								<StackPanel>
+									<TextBlock Text="⚡ Quick Actions" FontSize="16"
+                                               FontWeight="Medium" Foreground="#ecf0f1"
+                                               Margin="0,0,0,15"/>
+
+									<Button Content="📊 View Reports"
+                                            Background="#9b59b6"
+                                            Style="{StaticResource SmoothButton}"
+                                            Margin="0,0,0,12"/>
+
+									<Button Content="📤 Export Data"
+                                            Background="#2ecc71"
+                                            Style="{StaticResource SmoothButton}"
+                                            Margin="0,0,0,12"/>
+
+									<Button Content="📈 Budget Plans"
+                                            Background="#f39c12"
+                                            Style="{StaticResource SmoothButton}"
+                                            Margin="0,0,0,12"/>
+
+									<Button Content="⚙️ Settings"
+                                            Background="#95a5a6"
+                                            Style="{StaticResource SmoothButton}"/>
+								</StackPanel>
+							</Border>
+						</StackPanel>
+					</Grid>
+				</Grid>
+			</Border>
+		</Grid>
+	</Border>
+</Window>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,83 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+
+namespace ExpenseManager.Utils {
+    public class CategoryHelper {
+        private static readonly string categoriesFilePath = @"..\..\Data\categories.json";
+
+        // Basic category data
+        public static List<string> GetDefaultCategories() {
+            return new List<string> { "An Uong", "Mua Sam", "Giai Tri", "Khac" };
+        }
+
+        public static Dictionary<string, string> GetCategoryIcons() {
+            return new Dictionary<string, string> {
+                { "An Uong", "🍽️" },
+                { "Mua Sam", "🛍️" },
+                { "Giai Tri", "🎮" },
+                { "Khac", "📦" }
+            };
+        }
+
+        public static Dictionary<string, string> GetCategoryDisplayNames() {
+            return new Dictionary<string, string> {
+                { "An Uong", "🍽️ Ăn uống" },
+                { "Mua Sam", "🛍️ Mua sắm" },
+                { "Giai Tri", "🎮 Giải trí" },
+                { "Khac", "📦 Khác" }
+            };
+        }
+
+        // Helper methods
+        public static string GetCategoryIcon(string category) {
+            Dictionary<string, string> icons = GetCategoryIcons();
+            return icons.ContainsKey(category) ? icons[category] : "📦";
+        }
+
+        public static string GetCategoryDisplayName(string category) {
+            Dictionary<string, string> displayNames = GetCategoryDisplayNames();
+            return displayNames.ContainsKey(category) ? displayNames[category] : category;
+        }
+
+        // File operations - simplified
+        public static CategoryConfig LoadCategories() {
+            if (File.Exists(categoriesFilePath)) {
+                try {
+                    string json = File.ReadAllText(categoriesFilePath);
+                    return JsonSerializer.Deserialize<CategoryConfig>(json);
+                } catch {
+                    return CreateBasicCategoryConfig();
+                }
+            }
+            return CreateBasicCategoryConfig();
+        }
+
+        public static void SaveCategories(CategoryConfig categoryConfig) {
+            try {
+                string json = JsonSerializer.Serialize(categoryConfig, new JsonSerializerOptions { WriteIndented = true });
+                string directory = Path.GetDirectoryName(categoriesFilePath);
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+                File.WriteAllText(categoriesFilePath, json);
+            } catch {
+                // Handle save error silently
+            }
+        }
+
+        // Simplified - chỉ basic structure
+        private static CategoryConfig CreateBasicCategoryConfig() {
+            CategoryConfig categoryConfig = new CategoryConfig();
+            categoryConfig.Categories = GetDefaultCategories();
+            categoryConfig.CategoryIcons = GetCategoryIcons();
+            categoryConfig.CategoryDisplayNames = GetCategoryDisplayNames();
+            
+            // Keywords sẽ được quản lý bởi RuleBasedClassifier
+            categoryConfig.CategoryKeywords = new Dictionary<string, List<string>>();
+            
+            return categoryConfig;
+        }
+    }
+}

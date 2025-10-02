@@ -1,0 +1,50 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+using ExpenseManager.Repository.Interface;
+using ExpenseManager.Utils;
+
+namespace ExpenseManager.Utils {
+    public class CategoryHelper {
+        private static readonly string categoriesFilePath = "Data/categories.json";
+
+        public static List<string> GetDefaultCategories() {
+            return new List<string> { "An Uong", "Mua Sam", "Giai Tri", "Khac" };
+        }
+
+        public static CategoryData LoadCategories() {
+            if (File.Exists(categoriesFilePath)) {
+                try {
+                    string json = File.ReadAllText(categoriesFilePath);
+                    return JsonSerializer.Deserialize<CategoryData>(json);
+                } catch {
+                    return CreateDefaultCategoryData();
+                }
+            }
+            return CreateDefaultCategoryData();
+        }
+
+        public static void SaveCategories(CategoryData categoryData) {
+            try {
+                string json = JsonSerializer.Serialize(categoryData, new JsonSerializerOptions { WriteIndented = true });
+                Directory.CreateDirectory(Path.GetDirectoryName(categoriesFilePath));
+                File.WriteAllText(categoriesFilePath, json);
+            } catch {
+                // Handle save error silently
+            }
+        }
+
+        private static CategoryData CreateDefaultCategoryData() {
+            var categoryData = new CategoryData();
+            categoryData.Categories = GetDefaultCategories();
+            
+            categoryData.CategoryKeywords["An Uong"] = new List<string> { "an", "uong", "com", "ca phe", "tra", "nuoc" };
+            categoryData.CategoryKeywords["Mua Sam"] = new List<string> { "mua", "giay", "quan", "ao", "shopee", "tiki" };
+            categoryData.CategoryKeywords["Giai Tri"] = new List<string> { "xem", "phim", "game", "hat", "nhac" };
+            categoryData.CategoryKeywords["Khac"] = new List<string> { };
+
+            return categoryData;
+        }
+    }
+}

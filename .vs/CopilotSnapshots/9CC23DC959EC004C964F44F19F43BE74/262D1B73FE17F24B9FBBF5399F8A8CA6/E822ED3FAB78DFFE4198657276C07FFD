@@ -1,0 +1,275 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using ExpenseManager.Models;
+using ExpenseManager.Services;
+
+namespace ExpenseManager.Controllers {
+    public class ExpenseController {
+        private ExpenseManager.Services.ExpenseManager expenseManager;
+
+        public ExpenseController() {
+            expenseManager = new ExpenseManager.Services.ExpenseManager();
+            expenseManager.LoadExpensesFromFile();
+        }
+
+        public bool AddExpense(decimal amount, string description, string category) {
+            if (!ValidateExpense(amount, description, category)) {
+                return false;
+            }
+
+            try {
+                Expense expense = new Expense(amount, description, DateTime.Now, category);
+                expenseManager.AddExpense(expense);
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public List<Expense> GetAllExpenses() {
+            return expenseManager.Expenses;
+        }
+
+        public decimal GetTotalExpenses() {
+            return expenseManager.GetTotal();
+        }
+
+        public bool DeleteExpense(int index) {
+            try {
+                if (index >= 0 && index < expenseManager.Expenses.Count) {
+                    expenseManager.Expenses.RemoveAt(index);
+                    expenseManager.SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJson() {
+            try {
+                // Get project root directory by going up from current directory
+                string currentDir = System.AppDomain.CurrentDomain.BaseDirectory;
+                string projectRoot = GetProjectRootDirectory(currentDir);
+                
+                if (projectRoot == null) {
+                    return false;
+                }
+
+                string jsonPath = System.IO.Path.Combine(projectRoot, "Data", "User", "expenses.json");
+                
+                if (!File.Exists(jsonPath)) {
+                    return false;
+                }
+
+                string json = File.ReadAllText(jsonPath);
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                List<Expense> loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                
+                if (loadedExpenses != null && loadedExpenses.Count > 0) {
+                    // Clear current expenses and add loaded ones
+                    expenseManager.Expenses.Clear();
+                    
+                    foreach (Expense expense in loadedExpenses) {
+                        expenseManager.Expenses.Add(expense);
+                    }
+                    
+                    // Save to CSV for backup
+                    expenseManager.SaveExpensesToFile();
+                    return true;
+                }
+                return false;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        public bool LoadExpensesFromJsonWithDetails(out string message, out int loadedCount) {
+            message = "";
+            loadedCount = 0;
+            
+            try {
+                // Get project root directory by going up from current directory
+                string currentDir = System.AppDomain.CurrentDomain.BaseDirectory;
+                string projectRoot = GetProjectRootDirectory(currentDir);
+                
+                if (projectRoot == null) {
+                    message = "Could not find project root directory";
+                    return false;
+                }
+
+                string jsonPath = System.IO.Path.Combine(projectRoot, "Data", "User", "expenses.json");
+                
+                if (!File.Exists(jsonPath)) {
+                    message = $"JSON file not found at: {jsonPath}";
+                    return false;
+                }
+
+                // Read file with UTF-8 encoding to handle special characters
+                string json = File.ReadAllText(jsonPath, System.Text.Encoding.UTF8);
+                
+                // Validate JSON is not empty
+                if (string.IsNullOrWhiteSpace(json)) {
+                    message = "JSON file is empty";
+                    return false;
+                }
+                
+                // Check if JSON starts with array bracket
+                json = json.Trim();
+                if (!json.StartsWith("[")) {
+                    message = "JSON file must contain an array of expenses";
+                    return false;
+                }
+                
+                JsonSerializerOptions options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true,
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip
+                };
+                
+                List<Expense> loadedExpenses;
+                try {
+                    loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(json, options);
+                } catch (JsonException jsonEx) {
+                    // Try to fix common JSON issues
+                    string fixedJson = FixJsonIssues(json);
+                    try {
+                        loadedExpenses = JsonSerializer.Deserialize<List<Expense>>(fixedJson, options);
+                        message += " (JSON was auto-fixed) ";
+                    } catch {
+                        message = $"JSON parsing failed: {jsonEx.Message}";
+                        return false;
+                    }
+                }
+                
+                if (loadedExpenses == null || loadedExpenses.Count == 0) {
+                    message = "No valid expenses found in JSON file";
+                    return false;
+                }
+
+                // Validate and clean data
+                List<Expense> validExpenses = new List<Expense>();
+                foreach (Expense expense in loadedExpenses) {
+                    if (ValidateExpenseData(expense)) {
+                        // Clean up data
+                        CleanExpenseData(expense);
+                        validExpenses.Add(expense);
+                    }
+                }
+
+                if (validExpenses.Count == 0) {
+                    message = "No valid expenses found after validation";
+                    return false;
+                }
+
+                // Clear current expenses and add loaded ones
+                expenseManager.Expenses.Clear();
+                
+                foreach (Expense expense in validExpenses) {
+                    expenseManager.Expenses.Add(expense);
+                }
+                
+                loadedCount = validExpenses.Count;
+                
+                // Save to CSV for backup
+                expenseManager.SaveExpensesToFile();
+                
+                message = $"Successfully loaded {loadedCount} expenses from: {jsonPath}";
+                return true;
+                
+            } catch (Exception ex) {
+                message = $"Error loading JSON: {ex.Message}";
+                return false;
+            }
+        }
+
+        private string FixJsonIssues(string json) {
+            // Fix common JSON issues
+            json = json.Replace("\u01B0", "ư"); // Fix Vietnamese characters
+            json = json.Replace("\\u01B0", "ư");
+            
+            // Remove any BOM
+            if (json.StartsWith("\uFEFF")) {
+                json = json.Substring(1);
+            }
+            
+            return json;
+        }
+
+        private bool ValidateExpenseData(Expense expense) {
+            if (expense == null) return false;
+            if (expense.Amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(expense.Description)) return false;
+            if (expense.Date == default(DateTime)) return false;
+            return true;
+        }
+
+        private void CleanExpenseData(Expense expense) {
+            // Clean description
+            expense.Description = expense.Description?.Trim() ?? "";
+            
+            // Clean category
+            expense.Category = expense.Category?.Trim() ?? "Others";
+            if (expense.Category.ToLower() == "unknown") {
+                expense.Category = "Others";
+            }
+            
+            // Ensure date is reasonable
+            if (expense.Date.Year < 2020 || expense.Date.Year > 2030) {
+                expense.Date = DateTime.Now;
+            }
+        }
+
+        private string GetProjectRootDirectory(string currentDir) {
+            // Look for project markers (like .csproj files, Data folder, etc.)
+            string dir = currentDir;
+            
+            // Go up directories until we find project root
+            while (!string.IsNullOrEmpty(dir)) {
+                // Check if this directory contains ExpenseManager.csproj or Data folder
+                if (Directory.Exists(System.IO.Path.Combine(dir, "Data")) ||
+                    File.Exists(System.IO.Path.Combine(dir, "ExpenseManager.csproj")) ||
+                    Directory.Exists(System.IO.Path.Combine(dir, "Views"))) {
+                    return dir;
+                }
+                
+                // Try parent directory
+                DirectoryInfo parent = Directory.GetParent(dir);
+                if (parent == null) break;
+                dir = parent.FullName;
+            }
+            
+            // If not found, try relative paths from current directory
+            string[] relativePaths = {
+                "..",
+                "..\\..", 
+                "..\\..\\..",
+                "..\\..\\ExpenseManager"
+            };
+            
+            foreach (string relativePath in relativePaths) {
+                string testPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDir, relativePath));
+                if (Directory.Exists(System.IO.Path.Combine(testPath, "Data")) ||
+                    File.Exists(System.IO.Path.Combine(testPath, "ExpenseManager.csproj"))) {
+                    return testPath;
+                }
+            }
+            
+            return null;
+        }
+
+        private bool ValidateExpense(decimal amount, string description, string category) {
+            if (amount <= 0) return false;
+            if (string.IsNullOrWhiteSpace(description)) return false;
+            if (string.IsNullOrWhiteSpace(category)) return false;
+            return true;
+        }
+    }
+}

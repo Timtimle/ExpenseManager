@@ -1,0 +1,13 @@
+namespace ExpenseManager.Models {
+    public class ExpenseData {
+        public string Label { get; set; }  // Category 
+        public string Text { get; set; }   // Description
+
+        public ExpenseData() { }
+
+        public ExpenseData(string label, string text) {
+            Label = label;
+            Text = text;
+        }
+    }
+}

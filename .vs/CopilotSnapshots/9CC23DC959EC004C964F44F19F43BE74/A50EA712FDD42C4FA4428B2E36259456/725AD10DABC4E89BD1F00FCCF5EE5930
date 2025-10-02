@@ -1,0 +1,197 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Collections.Generic;
+using ExpenseManager.Controllers;
+
+namespace ExpenseManager.Views {
+    public partial class MainWindow : Window {
+        private ExpenseController expenseController;
+
+        public MainWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            LoadExpenses();
+        }
+
+        private void SetupEventHandlers() {
+            AddExpenseButton.Click += AddExpenseButton_Click;
+            RefreshButton.Click += RefreshButton_Click;
+            
+            // Window control buttons
+            MinimizeButton.Click += (s, e) => this.WindowState = WindowState.Minimized;
+            MaximizeButton.Click += (s, e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            CloseButton.Click += (s, e) => this.Close();
+        }
+
+        private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
+            AddExpenseWindow addWindow = new AddExpenseWindow();
+            if (addWindow.ShowDialog() == true) {
+                LoadExpenses(); // Refresh list after adding
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
+            LoadExpenses();
+        }
+
+        private void LoadExpenses() {
+            try {
+                var expenses = expenseController.GetAllExpenses();
+                ExpenseDataGrid.ItemsSource = expenses;
+                
+                // Update summary stats
+                TotalExpensesLabel.Text = expenseController.GetTotalExpenses().ToString("C");
+                TotalItemsLabel.Text = expenses.Count.ToString();
+                ExpenseCountLabel.Text = $"{expenses.Count} items";
+                
+                // Calculate monthly and daily totals
+                var today = DateTime.Today;
+                var thisMonth = expenses.Where(e => e.Date.Month == today.Month && e.Date.Year == today.Year);
+                var todayExpenses = expenses.Where(e => e.Date.Date == today);
+                
+                MonthlyLabel.Text = thisMonth.Sum(e => e.Amount).ToString("C");
+                TodayLabel.Text = todayExpenses.Sum(e => e.Amount).ToString("C");
+                
+                // Update charts with real data
+                UpdateCharts(expenses);
+                
+            } catch (Exception ex) {
+                MessageBox.Show($"Error loading expenses: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateCharts(System.Collections.Generic.List<ExpenseManager.Models.Expense> expenses) {
+            UpdateCategoryChart(expenses);
+            UpdateTrendChart(expenses);
+        }
+
+        private void UpdateCategoryChart(List<ExpenseManager.Models.Expense> expenses) {
+            if (expenses.Count == 0) {
+                FoodPercentLabel.Text = "Food: 0%";
+                ShoppingPercentLabel.Text = "Shopping: 0%";
+                EntertainmentPercentLabel.Text = "Entertainment: 0%";
+                OthersPercentLabel.Text = "Others: 0%";
+                return;
+            }
+
+            var total = expenses.Sum(e => e.Amount);
+            
+            // Calculate category percentages
+            var foodTotal = expenses.Where(e => e.Category.Contains("Food") || e.Category.Contains("🍽️")).Sum(e => e.Amount);
+            var shoppingTotal = expenses.Where(e => e.Category.Contains("Shopping") || e.Category.Contains("🛍️")).Sum(e => e.Amount);
+            var entertainmentTotal = expenses.Where(e => e.Category.Contains("Entertainment") || e.Category.Contains("🎮")).Sum(e => e.Amount);
+            var othersTotal = total - foodTotal - shoppingTotal - entertainmentTotal;
+
+            var foodPercent = total > 0 ? (foodTotal / total) * 100 : 0;
+            var shoppingPercent = total > 0 ? (shoppingTotal / total) * 100 : 0;
+            var entertainmentPercent = total > 0 ? (entertainmentTotal / total) * 100 : 0;
+            var othersPercent = total > 0 ? (othersTotal / total) * 100 : 0;
+
+            // Update labels
+            FoodPercentLabel.Text = $"Food: {foodPercent:F1}% (${foodTotal:F0})";
+            ShoppingPercentLabel.Text = $"Shopping: {shoppingPercent:F1}% (${shoppingTotal:F0})";
+            EntertainmentPercentLabel.Text = $"Entertainment: {entertainmentPercent:F1}% (${entertainmentTotal:F0})";
+            OthersPercentLabel.Text = $"Others: {othersPercent:F1}% (${othersTotal:F0})";
+        }
+
+        private void UpdateTrendChart(List<ExpenseManager.Models.Expense> expenses) {
+            // Clear existing chart
+            TrendChart.Children.Clear();
+            
+            if (expenses.Count == 0) {
+                TrendSummaryLabel.Text = "Add expenses to see trends";
+                return;
+            }
+
+            // Get last 6 months data
+            var today = DateTime.Today;
+            var monthlyData = new List<decimal>();
+            var monthLabels = new List<string>();
+
+            for (int i = 5; i >= 0; i--) {
+                var targetMonth = today.AddMonths(-i);
+                var monthExpenses = expenses.Where(e => 
+                    e.Date.Month == targetMonth.Month && 
+                    e.Date.Year == targetMonth.Year).Sum(e => e.Amount);
+                
+                monthlyData.Add(monthExpenses);
+                monthLabels.Add(targetMonth.ToString("MMM"));
+            }
+
+            // Update month labels
+            if (monthLabels.Count >= 6) {
+                Month1Label.Text = monthLabels[0];
+                Month2Label.Text = monthLabels[1];
+                Month3Label.Text = monthLabels[2];
+                Month4Label.Text = monthLabels[3];
+                Month5Label.Text = monthLabels[4];
+                Month6Label.Text = monthLabels[5];
+            }
+
+            // Draw trend line
+            if (monthlyData.Any(d => d > 0)) {
+                DrawTrendLine(monthlyData);
+                
+                // Calculate trend
+                var thisMonth = monthlyData.LastOrDefault();
+                var lastMonth = monthlyData.Count > 1 ? monthlyData[monthlyData.Count - 2] : 0;
+                
+                if (lastMonth > 0) {
+                    var change = ((thisMonth - lastMonth) / lastMonth) * 100;
+                    var trend = change > 0 ? "📈" : "📉";
+                    TrendSummaryLabel.Text = $"{trend} {Math.Abs(change):F1}% vs last month";
+                } else {
+                    TrendSummaryLabel.Text = $"💰 This month: ${thisMonth:F0}";
+                }
+            } else {
+                TrendSummaryLabel.Text = "Add more data to see trends";
+            }
+        }
+
+        private void DrawTrendLine(List<decimal> data) {
+            if (data.Count < 2) return;
+
+            var maxValue = data.Max();
+            if (maxValue == 0) return;
+
+            var width = TrendChart.ActualWidth > 0 ? TrendChart.ActualWidth : 250;
+            var height = TrendChart.ActualHeight > 0 ? TrendChart.ActualHeight : 80;
+            
+            var pointDistance = width / (data.Count - 1);
+            
+            // Create polyline for trend
+            var polyline = new Polyline {
+                Stroke = new SolidColorBrush(Color.FromRgb(0x66, 0x7e, 0xea)),
+                StrokeThickness = 3,
+                Fill = Brushes.Transparent
+            };
+
+            // Add points
+            for (int i = 0; i < data.Count; i++) {
+                var x = i * pointDistance;
+                var y = height - (double)(data[i] / maxValue) * (height - 10) - 5;
+                polyline.Points.Add(new Point(x, y));
+                
+                // Add data point circle
+                var circle = new Ellipse {
+                    Width = 6,
+                    Height = 6,
+                    Fill = new SolidColorBrush(Color.FromRgb(0x66, 0x7e, 0xea))
+                };
+                
+                Canvas.SetLeft(circle, x - 3);
+                Canvas.SetTop(circle, y - 3);
+                TrendChart.Children.Add(circle);
+            }
+
+            TrendChart.Children.Add(polyline);
+        }
+    }
+}

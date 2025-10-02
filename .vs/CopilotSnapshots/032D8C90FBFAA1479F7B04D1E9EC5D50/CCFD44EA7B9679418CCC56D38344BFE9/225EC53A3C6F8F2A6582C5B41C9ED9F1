@@ -1,0 +1,124 @@
+﻿using ExpenseManager.Controllers;
+using ExpenseManager.Services.Prediction;
+using ExpenseManager.Utils;
+using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
+
+namespace ExpenseManager.Views {
+    public partial class AddExpenseWindow : Window {
+        private ExpenseController expenseController;
+
+        public AddExpenseWindow() {
+            InitializeComponent();
+            expenseController = new ExpenseController();
+            
+            SetupEventHandlers();
+            InitializeForm();
+        }
+
+        private void SetupEventHandlers() {
+            PredictButton.Click += PredictButton_Click;
+            SaveButton.Click += SaveButton_Click;
+            CancelButton.Click += CancelButton_Click;
+        }
+
+        private void InitializeForm() {
+            AmountTextBox.Text = "";
+            DescriptionTextBox.Text = "";
+            CategoryComboBox.SelectedIndex = 0;
+        }
+
+        private void PredictButton_Click(object sender, RoutedEventArgs e) {
+            string description = DescriptionTextBox.Text.Trim();
+            
+            if (string.IsNullOrEmpty(description)) {
+                MessageBox.Show("Nhập mô tả trước!", "Thông báo", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try {
+                // Sử dụng PredictionController đơn giản
+                PredictionController predictionController = new PredictionController();
+                PredictionResult result = predictionController.PredictCategory(description);
+
+                // Map category cho ComboBox sử dụng CategoryHelper
+                string categoryToFind = "";
+                if (result.PredictedCategory.ToLower().Contains("an") || result.PredictedCategory.ToLower().Contains("uong")) {
+                    categoryToFind = CategoryHelper.GetCategoryIcon("An Uong");
+                } else if (result.PredictedCategory.ToLower().Contains("mua") || result.PredictedCategory.ToLower().Contains("sam")) {
+                    categoryToFind = CategoryHelper.GetCategoryIcon("Mua Sam");
+                } else if (result.PredictedCategory.ToLower().Contains("giai") || result.PredictedCategory.ToLower().Contains("tri")) {
+                    categoryToFind = CategoryHelper.GetCategoryIcon("Giai Tri");
+                } else {
+                    categoryToFind = CategoryHelper.GetCategoryIcon("Khac");
+                }
+
+                // Tìm và set ComboBox
+                for (int i = 0; i < CategoryComboBox.Items.Count; i++) {
+                    ComboBoxItem item = CategoryComboBox.Items[i] as ComboBoxItem;
+                    if (item.Content.ToString().Contains(categoryToFind)) {
+                        CategoryComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+
+                // Hiển thị kết quả đơn giản
+                MessageBox.Show($"🔮 Dự đoán: {result.PredictedCategory}\n" +
+                              $"📊 Confidence: {result.Confidence:P1}\n" +
+                              $"🛠️ Method: {result.Method}", 
+                              "ML Prediction Result", 
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            try {
+                if (string.IsNullOrWhiteSpace(AmountTextBox.Text)) {
+                    MessageBox.Show("Nhập số tiền!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+                
+                decimal amount;
+                if (!decimal.TryParse(AmountTextBox.Text, out amount) || amount <= 0) {
+                    MessageBox.Show("Nhập số tiền hợp lệ!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AmountTextBox.Focus();
+                    return;
+                }
+
+                string description = DescriptionTextBox.Text.Trim();
+                if (string.IsNullOrEmpty(description)) {
+                    MessageBox.Show("Nhập mô tả!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DescriptionTextBox.Focus();
+                    return;
+                }
+
+                ComboBoxItem selectedItem = CategoryComboBox.SelectedItem as ComboBoxItem;
+                string category = selectedItem?.Content.ToString() ?? "Others";
+
+                if (expenseController.AddExpense(amount, description, category)) {
+                    MessageBox.Show($"✅ Lưu thành công!\n\n💰 Số tiền: {amount:N0} VND\n📝 Mô tả: {description}\n📂 Loại: {category}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                } else {
+                    MessageBox.Show("❌ Lưu thất bại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            } catch (Exception ex) {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;
+            this.Close();
+        }
+    }
+}  
