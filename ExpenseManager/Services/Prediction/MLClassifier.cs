@@ -173,6 +173,14 @@ namespace ExpenseManager.Services.Prediction {
             }
         }
         public string Classify(string description) {
+            string filePath = @"..\..\Data\Models\trained_model.json";
+            if (!File.Exists(filePath)) {
+                MLClassifier mLClassifier = new MLClassifier();
+                mLClassifier.LoadTrainingData();
+                mLClassifier.Train(mLClassifier.getTrainingData(), 1000, true);
+                mLClassifier.SaveModel(filePath);
+            }
+
             if (weights == null || weights.Count == 0) {
                 return "Khac"; // Return default if model not trained
             }

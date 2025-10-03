@@ -148,7 +148,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Data\Models\trained_model.json" />
     <None Include="Data\TrainingData\anuong.csv" />
     <None Include="Data\TrainingData\giaitri.csv" />
     <None Include="Data\TrainingData\khac.csv" />
@@ -168,6 +167,8 @@
   <ItemGroup>
     <Resource Include="Images\kawaii_logo.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Data\Models\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
