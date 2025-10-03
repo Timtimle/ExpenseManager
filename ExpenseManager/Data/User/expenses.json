@@ -1,26 +1,566 @@
-[
+﻿[
   {
-    "Amount": 500000,
-    "Description": "\u0111i ng\u1EE7",
-    "Date": "2025-10-30T00:00:00",
+    "Amount": 141000,
+    "Description": "b\u00FA k\u00E8n",
+    "Date": "2025-10-06T00:00:00",
     "Category": "\uD83D\uDCE6 Others"
   },
   {
     "Amount": 50000,
-    "Description": "\u0103n chu\u1ED1i",
-    "Date": "2025-10-29T00:00:00",
+    "Description": "\u0103n c\u1EE9c b\u00F2",
+    "Date": "2025-11-05T00:00:00",
     "Category": "\uD83C\uDF7D\uFE0F Food"
   },
   {
-    "Amount": 10000,
-    "Description": "mua k\u1EB9o",
-    "Date": "2025-10-05T00:00:00",
-    "Category": "\uD83C\uDF7D\uFE0F Food"
+    "Amount": 30,
+    "Description": "an com",
+    "Date": "2025-09-11T14:41:41+07:00",
+    "Category": "unknown"
   },
   {
-    "Amount": 5000,
-    "Description": "mua b\u00E1nh",
-    "Date": "2025-11-06T00:00:00",
-    "Category": "\uD83C\uDF7D\uFE0F Food"
+    "Amount": 50,
+    "Description": "hu tieu",
+    "Date": "2025-09-11T14:42:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 100,
+    "Description": "mua viet",
+    "Date": "2025-09-11T14:43:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 60,
+    "Description": "banh mi",
+    "Date": "2025-09-11T14:44:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 80,
+    "Description": "di choi",
+    "Date": "2025-09-11T14:45:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 20,
+    "Description": "tra sua",
+    "Date": "2025-09-11T14:46:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 40,
+    "Description": "banh trang",
+    "Date": "2025-09-11T14:47:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 25,
+    "Description": "nuoc ngot",
+    "Date": "2025-09-11T14:48:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 150,
+    "Description": "mua sach",
+    "Date": "2025-09-11T14:49:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 70,
+    "Description": "xem phim",
+    "Date": "2025-09-11T14:50:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 45,
+    "Description": "an chao",
+    "Date": "2025-09-11T14:51:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 55,
+    "Description": "pho",
+    "Date": "2025-09-11T14:52:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 90,
+    "Description": "com tam",
+    "Date": "2025-09-11T14:53:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 35,
+    "Description": "banh bao",
+    "Date": "2025-09-11T14:54:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 60,
+    "Description": "banh canh",
+    "Date": "2025-09-11T14:55:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 110,
+    "Description": "mua ao",
+    "Date": "2025-09-11T14:56:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 95,
+    "Description": "mua but",
+    "Date": "2025-09-11T14:57:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 20,
+    "Description": "banh flan",
+    "Date": "2025-09-11T14:58:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 33,
+    "Description": "keo",
+    "Date": "2025-09-11T14:59:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 77,
+    "Description": "giay viet",
+    "Date": "2025-09-11T15:00:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 130,
+    "Description": "sach toan",
+    "Date": "2025-09-11T15:01:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 50,
+    "Description": "banh xeo",
+    "Date": "2025-09-11T15:02:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 66,
+    "Description": "banh khot",
+    "Date": "2025-09-11T15:03:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 90,
+    "Description": "mua do an",
+    "Date": "2025-09-11T15:04:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 15,
+    "Description": "keo deo",
+    "Date": "2025-09-11T15:05:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 80,
+    "Description": "ca phe",
+    "Date": "2025-09-11T15:06:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 120,
+    "Description": "mua vo",
+    "Date": "2025-09-11T15:07:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 25,
+    "Description": "banh nuong",
+    "Date": "2025-09-11T15:08:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 35,
+    "Description": "banh keo",
+    "Date": "2025-09-11T15:09:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 85,
+    "Description": "nuoc trai cay",
+    "Date": "2025-09-11T15:10:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 150,
+    "Description": "mua sach van",
+    "Date": "2025-09-11T15:11:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 65,
+    "Description": "com chay",
+    "Date": "2025-09-11T15:12:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 95,
+    "Description": "mien",
+    "Date": "2025-09-11T15:13:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 30,
+    "Description": "banh pia",
+    "Date": "2025-09-11T15:14:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 40,
+    "Description": "banh it",
+    "Date": "2025-09-11T15:15:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 100,
+    "Description": "mua usb",
+    "Date": "2025-09-11T15:16:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 150,
+    "Description": "mua chuot",
+    "Date": "2025-09-11T15:17:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 70,
+    "Description": "mua tap",
+    "Date": "2025-09-11T15:18:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 55,
+    "Description": "banh chung",
+    "Date": "2025-09-11T15:19:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 42,
+    "Description": "banh tet",
+    "Date": "2025-09-11T15:20:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 33,
+    "Description": "snack",
+    "Date": "2025-09-11T15:21:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 44,
+    "Description": "bim bim",
+    "Date": "2025-09-11T15:22:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 78,
+    "Description": "banh cuon",
+    "Date": "2025-09-11T15:23:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 81,
+    "Description": "banh beo",
+    "Date": "2025-09-11T15:24:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 53,
+    "Description": "banh bot loc",
+    "Date": "2025-09-11T15:25:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 110,
+    "Description": "mua den",
+    "Date": "2025-09-11T15:26:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 45,
+    "Description": "banh goi",
+    "Date": "2025-09-11T15:27:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 67,
+    "Description": "banh cam",
+    "Date": "2025-09-11T15:28:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 39,
+    "Description": "banh troi",
+    "Date": "2025-09-11T15:29:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 112,
+    "Description": "mua quan",
+    "Date": "2025-09-11T15:30:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 72,
+    "Description": "mua vo khac",
+    "Date": "2025-09-11T15:31:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 84,
+    "Description": "banh tom",
+    "Date": "2025-09-11T15:32:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 46,
+    "Description": "banh gio",
+    "Date": "2025-09-11T15:33:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 90,
+    "Description": "com ga",
+    "Date": "2025-09-11T15:34:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 150,
+    "Description": "mua balo",
+    "Date": "2025-09-11T15:35:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 99,
+    "Description": "mua but chi",
+    "Date": "2025-09-11T15:36:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 30,
+    "Description": "tra da",
+    "Date": "2025-09-11T15:37:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 55,
+    "Description": "banh dua",
+    "Date": "2025-09-11T15:38:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 66,
+    "Description": "banh trung thu",
+    "Date": "2025-09-11T15:39:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 80,
+    "Description": "tra sua lon",
+    "Date": "2025-09-11T15:40:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 41,
+    "Description": "banh da lon",
+    "Date": "2025-09-11T15:41:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 135,
+    "Description": "mua sach anh",
+    "Date": "2025-09-11T15:42:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 63,
+    "Description": "banh ran",
+    "Date": "2025-09-11T15:43:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 59,
+    "Description": "banh khoai",
+    "Date": "2025-09-11T15:44:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 74,
+    "Description": "banh duc",
+    "Date": "2025-09-11T15:45:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 28,
+    "Description": "banh xop",
+    "Date": "2025-09-11T15:46:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 47,
+    "Description": "banh sua",
+    "Date": "2025-09-11T15:47:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 31,
+    "Description": "banh dau xanh",
+    "Date": "2025-09-11T15:48:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 36,
+    "Description": "banh deo",
+    "Date": "2025-09-11T15:49:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 44,
+    "Description": "banh com",
+    "Date": "2025-09-11T15:50:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 57,
+    "Description": "banh phu the",
+    "Date": "2025-09-11T15:51:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 29,
+    "Description": "banh nep",
+    "Date": "2025-09-11T15:52:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 101,
+    "Description": "mua ao m\u01B0a",
+    "Date": "2025-09-11T15:53:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 150,
+    "Description": "mua tai nghe",
+    "Date": "2025-09-11T15:54:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 45,
+    "Description": "banh bo",
+    "Date": "2025-09-11T15:55:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 26,
+    "Description": "banh cay",
+    "Date": "2025-09-11T15:56:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 52,
+    "Description": "banh tai heo",
+    "Date": "2025-09-11T15:57:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 88,
+    "Description": "banh uot",
+    "Date": "2025-09-11T15:58:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 71,
+    "Description": "banh xeo nho",
+    "Date": "2025-09-11T15:59:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 150,
+    "Description": "mua sach su",
+    "Date": "2025-09-11T16:00:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 93,
+    "Description": "mua giay",
+    "Date": "2025-09-11T16:01:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 83,
+    "Description": "banh chuoi",
+    "Date": "2025-09-11T16:02:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 90,
+    "Description": "mua pin",
+    "Date": "2025-09-11T16:03:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 120,
+    "Description": "mua the nho",
+    "Date": "2025-09-11T16:04:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 135,
+    "Description": "mua o",
+    "Date": "2025-09-11T16:05:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 45,
+    "Description": "banh khoai mi",
+    "Date": "2025-09-11T16:06:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 32,
+    "Description": "banh sua tuoi",
+    "Date": "2025-09-11T16:07:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 28,
+    "Description": "banh dau phong",
+    "Date": "2025-09-11T16:08:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 33,
+    "Description": "banh men",
+    "Date": "2025-09-11T16:09:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 79,
+    "Description": "banh tet chuoi",
+    "Date": "2025-09-11T16:10:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 24,
+    "Description": "banh phu quy",
+    "Date": "2025-09-11T16:11:00+07:00",
+    "Category": "unknown"
+  },
+  {
+    "Amount": 566,
+    "Description": "mua ken",
+    "Date": "2025-09-11T19:46:20.5851081+07:00",
+    "Category": "unknown"
   }
 ]

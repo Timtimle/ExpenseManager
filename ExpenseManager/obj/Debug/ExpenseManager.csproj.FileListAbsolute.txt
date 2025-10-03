@@ -37,3 +37,5 @@ E:\Projects\ExpenseManager\ExpenseManager\obj\Debug\ExpenseM.9A6462B3.Up2Date
 E:\Projects\ExpenseManager\ExpenseManager\obj\Debug\ExpenseManager.exe
 E:\Projects\ExpenseManager\ExpenseManager\obj\Debug\ExpenseManager.pdb
 E:\Projects\ExpenseManager\ExpenseManager\obj\Debug\ExpenseManager.exe.config
+E:\Projects\ExpenseManager\ExpenseManager\obj\Debug\Views\MonthlyWindow.baml
+E:\Projects\ExpenseManager\ExpenseManager\obj\Debug\Views\MonthlyWindow.g.cs

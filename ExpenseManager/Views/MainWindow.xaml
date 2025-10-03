@@ -245,11 +245,15 @@
                             <Button Name="AddExpenseButton" Content="➕ Add Expense"
                                     Style="{StaticResource ModernButton}"
                                     Margin="0,0,10,0"/>
+                            <Button Name="MonthlyButton" Content="Monthly"
+                                    Style="{StaticResource CleanIcon}" Width="70" Height="42"
+                                    Background="#17a2b8" Foreground="White"
+                                    Margin="0,0,10,0"/>
                             <Button Name="ResetButton" Content="🔄 Reset All"
                                     Style="{StaticResource CleanIcon}" Width="80" Height="42"
                                     Background="#ffc107" Foreground="White"
                                     Margin="0,0,10,0"/>
-                            <Button Name="LoadJsonButton" Content="📄 LOAD"
+                            <Button Name="LoadJsonButton" Content="📄 JSON"
                                     Style="{StaticResource CleanIcon}" Width="60" Height="42"
                                     Background="#6f42c1" Foreground="White"
                                     Margin="0,0,10,0"/>
@@ -349,7 +353,7 @@
                             <!-- Expense Chart -->
                             <Border Style="{StaticResource CleanCard}">
                                 <StackPanel>
-                                    <TextBlock Text="📊 Expense Analytics" FontSize="16" FontWeight="SemiBold" Foreground="#2d3748" Margin="0,0,0,15"/>
+                                    <TextBlock Text="📊 Monthly Expense Analytics" FontSize="16" FontWeight="SemiBold" Foreground="#2d3748" Margin="0,0,0,15"/>
                                     
                                     <!-- Simple Visual Chart -->
                                     <Grid Height="120" Margin="0,0,0,15">

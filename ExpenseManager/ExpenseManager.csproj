@@ -87,15 +87,21 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controllers\ExpenseController.cs" />
+    <Compile Include="Controllers\MonthlyController.cs" />
     <Compile Include="Models\CategoryData.cs" />
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\ExpenseData.cs" />
     <Compile Include="Models\ModelData.cs" />
     <Compile Include="Models\PredictionResult.cs" />
+    <Compile Include="Models\Reports\MonthlyReport.cs" />
     <Compile Include="Repository\ExpenseRepository.cs" />
     <Compile Include="Repository\Interface\IExpenseRepository.cs" />
+    <Compile Include="Repository\Interface\IMonthlyRepository.cs" />
     <Compile Include="Repository\Interface\IPredictionRepository.cs" />
+    <Compile Include="Repository\MonthlyRepository.cs" />
     <Compile Include="Services\ExpenseManager.cs" />
+    <Compile Include="Services\Monthly\IMonthlyExpenseService.cs" />
+    <Compile Include="Services\Monthly\MonthlyExpenseService.cs" />
     <Compile Include="Services\Prediction\ExpensePredictor.cs" />
     <Compile Include="Services\Prediction\IExpenseClassifier.cs" />
     <Compile Include="Services\Prediction\MLClassifier.cs" />
@@ -111,10 +117,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\MonthlyWindow.xaml.cs">
+      <DependentUpon>MonthlyWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\AddExpenseWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MonthlyWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
