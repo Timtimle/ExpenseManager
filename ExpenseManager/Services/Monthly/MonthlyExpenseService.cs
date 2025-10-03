@@ -93,19 +93,24 @@ namespace ExpenseManager.Services.Monthly {
         }
 
         private bool IsFoodCategory(string category) {
-            return category.ToLower().Contains("food") || category.Contains("???");
+            var cat = category.ToLower();
+            return cat.Contains("food") || cat.Contains("???") || cat.Contains("?n") || cat.Contains("an uong");
         }
 
         private bool IsShoppingCategory(string category) {
-            return category.ToLower().Contains("shopping") || category.Contains("???");
+            var cat = category.ToLower();
+            return cat.Contains("shopping") || cat.Contains("???") || cat.Contains("mua sam");
         }
 
         private bool IsEntertainmentCategory(string category) {
-            return category.ToLower().Contains("entertainment") || category.Contains("??");
+            var cat = category.ToLower();
+            return cat.Contains("entertainment") || cat.Contains("??") || cat.Contains("giai tri");
         }
 
         private bool IsOthersCategory(string category) {
-            return !IsFoodCategory(category) && !IsShoppingCategory(category) && !IsEntertainmentCategory(category);
+            var cat = category.ToLower();
+            return cat.Contains("others") || cat.Contains("??") || cat.Contains("khac") || 
+                   (!IsFoodCategory(category) && !IsShoppingCategory(category) && !IsEntertainmentCategory(category));
         }
     }
 }

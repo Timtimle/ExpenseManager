@@ -149,26 +149,47 @@ namespace ExpenseManager.Views {
         }
 
         private CategoryTotals CalculateCategoryTotals(List<ExpenseManager.Models.Expense> expenses) {
-            var foodKeywords = new[] {"com", "pho", "banh", "tra", "ca phe", "nuoc"};
-            var shoppingKeywords = new[] {"mua", "sach", "ao", "quan", "giay", "but"};
-            var entertainmentKeywords = new[] {"choi", "xem", "phim", "giai"};
+            var foodKeywords = new[] {"com", "pho", "banh", "tra", "ca phe", "nuoc", "an"};
+            var shoppingKeywords = new[] {"mua", "sach", "ao", "quan", "giay", "but", "shop"};
+            var entertainmentKeywords = new[] {"choi", "xem", "phim", "giai", "game"};
 
-            var foodTotal = expenses.Where(e => HasKeyword(e, foodKeywords) || 
-                e.Category.ToLower().Contains("food") || e.Category.Contains("🍽️")).Sum(e => e.Amount);
-                
-            var shoppingTotal = expenses.Where(e => HasKeyword(e, shoppingKeywords) || 
-                e.Category.ToLower().Contains("shopping") || e.Category.Contains("🛍️")).Sum(e => e.Amount);
-                
-            var entertainmentTotal = expenses.Where(e => HasKeyword(e, entertainmentKeywords) || 
-                e.Category.ToLower().Contains("entertainment") || e.Category.Contains("🎮")).Sum(e => e.Amount);
+            decimal foodTotal = 0;
+            decimal shoppingTotal = 0;
+            decimal entertainmentTotal = 0;
+            decimal othersTotal = 0;
 
-            var total = expenses.Sum(e => e.Amount);
+            foreach (var expense in expenses) {
+                // ✅ CHECK CATEGORY FIRST (exact match)
+                var category = expense.Category.ToLower();
+                
+                if (category.Contains("food") || category.Contains("🍽️") || category.Contains("ăn") || category.Contains("an uong")) {
+                    foodTotal += expense.Amount;
+                } else if (category.Contains("shopping") || category.Contains("🛍️") || category.Contains("mua sam")) {
+                    shoppingTotal += expense.Amount;
+                } else if (category.Contains("entertainment") || category.Contains("🎮") || category.Contains("giai tri")) {
+                    entertainmentTotal += expense.Amount;
+                } else if (category.Contains("others") || category.Contains("📦") || category.Contains("khac")) {
+                    othersTotal += expense.Amount;
+                } else {
+                    // ✅ FALLBACK: Check keywords in description
+                    if (HasKeyword(expense, foodKeywords)) {
+                        foodTotal += expense.Amount;
+                    } else if (HasKeyword(expense, shoppingKeywords)) {
+                        shoppingTotal += expense.Amount;
+                    } else if (HasKeyword(expense, entertainmentKeywords)) {
+                        entertainmentTotal += expense.Amount;
+                    } else {
+                        // ✅ DEFAULT: Everything else goes to Others
+                        othersTotal += expense.Amount;
+                    }
+                }
+            }
             
             return new CategoryTotals {
                 Food = foodTotal,
                 Shopping = shoppingTotal,
                 Entertainment = entertainmentTotal,
-                Others = total - foodTotal - shoppingTotal - entertainmentTotal
+                Others = othersTotal
             };
         }
 

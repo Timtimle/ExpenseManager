@@ -353,10 +353,10 @@
                             <!-- Expense Chart -->
                             <Border Style="{StaticResource CleanCard}">
                                 <StackPanel>
-                                    <TextBlock Text="📊 Monthly Expense Analytics" FontSize="16" FontWeight="SemiBold" Foreground="#2d3748" Margin="0,0,0,15"/>
+                                    <TextBlock Text="Expense Analytics" FontSize="16" FontWeight="SemiBold" Foreground="#2d3748" Margin="0,0,0,15"/>
                                     
                                     <!-- Simple Visual Chart -->
-                                    <Grid Height="120" Margin="0,0,0,15">
+                                    <Grid Height="140" Margin="0,0,0,15">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
@@ -365,63 +365,63 @@
                                         </Grid.RowDefinitions>
                                         
                                         <!-- Food Bar -->
-                                        <Grid Grid.Row="0" Margin="0,2">
+                                        <Grid Grid.Row="0" Margin="0,4">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="70"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="Food" FontSize="10" VerticalAlignment="Center"/>
-                                            <Border Grid.Column="1" Background="#667eea" Height="20" CornerRadius="10" HorizontalAlignment="Left" Name="FoodBar" Width="50"/>
+                                            <TextBlock Grid.Column="0" Text="Food" FontSize="10" VerticalAlignment="Center" FontWeight="Medium"/>
+                                            <Border Grid.Column="1" Background="#667eea" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="FoodBar" Width="50" MinWidth="2"/>
                                         </Grid>
                                         
                                         <!-- Shopping Bar -->
-                                        <Grid Grid.Row="1" Margin="0,2">
+                                        <Grid Grid.Row="1" Margin="0,4">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="70"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="Shopping" FontSize="10" VerticalAlignment="Center"/>
-                                            <Border Grid.Column="1" Background="#28a745" Height="20" CornerRadius="10" HorizontalAlignment="Left" Name="ShoppingBar" Width="30"/>
+                                            <TextBlock Grid.Column="0" Text="Shopping" FontSize="10" VerticalAlignment="Center" FontWeight="Medium"/>
+                                            <Border Grid.Column="1" Background="#28a745" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="ShoppingBar" Width="30" MinWidth="2"/>
                                         </Grid>
                                         
                                         <!-- Entertainment Bar -->
-                                        <Grid Grid.Row="2" Margin="0,2">
+                                        <Grid Grid.Row="2" Margin="0,4">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="70"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="Entertainment" FontSize="10" VerticalAlignment="Center"/>
-                                            <Border Grid.Column="1" Background="#fd7e14" Height="20" CornerRadius="10" HorizontalAlignment="Left" Name="EntertainmentBar" Width="20"/>
+                                            <TextBlock Grid.Column="0" Text="Entertainment" FontSize="9" VerticalAlignment="Center" FontWeight="Medium"/>
+                                            <Border Grid.Column="1" Background="#fd7e14" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="EntertainmentBar" Width="20" MinWidth="2"/>
                                         </Grid>
                                         
                                         <!-- Others Bar -->
-                                        <Grid Grid.Row="3" Margin="0,2">
+                                        <Grid Grid.Row="3" Margin="0,4">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="70"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="Others" FontSize="10" VerticalAlignment="Center"/>
-                                            <Border Grid.Column="1" Background="#6f42c1" Height="20" CornerRadius="10" HorizontalAlignment="Left" Name="OthersBar" Width="10"/>
+                                            <TextBlock Grid.Column="0" Text="Others" FontSize="10" VerticalAlignment="Center" FontWeight="Medium"/>
+                                            <Border Grid.Column="1" Background="#6f42c1" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="OthersBar" Width="10" MinWidth="2"/>
                                         </Grid>
                                     </Grid>
                                     
                                     <!-- Percentage Labels -->
                                     <StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
                                             <Ellipse Width="8" Height="8" Fill="#667eea" Margin="0,0,8,0"/>
-                                            <TextBlock Name="FoodPercentLabel" Text="Food: 0%" FontSize="10" Foreground="#6c757d"/>
+                                            <TextBlock Name="FoodPercentLabel" Text="Food: 0%" FontSize="11" Foreground="#6c757d"/>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
                                             <Ellipse Width="8" Height="8" Fill="#28a745" Margin="0,0,8,0"/>
-                                            <TextBlock Name="ShoppingPercentLabel" Text="Shopping: 0%" FontSize="10" Foreground="#6c757d"/>
+                                            <TextBlock Name="ShoppingPercentLabel" Text="Shopping: 0%" FontSize="11" Foreground="#6c757d"/>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
                                             <Ellipse Width="8" Height="8" Fill="#fd7e14" Margin="0,0,8,0"/>
-                                            <TextBlock Name="EntertainmentPercentLabel" Text="Entertainment: 0%" FontSize="10" Foreground="#6c757d"/>
+                                            <TextBlock Name="EntertainmentPercentLabel" Text="Entertainment: 0%" FontSize="11" Foreground="#6c757d"/>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
                                             <Ellipse Width="8" Height="8" Fill="#6f42c1" Margin="0,0,8,0"/>
-                                            <TextBlock Name="OthersPercentLabel" Text="Others: 0%" FontSize="10" Foreground="#6c757d"/>
+                                            <TextBlock Name="OthersPercentLabel" Text="Others: 0%" FontSize="11" Foreground="#6c757d"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
