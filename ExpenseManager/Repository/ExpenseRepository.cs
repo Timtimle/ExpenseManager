@@ -16,6 +16,12 @@ namespace ExpenseManager.Repository {
             LoadExpenses();
         }
 
+        public Expense Expense {
+            get => default;
+            set {
+            }
+        }
+
         public bool AddExpense(Expense expense) {
             try {
                 expenses.Insert(0, expense);

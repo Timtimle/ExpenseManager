@@ -3,6 +3,12 @@ using System.Text;
 
 namespace ExpenseManager.Utils {
     public class Vietnamese {
+        public Services.Prediction.MLClassifier MLClassifier {
+            get => default;
+            set {
+            }
+        }
+
         public string RemoveDiacritics(string text) {
             if (string.IsNullOrEmpty(text))
                 return text;
@@ -14,7 +20,7 @@ namespace ExpenseManager.Utils {
             foreach (char c in normalized) {
                 UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(c); // diacritics have a different unicode category than letter
 
-                if (category != UnicodeCategory.NonSpacingMark) { // keep only characters that are not diacritic marks: 'á'->'a'+'dia'
+                if (category != UnicodeCategory.NonSpacingMark) { // keep only characters that are not diacritic marks: 'E->'a'+'dia'
                     builder.Append(c);
                 }
             }

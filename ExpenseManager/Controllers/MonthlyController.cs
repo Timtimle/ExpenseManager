@@ -18,6 +18,12 @@ namespace ExpenseManager.Controllers {
             monthlyService = service;
         }
 
+        public MonthlyExpenseService MonthlyExpenseService {
+            get => default;
+            set {
+            }
+        }
+
         // Basic Operations
         public bool AddExpense(decimal amount, string description, string category, DateTime date) {
             return monthlyService.AddExpense(amount, description, category, date);

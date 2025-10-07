@@ -1,0 +1,75 @@
+﻿@startuml ExpenseManager_Layout_UML
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title ExpenseManager - Simple UML Layout
+
+package Views {
+    class MainWindow
+    class AddExpenseWindow  
+    class MonthlyWindow
+}
+
+package Controllers {
+    class ExpenseController
+    class MonthlyController
+}
+
+package Services {
+    class ExpenseManager
+    class MonthlyExpenseService
+    class ExpensePredictor
+    class MLClassifier
+    class RuleBasedClassifier
+}
+
+package Repository {
+    class ExpenseRepository
+    class MonthlyRepository
+}
+
+package Models {
+    class Expense
+    class ExpenseData
+    class MonthlyReport
+    class ModelData
+}
+
+package Interfaces {
+    interface IExpenseRepository
+    interface IExpenseClassifier
+    interface IMonthlyExpenseService
+}
+
+package Utils {
+    class Vietnamese
+}
+
+' Main Flow
+MainWindow --> ExpenseController
+AddExpenseWindow --> ExpenseController  
+MonthlyWindow --> MonthlyController
+
+ExpenseController --> ExpenseManager
+MonthlyController --> MonthlyExpenseService
+
+ExpenseManager --> IExpenseRepository
+ExpenseRepository ..|> IExpenseRepository
+
+' AI Flow
+AddExpenseWindow --> ExpensePredictor
+ExpensePredictor --> MLClassifier
+ExpensePredictor --> RuleBasedClassifier
+MLClassifier ..|> IExpenseClassifier
+RuleBasedClassifier ..|> IExpenseClassifier
+
+' Data
+ExpenseRepository --> Expense
+MLClassifier --> ExpenseData
+MonthlyRepository --> MonthlyReport
+MLClassifier --> ModelData
+
+' Utils
+MLClassifier --> Vietnamese
+
+@enduml

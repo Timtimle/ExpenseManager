@@ -15,11 +15,16 @@ namespace ExpenseManager.Views {
             RefreshData();
         }
 
+        public ExpenseController ExpenseController {
+            get => default;
+            set {
+            }
+        }
+
         private void SetupEventHandlers() {
             AddExpenseButton.Click += AddExpenseButton_Click;
             MonthlyButton.Click += MonthlyButton_Click;
             ResetButton.Click += ResetButton_Click;
-            RefreshButton.Click += RefreshButton_Click;
             LoadJsonButton.Click += LoadJsonButton_Click;
             
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
@@ -65,17 +70,6 @@ namespace ExpenseManager.Views {
                 }
                 RefreshData();
                 ShowSuccess("All data cleared!");
-            }
-        }
-
-        private void RefreshButton_Click(object sender, RoutedEventArgs e) {
-            var result = MessageBox.Show("YES: Load JSON\nNO: Refresh Data\nCANCEL: Export JSON", 
-                "Data Operations", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                
-            switch (result) {
-                case MessageBoxResult.Yes: LoadFromJson(); break;
-                case MessageBoxResult.No: RefreshData(); break;
-                case MessageBoxResult.Cancel: ExportToJson(); break;
             }
         }
 

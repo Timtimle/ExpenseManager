@@ -1,0 +1,114 @@
+﻿@startuml ExpenseManager_UseCase_Diagram
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam actorBackgroundColor #E3F2FD
+skinparam usecaseBackgroundColor #F8F9FA
+
+title ExpenseManager - Use Case Diagram
+
+' Actors
+actor "User" as User
+actor "System" as System
+
+' Use Cases
+rectangle "ExpenseManager System" {
+    
+    package "💰 Expense Management" {
+        usecase "Add Expense" as UC1
+        usecase "Edit Expense" as UC2
+        usecase "Delete Expense" as UC3
+        usecase "View All Expenses" as UC4
+        usecase "Filter by Category" as UC5
+        usecase "Search Expenses" as UC6
+    }
+    
+    package "🔮 ML Prediction" {
+        usecase "Predict Category" as UC7
+        usecase "Train ML Model" as UC8
+        usecase "Validate Prediction" as UC9
+        usecase "Update Rules" as UC10
+    }
+    
+    package "📊 Analytics & Reports" {
+        usecase "View Summary Stats" as UC11
+        usecase "Generate Monthly Report" as UC12
+        usecase "View Category Breakdown" as UC13
+        usecase "Compare Monthly Trends" as UC14
+        usecase "Export Reports" as UC15
+    }
+    
+    package "💾 Data Management" {
+        usecase "Import from JSON" as UC16
+        usecase "Export to JSON" as UC17
+        usecase "Backup Data" as UC18
+        usecase "Reset All Data" as UC19
+        usecase "Archive Old Data" as UC20
+    }
+    
+    package "🛠️ System Operations" {
+        usecase "Auto-save Changes" as UC21
+        usecase "Load Application" as UC22
+        usecase "Refresh UI" as UC23
+        usecase "Handle Errors" as UC24
+    }
+}
+
+' User Interactions
+User --> UC1 : Enters expense details
+User --> UC2 : Modifies existing expense
+User --> UC3 : Removes unwanted expense
+User --> UC4 : Views expense list
+User --> UC5 : Filters by category
+User --> UC6 : Searches for specific expense
+
+User --> UC7 : Requests category prediction
+User --> UC9 : Confirms/rejects prediction
+
+User --> UC11 : Views dashboard
+User --> UC12 : Requests monthly report
+User --> UC13 : Views category charts
+User --> UC14 : Compares trends
+User --> UC15 : Exports data
+
+User --> UC16 : Imports JSON file
+User --> UC17 : Exports to JSON
+User --> UC18 : Creates backup
+User --> UC19 : Resets application
+User --> UC20 : Archives old records
+
+User --> UC22 : Starts application
+User --> UC23 : Refreshes display
+
+' System Interactions
+System --> UC8 : Auto-trains model
+System --> UC10 : Updates classification rules
+System --> UC21 : Saves changes automatically
+System --> UC24 : Manages exceptions
+
+' Include Relationships
+UC1 ..> UC7 : <<include>>
+UC1 ..> UC21 : <<include>>
+UC2 ..> UC21 : <<include>>
+UC3 ..> UC21 : <<include>>
+UC12 ..> UC13 : <<include>>
+UC16 ..> UC23 : <<include>>
+UC17 ..> UC18 : <<include>>
+UC19 ..> UC23 : <<include>>
+
+' Extend Relationships
+UC7 ..> UC8 : <<extend>>
+UC1 ..> UC9 : <<extend>>
+UC4 ..> UC5 : <<extend>>
+UC4 ..> UC6 : <<extend>>
+UC11 ..> UC14 : <<extend>>
+
+note top of UC1 : Primary use case:\nUser adds new expense\nwith ML category prediction
+
+note right of UC7 : Uses both Rule-based\nand ML classifiers\nfor accurate prediction
+
+note bottom of UC12 : Generates comprehensive\nmonthly analytics with\ncategory breakdowns
+
+note left of UC21 : Automatic JSON saving\nafter every operation\nensures data persistence
+
+@enduml

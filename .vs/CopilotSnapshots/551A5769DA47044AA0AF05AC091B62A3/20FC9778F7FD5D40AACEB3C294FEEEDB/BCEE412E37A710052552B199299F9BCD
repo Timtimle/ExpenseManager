@@ -1,0 +1,59 @@
+﻿using System.Collections.Generic;
+using ExpenseManager.Models;
+using ExpenseManager.Services.Prediction;
+
+namespace ExpenseManager.Services.Prediction {
+    public class ExpensePredictor : ExpenseManager.Models.PredictionResult, ExpenseManager.Views.AddExpenseWindow {
+        private List<IExpenseClassifier> classifiers;
+        private MLClassifier mlClassifier;
+        private RuleBasedClassifier ruleBasedClassifier;
+
+        public ExpensePredictor(List<IExpenseClassifier> classifiers) {
+            foreach (IExpenseClassifier classifier in classifiers) {
+                if (classifier is MLClassifier) {
+                    mlClassifier = classifier as MLClassifier;
+                }
+                else if (classifier is RuleBasedClassifier) {
+                    ruleBasedClassifier = classifier as RuleBasedClassifier;
+                }
+            }
+        }
+
+        public ExpenseManager.Models.PredictionResult PredictionResult {
+            get => default(ExpenseManager.Services.ExpenseManager.Models.PredictionResult);
+            set {
+            }
+        }
+
+        public ExpenseManager.Models.PredictionResult PredictionResult1 {
+            get => default(ExpenseManager.Services.ExpenseManager.Models.PredictionResult);
+            set {
+            }
+        }
+
+        public ExpenseManager.Models.PredictionResult PredictionResult2 {
+            get => default(ExpenseManager.Services.ExpenseManager.Models.PredictionResult);
+            set {
+            }
+        }
+
+        public string Predict(string description) {
+            if (string.IsNullOrWhiteSpace(description)) {
+                return "Khac";
+            }
+
+            if (ruleBasedClassifier != null) {
+                string ruleResult = ruleBasedClassifier.Classify(description);
+                if (ruleResult != "Khac") {
+                    return ruleResult;
+                }
+            }
+
+            if (mlClassifier != null) {
+                return mlClassifier.Classify(description);
+            }
+
+            return "Khac";
+        }
+    }
+}

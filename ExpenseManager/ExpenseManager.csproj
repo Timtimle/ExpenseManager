@@ -92,7 +92,6 @@
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\ExpenseData.cs" />
     <Compile Include="Models\ModelData.cs" />
-    <Compile Include="Models\PredictionResult.cs" />
     <Compile Include="Models\Reports\MonthlyReport.cs" />
     <Compile Include="Repository\ExpenseRepository.cs" />
     <Compile Include="Repository\Interface\IExpenseRepository.cs" />
@@ -153,9 +152,11 @@
     <None Include="Data\TrainingData\khac.csv" />
     <None Include="Data\TrainingData\muasam.csv" />
     <None Include="Data\User\expenses.json" />
+    <None Include="ExpenseManagerClassDiagram.cd" />
     <None Include="Images\kawaii_logo.png.placeholder" />
     <None Include="Images\README.md" />
     <None Include="packages.config" />
+    <None Include="PROJECT_DIAGRAM.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

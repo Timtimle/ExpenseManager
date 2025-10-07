@@ -3,6 +3,12 @@ namespace ExpenseManager.Models {
         public string Label { get; set; }  // Category 
         public string Text { get; set; }   // Description
 
+        public Services.Prediction.MLClassifier MLClassifier {
+            get => default;
+            set {
+            }
+        }
+
         public ExpenseData() { }
 
         public ExpenseData(string label, string text) {

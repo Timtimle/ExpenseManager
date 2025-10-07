@@ -1,0 +1,80 @@
+﻿@startuml ExpenseManager_SimpleClassDiagram
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #6C757D
+}
+skinparam interface {
+    BackgroundColor #E8F5E8
+    BorderColor #28A745
+}
+
+title ExpenseManager - Basic Class Relationships
+
+' === VIEWS ===
+class MainWindow
+class AddExpenseWindow  
+class MonthlyWindow
+
+' === CONTROLLERS ===
+class ExpenseController
+class MonthlyController
+
+' === SERVICES ===
+class "ExpenseManager\n(Service)" as ExpenseManagerService
+class MonthlyExpenseService
+class ExpensePredictor
+
+' === AI/ML ===
+class MLClassifier
+class RuleBasedClassifier
+
+' === REPOSITORY ===
+class ExpenseRepository
+class MonthlyRepository
+
+' === MODELS ===
+class Expense
+class ExpenseData
+class MonthlyReport
+
+' === INTERFACES ===
+interface IExpenseRepository
+interface IExpenseClassifier
+interface IMonthlyExpenseService
+
+' === UTILS ===
+class Vietnamese
+
+' === MAIN FLOW ===
+MainWindow --> ExpenseController
+AddExpenseWindow --> ExpenseController
+MonthlyWindow --> MonthlyController
+
+ExpenseController --> ExpenseManagerService
+MonthlyController --> MonthlyExpenseService
+
+ExpenseManagerService --> IExpenseRepository
+MonthlyExpenseService --> ExpenseRepository
+
+ExpenseRepository ..|> IExpenseRepository
+MonthlyExpenseService ..|> IMonthlyExpenseService
+
+' === AI FLOW ===
+AddExpenseWindow --> ExpensePredictor
+ExpensePredictor --> MLClassifier
+ExpensePredictor --> RuleBasedClassifier
+
+MLClassifier ..|> IExpenseClassifier
+RuleBasedClassifier ..|> IExpenseClassifier
+
+' === DATA ===
+ExpenseRepository --> Expense
+MLClassifier --> ExpenseData
+MonthlyRepository --> MonthlyReport
+
+' === UTILS ===
+MLClassifier --> Vietnamese
+
+@enduml

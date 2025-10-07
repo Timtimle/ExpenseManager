@@ -11,15 +11,27 @@ using System.Windows.Controls;
 using System.Windows.Markup;
 
 namespace ExpenseManager.Views {
-    public partial class AddExpenseWindow : Window {
+    public partial class AddExpenseWindow : ExpenseController {
         private ExpenseController expenseController;
 
         public AddExpenseWindow() {
             InitializeComponent();
             expenseController = new ExpenseController();
-            
+
             SetupEventHandlers();
             InitializeForm();
+        }
+
+        public ExpensePredictor ExpensePredictor {
+            get => default;
+            set {
+            }
+        }
+
+        public ExpenseController ExpenseController {
+            get => default;
+            set {
+            }
         }
 
         private void SetupEventHandlers() {
@@ -37,9 +49,9 @@ namespace ExpenseManager.Views {
 
         private void PredictButton_Click(object sender, RoutedEventArgs e) {
             string description = DescriptionTextBox.Text.Trim();
-            
+
             if (string.IsNullOrEmpty(description)) {
-                MessageBox.Show("Nhập mô tả trước!", "Thông báo", 
+                MessageBox.Show("Nhập mô tả trước!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -59,14 +71,17 @@ namespace ExpenseManager.Views {
                     string itemText = item.Content.ToString();
 
                     bool shouldSelect = false;
-                    
+
                     if (category == "an uong" && itemText.Contains("Food")) {
                         shouldSelect = true;
-                    } else if (category == "mua sam" && itemText.Contains("Shopping")) {
+                    }
+                    else if (category == "mua sam" && itemText.Contains("Shopping")) {
                         shouldSelect = true;
-                    } else if (category == "giai tri" && itemText.Contains("Entertainment")) {
+                    }
+                    else if (category == "giai tri" && itemText.Contains("Entertainment")) {
                         shouldSelect = true;
-                    } else if (category == "khac" && itemText.Contains("Others")) {
+                    }
+                    else if (category == "khac" && itemText.Contains("Others")) {
                         shouldSelect = true;
                     }
 
@@ -77,8 +92,9 @@ namespace ExpenseManager.Views {
                 }
 
                 MessageBox.Show($"🔮 Dự đoán: {category}\n✅ Đã tự động chọn category!", "ML Prediction", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
-            } catch (Exception ex) {
+
+            }
+            catch (Exception ex) {
                 MessageBox.Show($"Lỗi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -90,7 +106,7 @@ namespace ExpenseManager.Views {
                     AmountTextBox.Focus();
                     return;
                 }
-                
+
                 decimal amount;
                 if (!decimal.TryParse(AmountTextBox.Text, out amount) || amount <= 0) {
                     MessageBox.Show("Nhập số tiền hợp lệ!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -113,35 +129,38 @@ namespace ExpenseManager.Views {
                 System.Diagnostics.Debug.WriteLine($"🔄 AddExpenseWindow: Attempting to add expense - {amount} - {description} - {category} - {selectedDate:yyyy-MM-dd}");
 
                 bool success = expenseController.AddExpense(amount, description, category, selectedDate);
-                
+
                 System.Diagnostics.Debug.WriteLine($"📊 AddExpenseWindow: Add result = {success}");
-                
+
                 if (success) {
                     var allExpenses = expenseController.GetAllExpenses();
                     System.Diagnostics.Debug.WriteLine($"📈 AddExpenseWindow: Total expenses after add = {allExpenses.Count}");
-                    
-                    var justAdded = allExpenses.FirstOrDefault(expense => 
-                        expense.Amount == amount && 
-                        expense.Description == description && 
+
+                    var justAdded = allExpenses.FirstOrDefault(expense =>
+                        expense.Amount == amount &&
+                        expense.Description == description &&
                         expense.Category == category);
-                    
+
                     if (justAdded != null) {
                         System.Diagnostics.Debug.WriteLine($"✅ VERIFIED: Found expense - {justAdded.Amount} on {justAdded.Date:yyyy-MM-dd}");
-                        
+
                         System.Threading.Thread.Sleep(50);
-                        
+
                         MessageBox.Show($"✅ Lưu thành công!\n\n💰 Số tiền: {amount:N0} VND\n📝 Mô tả: {description}\n📂 Loại: {category}\n📅 Ngày: {selectedDate:dd/MM/yyyy}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
                         this.DialogResult = true;
                         this.Close();
-                    } else {
+                    }
+                    else {
                         System.Diagnostics.Debug.WriteLine("❌ ERROR: Expense NOT found after adding!");
                         MessageBox.Show("❌ Lưu thất bại - Không tìm thấy expense!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
-                } else {
+                }
+                else {
                     System.Diagnostics.Debug.WriteLine("❌ AddExpenseWindow: AddExpense returned false");
                     MessageBox.Show("❌ Lưu thất bại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 MessageBox.Show($"Lỗi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

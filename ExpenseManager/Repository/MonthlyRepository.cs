@@ -17,6 +17,12 @@ namespace ExpenseManager.Repository {
             }
         }
 
+        public MonthlyReport MonthlyReport {
+            get => default;
+            set {
+            }
+        }
+
         public bool SaveMonthlyData(int year, int month, List<Expense> expenses) {
             try {
                 var yearPath = Path.Combine(dataPath, year.ToString());
@@ -81,8 +87,7 @@ namespace ExpenseManager.Repository {
                     return reports;
                 }
 
-                var yearDirectories = Directory.GetDirectories(dataPath)
-                    .Where(d => !Path.GetFileName(d).Equals("Archive", StringComparison.OrdinalIgnoreCase));
+                var yearDirectories = Directory.GetDirectories(dataPath).Where(d => !Path.GetFileName(d).Equals("Archive", StringComparison.OrdinalIgnoreCase));
 
                 foreach (var yearDir in yearDirectories) {
                     if (int.TryParse(Path.GetFileName(yearDir), out int year)) {

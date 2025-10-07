@@ -11,6 +11,16 @@ namespace ExpenseManager.Controllers {
             expenseManager = new ExpenseManager.Services.ExpenseManager();
         }
 
+        public ExpenseController(ExpenseManager.Services.ExpenseManager expenseManagerService) {
+            expenseManager = expenseManagerService;
+        }
+
+        public Services.ExpenseManager ExpenseManager {
+            get => default;
+            set {
+            }
+        }
+
         public bool AddExpense(decimal amount, string description, string category) {
             return expenseManager.AddExpense(amount, description, category);
         }
@@ -33,6 +43,14 @@ namespace ExpenseManager.Controllers {
 
         public bool LoadExpensesFromJson() {
             return expenseManager.LoadExpensesFromJson();
+        }
+
+        public List<Expense> GetExpensesByCategory(string category) {
+            return expenseManager.GetExpensesByCategory(category);
+        }
+
+        public List<ExpenseData> GetExpensesAsTrainingData() {
+            return expenseManager.GetExpensesAsTrainingData();
         }
     }
 }

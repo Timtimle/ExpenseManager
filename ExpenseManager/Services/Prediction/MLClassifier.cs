@@ -8,11 +8,47 @@ using ExpenseManager.Models;
 using ExpenseManager.Utils;
 
 namespace ExpenseManager.Services.Prediction {
-    public class MLClassifier : IExpenseClassifier {
+    public class MLClassifier : ExpenseManager.Utils.Vietnamese, IExpenseClassifier {
         private List<ExpenseData> trainingData = new List<ExpenseData>();
         private List<string> vocabulary = new List<string>();
         private Dictionary<string, List<double>> weights;
         private Dictionary<string, double> bias;
+
+        public ExpenseManager.Models.ExpenseData ExpenseData {
+            get => default(ExpenseManager.Services.ExpenseManager.Models.ExpenseData);
+            set {
+            }
+        }
+
+        public ExpenseManager.Models.ExpenseData ExpenseData1 {
+            get => default(ExpenseManager.Services.ExpenseManager.Models.ExpenseData);
+            set {
+            }
+        }
+
+        public ExpenseManager.Models.ExpenseData ExpenseData2 {
+            get => default(ExpenseManager.Services.ExpenseManager.Models.ExpenseData);
+            set {
+            }
+        }
+
+        public ExpenseManager.Utils.Vietnamese Vietnamese {
+            get => default(ExpenseManager.Services.ExpenseManager.Utils.Vietnamese);
+            set {
+            }
+        }
+
+        public ExpenseManager.Utils.Vietnamese Vietnamese1 {
+            get => default(ExpenseManager.Services.ExpenseManager.Utils.Vietnamese);
+            set {
+            }
+        }
+
+        public ExpenseManager.Utils.Vietnamese Vietnamese2 {
+            get => default(ExpenseManager.Services.ExpenseManager.Utils.Vietnamese);
+            set {
+            }
+        }
 
         public List<string> getVocabulary() => vocabulary;
         public List<ExpenseData> getTrainingData() => trainingData;

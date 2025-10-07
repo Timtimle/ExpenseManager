@@ -1,0 +1,321 @@
+﻿@startuml ExpenseManager_Layout_UML
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam package {
+    BackgroundColor #F8F9FA
+    BorderColor #6C757D
+    FontColor #495057
+}
+skinparam class {
+    BackgroundColor #E8F4FD
+    BorderColor #2E86C1
+    FontColor #1B4F72
+}
+skinparam interface {
+    BackgroundColor #E8F5E8
+    BorderColor #28A745
+    FontColor #155724
+}
+
+title ExpenseManager - UML Layout Diagram\n🏗️ Complete System Architecture
+
+package "ExpenseManager.Views" as Views {
+    class MainWindow {
+        -expenseController: ExpenseController
+        --
+        +AddExpenseButton_Click()
+        +RefreshData()
+        +UpdateCharts()
+        +LoadFromJson()
+    }
+    
+    class AddExpenseWindow {
+        -expenseController: ExpenseController
+        --
+        +PredictButton_Click()
+        +SaveButton_Click()
+        +CancelButton_Click()
+    }
+    
+    class MonthlyWindow {
+        -monthlyController: MonthlyController
+        --
+        +LoadMonthlyData()
+    }
+    
+    class App {
+        --
+        +OnStartup()
+        +OnExit()
+    }
+}
+
+package "ExpenseManager.Controllers" as Controllers {
+    class ExpenseController {
+        -expenseManager: ExpenseManager.Services.ExpenseManager
+        --
+        +AddExpense()
+        +GetAllExpenses()
+        +DeleteExpense()
+        +LoadExpensesFromJson()
+        +GetTotalExpenses()
+    }
+    
+    class MonthlyController {
+        -monthlyService: IMonthlyExpenseService
+        --
+        +GetMonthlyReport()
+        +GetMonthExpenses()
+        +GetMonthlyTotal()
+        +CompareWithPreviousMonth()
+        +GetAverageMonthlySpending()
+        +ArchiveMonth()
+    }
+    
+    class PredictionController {
+        -predictor: ExpensePredictor
+        --
+        +PredictCategory()
+        +TrainModel()
+    }
+}
+
+package "ExpenseManager.Services" as Services {
+    class "ExpenseManager\n(Service)" as ExpenseManagerService {
+        -repository: IExpenseRepository
+        --
+        +AddExpense()
+        +GetAllExpenses()
+        +DeleteExpense()
+        +LoadExpensesFromJson()
+        +ValidateExpense()
+        +GetExpensesAsTrainingData()
+    }
+    
+    package "ExpenseManager.Services.Monthly" as MonthlyServices {
+        class MonthlyExpenseService {
+            -expenseRepository: ExpenseRepository
+            --
+            +AddExpense()
+            +GetExpensesByMonth()
+            +GetMonthlyTotal()
+            +GetMonthlyCategoryTotals()
+            +GetYearlyReport()
+            +ArchiveMonth()
+        }
+        
+        interface IMonthlyExpenseService {
+            +AddExpense()
+            +GetExpensesByMonth()
+            +GetMonthlyTotal()
+            +GetMonthlyCategoryTotals()
+            +GetYearlyReport()
+            +ArchiveMonth()
+        }
+    }
+    
+    package "ExpenseManager.Services.Prediction" as PredictionServices {
+        class ExpensePredictor {
+            -classifiers: List<IExpenseClassifier>
+            -mlClassifier: MLClassifier
+            -ruleBasedClassifier: RuleBasedClassifier
+            --
+            +Predict()
+            +GetConfidence()
+        }
+        
+        class MLClassifier {
+            -trainingData: List<ExpenseData>
+            -vocabulary: List<string>
+            -weights: Dictionary
+            -bias: Dictionary
+            --
+            +Train()
+            +Classify()
+            +LoadTrainingData()
+            +SaveModel()
+            +LoadModel()
+            +EvaluateAccuracy()
+        }
+        
+        class RuleBasedClassifier {
+            +rules: Dictionary<string, string[]>
+            --
+            +Classify()
+        }
+        
+        interface IExpenseClassifier {
+            +Classify()
+        }
+    }
+}
+
+package "ExpenseManager.Repository" as Repository {
+    class ExpenseRepository {
+        -expenses: List<Expense>
+        --
+        +AddExpense()
+        +GetAllExpenses()
+        +GetExpensesByCategory()
+        +DeleteExpense()
+        +SaveExpenses()
+        +LoadExpenses()
+        +GetTotalAmount()
+    }
+    
+    class MonthlyRepository {
+        --
+        +GetMonthlyData()
+        +GetExpensesByMonth()
+        +CalculateMonthlyTotals()
+    }
+    
+    package "ExpenseManager.Repository.Interface" as RepositoryInterfaces {
+        interface IExpenseRepository {
+            +AddExpense()
+            +GetAllExpenses()
+            +GetExpensesByCategory()
+            +DeleteExpense()
+            +SaveExpenses()
+            +LoadExpenses()
+            +GetTotalAmount()
+        }
+        
+        interface IMonthlyRepository {
+            +GetMonthlyData()
+            +GetExpensesByMonth()
+            +CalculateMonthlyTotals()
+        }
+        
+        interface IPredictionRepository {
+            +LoadTrainingData()
+            +SaveModel()
+            +LoadModel()
+        }
+    }
+}
+
+package "ExpenseManager.Models" as Models {
+    class Expense {
+        +Amount: decimal
+        +Description: string
+        +Date: DateTime
+        +Category: string
+        --
+        +Expense()
+        +Expense(amount, desc, date, category)
+    }
+    
+    class ExpenseData {
+        +Label: string
+        +Text: string
+        --
+        +ExpenseData()
+        +ExpenseData(label, text)
+    }
+    
+    class ModelData {
+        +Vocabulary: List<string>
+        +Weights: Dictionary<string, List<double>>
+        +Bias: Dictionary<string, double>
+        +TrainingEpochs: int
+        +Version: string
+        --
+        +ModelData()
+    }
+    
+    class CategoryData {
+        +Categories: List<string>
+        +CategoryKeywords: Dictionary
+        +CategoryIcons: Dictionary
+        +CategoryDisplayNames: Dictionary
+        --
+        +CategoryConfig()
+    }
+    
+    package "ExpenseManager.Models.Reports" as Reports {
+        class MonthlyReport {
+            +Year: int
+            +Month: int
+            +MonthName: string
+            +TotalAmount: decimal
+            +TotalTransactions: int
+            +FoodTotal: decimal
+            +ShoppingTotal: decimal
+            +EntertainmentTotal: decimal
+            +OthersTotal: decimal
+            +AveragePerDay: decimal
+            +GeneratedDate: DateTime
+            --
+            +MonthlyReport()
+            +MonthlyReport(year, month)
+        }
+    }
+}
+
+package "ExpenseManager.Utils" as Utils {
+    class Vietnamese {
+        --
+        +RemoveDiacritics()
+    }
+    
+    class CategoryHelper {
+        --
+        +ValidateCategory()
+        +GetCategoryIcon()
+        +NormalizeCategory()
+    }
+    
+    class DBG {
+        --
+        +Out()
+        +Log()
+    }
+}
+
+' === MAIN RELATIONSHIPS ===
+
+' Views to Controllers
+MainWindow --> ExpenseController
+AddExpenseWindow --> ExpenseController
+MonthlyWindow --> MonthlyController
+
+' Controllers to Services
+ExpenseController --> ExpenseManagerService
+MonthlyController --> MonthlyExpenseService
+PredictionController --> ExpensePredictor
+
+' Services to Repository (via interfaces)
+ExpenseManagerService --> IExpenseRepository
+MonthlyExpenseService --> ExpenseRepository
+
+' Repository implementations
+ExpenseRepository ..|> IExpenseRepository
+MonthlyRepository ..|> IMonthlyRepository
+MonthlyExpenseService ..|> IMonthlyExpenseService
+
+' AI/ML relationships
+AddExpenseWindow --> ExpensePredictor
+ExpensePredictor --> MLClassifier
+ExpensePredictor --> RuleBasedClassifier
+MLClassifier ..|> IExpenseClassifier
+RuleBasedClassifier ..|> IExpenseClassifier
+
+' Data Model usage
+ExpenseRepository --> Expense
+MLClassifier --> ExpenseData
+MLClassifier --> ModelData
+MonthlyRepository --> MonthlyReport
+MonthlyRepository --> Reports
+
+' Utility usage
+MLClassifier --> Vietnamese
+RuleBasedClassifier --> CategoryHelper
+ExpenseManagerService --> DBG
+
+' Interface relationships
+Repository --> RepositoryInterfaces
+MonthlyServices --> RepositoryInterfaces
+PredictionServices --> RepositoryInterfaces
+
+@enduml

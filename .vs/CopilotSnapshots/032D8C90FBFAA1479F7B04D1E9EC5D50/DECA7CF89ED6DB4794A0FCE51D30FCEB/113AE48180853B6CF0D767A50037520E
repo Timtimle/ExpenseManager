@@ -1,0 +1,141 @@
+﻿@startuml ExpenseManager_Component_Diagram
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam componentBackgroundColor #F8F9FA
+skinparam packageBackgroundColor #E8F4FD
+
+title ExpenseManager - Component Architecture
+
+package "💻 Presentation Layer" {
+    component [MainWindow.xaml] as MainUI
+    component [AddExpenseWindow.xaml] as AddUI
+    component [MonthlyWindow.xaml] as MonthlyUI
+    
+    interface "IDataDisplay" as IDataDisplay
+    interface "IUserInput" as IUserInput
+    interface "IChartRenderer" as IChartRenderer
+}
+
+package "🎮 Application Layer" {
+    component [ExpenseController] as ExpenseCtrl
+    component [MonthlyController] as MonthlyCtrl
+    component [PredictionController] as PredictionCtrl
+    
+    interface "IExpenseOperations" as IExpenseOps
+    interface "IMonthlyOperations" as IMonthlyOps
+    interface "IPredictionOperations" as IPredictionOps
+}
+
+package "⚙️ Business Logic Layer" {
+    component [ExpenseManager] as ExpenseMgr
+    component [MonthlyExpenseService] as MonthlyService
+    component [ExpensePredictor] as Predictor
+    component [RuleBasedClassifier] as RuleClassifier
+    component [MLClassifier] as MLClassifier
+    
+    interface "IBusinessRules" as IBusinessRules
+    interface "IValidation" as IValidation
+    interface "IClassification" as IClassification
+}
+
+package "💾 Data Access Layer" {
+    component [ExpenseRepository] as ExpenseRepo
+    component [MonthlyRepository] as MonthlyRepo
+    
+    interface "IDataAccess" as IDataAccess
+    interface "IFileOperations" as IFileOps
+}
+
+package "📊 Data Layer" {
+    database "expenses.json" as ExpenseDB
+    database "Monthly Archives" as MonthlyDB
+    database "Training Data" as TrainingDB
+    database "anuong.csv" as FoodCSV
+    database "muasam.csv" as ShoppingCSV
+    database "categories.json" as CategoriesJSON
+}
+
+package "🛠️ Utility Layer" {
+    component [Vietnamese] as VietnameseUtil
+    component [CategoryHelper] as CategoryUtil
+    component [DBG] as DebugUtil
+    
+    interface "ITextProcessing" as ITextProcessing
+    interface "ICategoryUtils" as ICategoryUtils
+    interface "ILogging" as ILogging
+}
+
+' UI Layer Connections
+MainUI --> IExpenseOps
+AddUI --> IExpenseOps
+AddUI --> IPredictionOps
+MonthlyUI --> IMonthlyOps
+
+' Controller Layer Connections
+ExpenseCtrl ..> IExpenseOps
+MonthlyCtrl ..> IMonthlyOps
+PredictionCtrl ..> IPredictionOps
+
+ExpenseCtrl --> IBusinessRules
+MonthlyCtrl --> IBusinessRules
+PredictionCtrl --> IClassification
+
+' Business Layer Connections
+ExpenseMgr ..> IBusinessRules
+MonthlyService ..> IBusinessRules
+Predictor ..> IClassification
+RuleClassifier ..> IClassification
+MLClassifier ..> IClassification
+
+ExpenseMgr --> IDataAccess
+MonthlyService --> IDataAccess
+Predictor --> ITextProcessing
+
+' Data Access Layer Connections
+ExpenseRepo ..> IDataAccess
+MonthlyRepo ..> IDataAccess
+
+ExpenseRepo --> IFileOps
+MonthlyRepo --> IFileOps
+
+' Data Layer Connections
+ExpenseRepo --> ExpenseDB
+MonthlyRepo --> MonthlyDB
+MLClassifier --> TrainingDB
+RuleClassifier --> FoodCSV
+RuleClassifier --> ShoppingCSV
+Predictor --> CategoriesJSON
+
+' Utility Layer Connections
+VietnameseUtil ..> ITextProcessing
+CategoryUtil ..> ICategoryUtils
+DebugUtil ..> ILogging
+
+' Cross-cutting Concerns
+Predictor --> VietnameseUtil
+AddUI --> VietnameseUtil
+MainUI --> CategoryUtil
+
+note as N1
+    Data Flow Direction:
+    UI → Controllers → Services → Repository → Data Storage
+    
+    Key Features:
+    • WPF MVVM Pattern
+    • Repository Pattern
+    • Dependency Injection Ready
+    • ML Prediction System
+    • Monthly Analytics
+    • JSON Data Storage
+end note
+
+note as N2
+    File Structure:
+    /Data/User/ - User expenses
+    /Data/Archive/ - Monthly archives
+    /Data/ - Training data (CSV)
+    /Images/ - UI resources
+end note
+
+@enduml

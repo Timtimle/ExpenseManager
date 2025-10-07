@@ -1,0 +1,80 @@
+﻿@startuml ExpenseManager_Sequence_Diagram
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title ExpenseManager - Add Expense Sequence Flow
+
+actor User
+participant "AddExpenseWindow" as AEW
+participant "ExpenseController" as EC
+participant "ExpenseManager" as EM
+participant "ExpensePredictor" as EP
+participant "RuleBasedClassifier" as RBC
+participant "MLClassifier" as MLC
+participant "ExpenseRepository" as ER
+participant "MainWindow" as MW
+participant "Vietnamese" as VN
+
+== User Input Phase ==
+User -> AEW : Fill Amount, Description
+User -> AEW : Click "🔮 Predict"
+
+== Prediction Phase ==
+AEW -> VN : RemoveDiacritics(description)
+VN --> AEW : cleanDescription
+AEW -> EP : Predict(cleanDescription)
+EP -> RBC : Classify(description)
+RBC --> EP : "an uong" / "mua sam" / "giai tri" / "khac"
+
+alt Rule-based result is "khac"
+    EP -> MLC : Classify(description)
+    MLC --> EP : ML prediction result
+end
+
+EP --> AEW : predicted category
+AEW -> AEW : Auto-select ComboBox
+AEW -> User : Show prediction result
+
+== Save Phase ==
+User -> AEW : Click "💾 Save"
+AEW -> AEW : Validate inputs
+AEW -> EC : AddExpense(amount, description, category, date)
+EC -> EM : AddExpense(amount, description, category, date)
+EM -> EM : ValidateExpense()
+EM -> ER : AddExpense(new Expense(...))
+ER -> ER : expenses.Insert(0, expense)
+ER -> ER : SaveExpenses() to JSON
+
+alt Save successful
+    ER --> EM : true
+    EM --> EC : true
+    EC --> AEW : true
+    AEW -> AEW : Show success message
+    AEW -> AEW : DialogResult = true
+    AEW -> AEW : Close()
+else Save failed
+    ER --> EM : false
+    EM --> EC : false
+    EC --> AEW : false
+    AEW -> User : Show error message
+end
+
+== UI Refresh Phase ==
+AEW --> MW : Dialog closed with result = true
+MW -> MW : Thread.Sleep(200) // Wait for file I/O
+MW -> EC : new ExpenseController() // Force reload
+MW -> MW : RefreshData()
+MW -> EC : GetAllExpenses()
+EC -> EM : GetAllExpenses()
+EM -> ER : GetAllExpenses()
+ER --> EM : List<Expense>
+EM --> EC : List<Expense>
+EC --> MW : List<Expense>
+
+MW -> MW : UpdateSummaryStats()
+MW -> MW : UpdateCharts()
+MW -> MW : UpdateChartBars()
+MW -> User : Show updated UI with new expense
+
+@enduml

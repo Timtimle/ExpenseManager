@@ -192,8 +192,6 @@
                         <StackPanel>
                             <TextBlock Text="💰Expense Manager" FontSize="20"
                                        FontWeight="Bold" Foreground="#2d3748"/>
-                            <TextBlock Text="✨ Your smart finance companion" FontSize="11"
-                                       Foreground="#718096" Margin="0,-2,0,0"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -236,8 +234,6 @@
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="📊 Expense Management Dashboard" FontSize="24"
                                        FontWeight="Bold" Foreground="#2d3748"/>
-                            <TextBlock Text="✨ Track your spending smartly with ML predictions" FontSize="14"
-                                       Foreground="#718096" Margin="0,5,0,0"/>
                         </StackPanel>
 
                         <!-- Action Buttons -->
@@ -253,13 +249,9 @@
                                     Style="{StaticResource CleanIcon}" Width="80" Height="42"
                                     Background="#ffc107" Foreground="White"
                                     Margin="0,0,10,0"/>
-                            <Button Name="LoadJsonButton" Content="📄 JSON"
-                                    Style="{StaticResource CleanIcon}" Width="60" Height="42"
-                                    Background="#6f42c1" Foreground="White"
-                                    Margin="0,0,10,0"/>
-                            <Button Name="RefreshButton" Content="🔄"
-                                    Style="{StaticResource CleanIcon}"
-                                    Background="#28a745" Foreground="White"/>
+                            <Button Name="LoadJsonButton" Content="📄 Load JSON"
+                                    Style="{StaticResource CleanIcon}" Width="90" Height="42"
+                                    Background="#6f42c1" Foreground="White"/>
                         </StackPanel>
                     </Grid>
 

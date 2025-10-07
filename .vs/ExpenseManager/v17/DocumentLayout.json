@@ -3,16 +3,44 @@
   "WorkspaceRootPath": "E:\\Projects\\ExpenseManager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|e:\\projects\\expensemanager\\expensemanager\\services\\prediction\\expensepredictor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\expensepredictor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|e:\\projects\\expensemanager\\expensemanager\\services\\prediction\\mlclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\mlclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\monthly\\monthlyexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\monthly\\monthlyexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\controllers\\monthlycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\controllers\\monthlycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\models\\reports\\monthlyreport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\models\\reports\\monthlyreport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\monthly\\monthlyexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\monthly\\monthlyexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\utils\\vietnamese.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\utils\\vietnamese.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\prediction\\rulebasedclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\rulebasedclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\prediction\\iexpenseclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\iexpenseclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\models\\predictionresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\models\\predictionresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\repository\\expenserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\repository\\expenserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\prediction\\expensepredictor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\expensepredictor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\monthly\\imonthlyexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -29,10 +57,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\controllers\\expensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\controllers\\expensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\prediction\\mlclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\mlclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\views\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -63,14 +87,6 @@
       "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\models\\modeldata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\prediction\\iexpenseclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\iexpenseclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\prediction\\rulebasedclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\services\\prediction\\rulebasedclassifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
@@ -85,10 +101,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\utils\\vietnamese.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\utils\\vietnamese.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\services\\expensemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -129,10 +141,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\repository\\monthlyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\repository\\monthlyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|E:\\Projects\\ExpenseManager\\expensemanager\\controllers\\monthlycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B7BD952-6E66-4753-AFE0-456580A39FA1}|ExpenseManager\\ExpenseManager.csproj|solutionrelative:expensemanager\\controllers\\monthlycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -142,7 +150,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 270,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -154,43 +162,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "MonthlyRepository.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\MonthlyRepository.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Repository\\MonthlyRepository.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\MonthlyRepository.cs",
-              "RelativeToolTip": "ExpenseManager\\Repository\\MonthlyRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIEAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T02:59:49.714Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "IMonthlyRepository.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
-              "RelativeToolTip": "ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T02:59:32.179Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MonthlyExpenseService.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
-              "RelativeToolTip": "ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAG4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T02:59:23.306Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "MonthlyReport.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\Reports\\MonthlyReport.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Models\\Reports\\MonthlyReport.cs",
@@ -198,11 +170,51 @@
               "RelativeToolTip": "ExpenseManager\\Models\\Reports\\MonthlyReport.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T02:59:03.565Z"
+              "WhenOpened": "2025-10-03T02:59:03.565Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MonthlyController.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Controllers\\MonthlyController.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Controllers\\MonthlyController.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Controllers\\MonthlyController.cs",
+              "RelativeToolTip": "ExpenseManager\\Controllers\\MonthlyController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEQAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T03:00:15.297Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PredictionResult.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\PredictionResult.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Models\\PredictionResult.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\PredictionResult.cs",
+              "RelativeToolTip": "ExpenseManager\\Models\\PredictionResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T05:35:15.255Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "MLClassifier.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
+              "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
+              "ViewState": "AgIAAOgAAAAAAAAAAAAYwLMAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T12:01:20.181Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "ExpensePredictor.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\ExpensePredictor.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\ExpensePredictor.cs",
@@ -210,24 +222,11 @@
               "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\ExpensePredictor.cs",
               "ViewState": "AgIAAA0AAAAAAAAAAAAgwB0AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T12:00:40.833Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-02T12:00:40.833Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "MonthlyController.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Controllers\\MonthlyController.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Controllers\\MonthlyController.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Controllers\\MonthlyController.cs",
-              "RelativeToolTip": "ExpenseManager\\Controllers\\MonthlyController.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAIBYwFoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T03:00:15.297Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 10,
               "Title": "IMonthlyExpenseService.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Monthly\\IMonthlyExpenseService.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Services\\Monthly\\IMonthlyExpenseService.cs",
@@ -239,7 +238,95 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IExpenseClassifier.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
+              "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T12:00:13.976Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RuleBasedClassifier.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
+              "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T12:00:31.205Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Vietnamese.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Utils\\Vietnamese.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Utils\\Vietnamese.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Utils\\Vietnamese.cs",
+              "RelativeToolTip": "ExpenseManager\\Utils\\Vietnamese.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T07:46:33.685Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MonthlyExpenseService.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
+              "RelativeToolTip": "ExpenseManager\\Services\\Monthly\\MonthlyExpenseService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAG4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T02:59:23.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "MonthlyRepository.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\MonthlyRepository.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Repository\\MonthlyRepository.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\MonthlyRepository.cs",
+              "RelativeToolTip": "ExpenseManager\\Repository\\MonthlyRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T02:59:49.714Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "IMonthlyRepository.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
+              "RelativeToolTip": "ExpenseManager\\Repository\\Interface\\IMonthlyRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T02:59:32.179Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 8,
+              "Title": "ExpenseRepository.cs",
+              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\ExpenseRepository.cs",
+              "RelativeDocumentMoniker": "ExpenseManager\\Repository\\ExpenseRepository.cs",
+              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Repository\\ExpenseRepository.cs",
+              "RelativeToolTip": "ExpenseManager\\Repository\\ExpenseRepository.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T05:36:07.8Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Views\\MainWindow.xaml",
               "RelativeDocumentMoniker": "ExpenseManager\\Views\\MainWindow.xaml",
@@ -250,7 +337,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 13,
               "Title": "ExpenseController.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Controllers\\ExpenseController.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Controllers\\ExpenseController.cs",
@@ -262,7 +349,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 11,
               "Title": "AddExpenseWindow.xaml.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Views\\AddExpenseWindow.xaml.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Views\\AddExpenseWindow.xaml.cs",
@@ -274,7 +361,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 15,
               "Title": "AddExpenseWindow.xaml",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Views\\AddExpenseWindow.xaml",
               "RelativeDocumentMoniker": "ExpenseManager\\Views\\AddExpenseWindow.xaml",
@@ -285,7 +372,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 12,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Views\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Views\\MainWindow.xaml.cs",
@@ -297,7 +384,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 17,
               "Title": "CategoryData.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\CategoryData.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Models\\CategoryData.cs",
@@ -309,7 +396,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 18,
               "Title": "Expense.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\Expense.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Models\\Expense.cs",
@@ -321,7 +408,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 16,
               "Title": "README.md",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Images\\README.md",
               "RelativeDocumentMoniker": "ExpenseManager\\Images\\README.md",
@@ -333,19 +420,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "MLClassifier.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
-              "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\MLClassifier.cs",
-              "ViewState": "AgIAANQAAAAAAAAAAAAAwCsAAABcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T12:01:20.181Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 19,
               "Title": "ExpenseData.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\ExpenseData.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Models\\ExpenseData.cs",
@@ -357,7 +432,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 20,
               "Title": "ModelData.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Models\\ModelData.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Models\\ModelData.cs",
@@ -369,7 +444,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 30,
               "Title": "PredictionController.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Controllers\\PredictionController.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Controllers\\PredictionController.cs",
@@ -381,31 +456,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "IExpenseClassifier.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
-              "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\IExpenseClassifier.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T12:00:13.976Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "RuleBasedClassifier.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
-              "RelativeToolTip": "ExpenseManager\\Services\\Prediction\\RuleBasedClassifier.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T12:00:31.205Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 32,
               "Title": "CategoryHelper.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Utils\\CategoryHelper.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Utils\\CategoryHelper.cs",
@@ -417,7 +468,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "App.config",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\App.config",
               "RelativeDocumentMoniker": "ExpenseManager\\App.config",
@@ -429,7 +480,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 27,
               "Title": "anuong.csv",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Data\\anuong.csv",
               "RelativeDocumentMoniker": "ExpenseManager\\Data\\anuong.csv",
@@ -441,7 +492,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 28,
               "Title": "categories.json",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Data\\categories.json",
               "RelativeDocumentMoniker": "ExpenseManager\\Data\\categories.json",
@@ -453,7 +504,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 23,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Views\\MainWindow.xaml",
               "RelativeDocumentMoniker": "ExpenseManager\\Views\\MainWindow.xaml",
@@ -465,7 +516,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "App.xaml",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\App.xaml",
               "RelativeDocumentMoniker": "ExpenseManager\\App.xaml",
@@ -476,7 +527,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 22,
               "Title": "AddExpenseWindow.xaml",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Views\\AddExpenseWindow.xaml",
               "RelativeDocumentMoniker": "ExpenseManager\\Views\\AddExpenseWindow.xaml",
@@ -488,7 +539,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 29,
               "Title": "muasam.csv",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Data\\muasam.csv",
               "RelativeDocumentMoniker": "ExpenseManager\\Data\\muasam.csv",
@@ -500,7 +551,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 31,
               "Title": "DBG.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Utils\\DBG.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Utils\\DBG.cs",
@@ -512,7 +563,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 26,
               "Title": "App.xaml.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\App.xaml.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\App.xaml.cs",
@@ -524,7 +575,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 25,
               "Title": "ExpenseManager.cs",
               "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Services\\ExpenseManager.cs",
               "RelativeDocumentMoniker": "ExpenseManager\\Services\\ExpenseManager.cs",
@@ -533,18 +584,6 @@
               "ViewState": "AgIAACkAAAAAAAAAAABRwCwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-02T07:45:46.073Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "Vietnamese.cs",
-              "DocumentMoniker": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Utils\\Vietnamese.cs",
-              "RelativeDocumentMoniker": "ExpenseManager\\Utils\\Vietnamese.cs",
-              "ToolTip": "E:\\Projects\\ExpenseManager\\ExpenseManager\\Utils\\Vietnamese.cs",
-              "RelativeToolTip": "ExpenseManager\\Utils\\Vietnamese.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T07:46:33.685Z"
             }
           ]
         },

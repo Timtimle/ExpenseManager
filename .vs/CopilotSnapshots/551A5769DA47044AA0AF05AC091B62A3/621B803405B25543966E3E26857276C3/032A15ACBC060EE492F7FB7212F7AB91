@@ -1,0 +1,422 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <!-- ============= MODELS LAYER ============= -->
+  <Class Name="ExpenseManager.Models.Expense">
+    <Position X="1" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Models\Expense.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Property Name="Amount" />
+      <Property Name="Description" />
+      <Property Name="Date" />
+      <Property Name="Category" />
+    </Members>
+  </Class>
+  
+  <Class Name="ExpenseManager.Models.ExpenseData">
+    <Position X="4" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAIAAAA=</HashCode>
+      <FileName>Models\ExpenseData.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Property Name="Label" />
+      <Property Name="Text" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Models.ModelData">
+    <Position X="7" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAABAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\ModelData.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Property Name="Vocabulary" />
+      <Property Name="Weights" />
+      <Property Name="Bias" />
+      <Property Name="TrainingEpochs" />
+      <Property Name="Version" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Models.PredictionResult">
+    <Position X="10.5" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Models\PredictionResult.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Property Name="PredictedCategory" />
+      <Property Name="Confidence" />
+      <Property Name="Method" />
+      <Property Name="PredictionTime" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Models.MonthlyReport">
+    <Position X="14" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAA=</HashCode>
+      <FileName>Models\Reports\MonthlyReport.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Property Name="Year" />
+      <Property Name="Month" />
+      <Property Name="MonthName" />
+      <Property Name="TotalAmount" />
+      <Property Name="TotalTransactions" />
+      <Property Name="FoodTotal" />
+      <Property Name="ShoppingTotal" />
+      <Property Name="EntertainmentTotal" />
+      <Property Name="OthersTotal" />
+      <Property Name="AveragePerDay" />
+      <Property Name="GeneratedDate" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Models.CategoryConfig">
+    <Position X="17.5" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Models\CategoryData.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Property Name="Categories" />
+      <Property Name="CategoryKeywords" />
+      <Property Name="CategoryIcons" />
+      <Property Name="CategoryDisplayNames" />
+    </Members>
+  </Class>
+
+  <!-- ============= CONTROLLERS LAYER ============= -->
+  <Class Name="ExpenseManager.Controllers.ExpenseController">
+    <Position X="1" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ExpenseController.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="expenseManager" />
+      <Method Name="AddExpense" />
+      <Method Name="GetAllExpenses" />
+      <Method Name="DeleteExpense" />
+      <Method Name="LoadExpensesFromJson" />
+      <Method Name="GetTotalExpenses" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Controllers.MonthlyController">
+    <Position X="4.5" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Controllers\MonthlyController.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="monthlyService" />
+      <Method Name="GetMonthlyReport" />
+      <Method Name="GetMonthlyTrends" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Controllers.PredictionController">
+    <Position X="8" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Controllers\PredictionController.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="predictor" />
+      <Method Name="PredictCategory" />
+      <Method Name="TrainModel" />
+    </Members>
+  </Class>
+
+  <!-- ============= SERVICES LAYER ============= -->
+  <Class Name="ExpenseManager.Services.ExpenseManager">
+    <Position X="1" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ExpenseManager.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="repository" />
+      <Method Name="AddExpense" />
+      <Method Name="GetAllExpenses" />
+      <Method Name="DeleteExpense" />
+      <Method Name="LoadExpensesFromJson" />
+      <Method Name="ValidateExpense" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Services.Monthly.MonthlyExpenseService">
+    <Position X="4.5" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Services\Monthly\MonthlyExpenseService.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="monthlyRepository" />
+      <Method Name="GenerateMonthlyReport" />
+      <Method Name="CalculateTrends" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Services.Prediction.ExpensePredictor">
+    <Position X="8" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Services\Prediction\ExpensePredictor.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="classifiers" />
+      <Field Name="mlClassifier" />
+      <Field Name="ruleBasedClassifier" />
+      <Method Name="Predict" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Services.Prediction.MLClassifier">
+    <Position X="11.5" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Services\Prediction\MLClassifier.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="trainingData" />
+      <Field Name="vocabulary" />
+      <Field Name="weights" />
+      <Field Name="bias" />
+      <Method Name="Train" />
+      <Method Name="Classify" />
+      <Method Name="LoadTrainingData" />
+      <Method Name="SaveModel" />
+      <Method Name="LoadModel" />
+      <Method Name="EvaluateAccuracy" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Services.Prediction.RuleBasedClassifier">
+    <Position X="15" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Services\Prediction\RuleBasedClassifier.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="rules" />
+      <Method Name="Classify" />
+    </Members>
+  </Class>
+
+  <!-- ============= REPOSITORY LAYER ============= -->
+  <Class Name="ExpenseManager.Repository.ExpenseRepository">
+    <Position X="1" Y="11.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Repository\ExpenseRepository.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="expenses" />
+      <Method Name="AddExpense" />
+      <Method Name="GetAllExpenses" />
+      <Method Name="DeleteExpense" />
+      <Method Name="SaveExpenses" />
+      <Method Name="LoadExpenses" />
+      <Method Name="GetTotalAmount" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Repository.MonthlyRepository">
+    <Position X="4.5" Y="11.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Repository\MonthlyRepository.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="GetMonthlyData" />
+      <Method Name="GetExpensesByMonth" />
+      <Method Name="CalculateMonthlyTotals" />
+    </Members>
+  </Class>
+
+  <!-- ============= INTERFACES ============= -->
+  <Interface Name="ExpenseManager.Repository.Interface.IExpenseRepository">
+    <Position X="1" Y="14.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Repository\Interface\IExpenseRepository.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="AddExpense" />
+      <Method Name="GetAllExpenses" />
+      <Method Name="DeleteExpense" />
+      <Method Name="SaveExpenses" />
+      <Method Name="LoadExpenses" />
+      <Method Name="GetTotalAmount" />
+    </Members>
+  </Interface>
+
+  <Interface Name="ExpenseManager.Repository.Interface.IMonthlyRepository">
+    <Position X="4.5" Y="14.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Repository\Interface\IMonthlyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+
+  <Interface Name="ExpenseManager.Services.Monthly.IMonthlyExpenseService">
+    <Position X="8" Y="14.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Services\Monthly\IMonthlyExpenseService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+
+  <Interface Name="ExpenseManager.Services.Prediction.IExpenseClassifier">
+    <Position X="11.5" Y="14.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Services\Prediction\IExpenseClassifier.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="Classify" />
+    </Members>
+  </Interface>
+
+  <!-- ============= UTILITIES ============= -->
+  <Class Name="ExpenseManager.Utils.Vietnamese">
+    <Position X="15" Y="11.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Utils\Vietnamese.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="RemoveDiacritics" />
+    </Members>
+  </Class>
+
+  <Class Name="ExpenseManager.Utils.CategoryHelper">
+    <Position X="17.5" Y="11.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Utils\CategoryHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+
+  <Class Name="ExpenseManager.Utils.DBG">
+    <Position X="20" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Utils\DBG.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+
+  <!-- ============= WPF VIEWS ============= -->
+  <Class Name="ExpenseManager.Views.MainWindow" BaseTypeListCollapsed="true">
+    <Position X="1" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Views\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="expenseController" />
+      <Method Name="AddExpenseButton_Click" />
+      <Method Name="RefreshData" />
+      <Method Name="UpdateCharts" />
+    </Members>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+
+  <Class Name="ExpenseManager.Views.AddExpenseWindow" BaseTypeListCollapsed="true">
+    <Position X="4.5" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Views\AddExpenseWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="SaveButton_Click" />
+      <Method Name="PredictCategory" />
+    </Members>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+
+  <Class Name="ExpenseManager.Views.MonthlyWindow" BaseTypeListCollapsed="true">
+    <Position X="8" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Views\MonthlyWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="monthlyController" />
+      <Method Name="LoadMonthlyData" />
+    </Members>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+
+  <!-- ============= APP ENTRY POINT ============= -->
+  <Class Name="ExpenseManager.App" BaseTypeListCollapsed="true">
+    <Position X="11.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+
+  <!-- ============= ASSOCIATIONS ============= -->
+  <Association Name="ExpenseControllerToExpenseManager">
+    <End Name="ExpenseController" Type="ExpenseManager.Controllers.ExpenseController" Multiplicity="1" />
+    <End Name="ExpenseManagerService" Type="ExpenseManager.Services.ExpenseManager" Multiplicity="1" />
+  </Association>
+
+  <Association Name="MonthlyControllerToMonthlyService">
+    <End Name="MonthlyController" Type="ExpenseManager.Controllers.MonthlyController" Multiplicity="1" />
+    <End Name="MonthlyExpenseService" Type="ExpenseManager.Services.Monthly.MonthlyExpenseService" Multiplicity="1" />
+  </Association>
+
+  <Association Name="PredictionControllerToPredictor">
+    <End Name="PredictionController" Type="ExpenseManager.Controllers.PredictionController" Multiplicity="1" />
+    <End Name="ExpensePredictor" Type="ExpenseManager.Services.Prediction.ExpensePredictor" Multiplicity="1" />
+  </Association>
+
+  <Association Name="ExpenseManagerToRepository">
+    <End Name="ExpenseManagerService" Type="ExpenseManager.Services.ExpenseManager" Multiplicity="1" />
+    <End Name="ExpenseRepository" Type="ExpenseManager.Repository.ExpenseRepository" Multiplicity="1" />
+  </Association>
+
+  <Association Name="MonthlyServiceToRepository">
+    <End Name="MonthlyExpenseService" Type="ExpenseManager.Services.Monthly.MonthlyExpenseService" Multiplicity="1" />
+    <End Name="MonthlyRepository" Type="ExpenseManager.Repository.MonthlyRepository" Multiplicity="1" />
+  </Association>
+
+  <Association Name="PredictorToMLClassifier">
+    <End Name="ExpensePredictor" Type="ExpenseManager.Services.Prediction.ExpensePredictor" Multiplicity="1" />
+    <End Name="MLClassifier" Type="ExpenseManager.Services.Prediction.MLClassifier" Multiplicity="1" />
+  </Association>
+
+  <Association Name="PredictorToRuleClassifier">
+    <End Name="ExpensePredictor" Type="ExpenseManager.Services.Prediction.ExpensePredictor" Multiplicity="1" />
+    <End Name="RuleBasedClassifier" Type="ExpenseManager.Services.Prediction.RuleBasedClassifier" Multiplicity="1" />
+  </Association>
+
+  <Association Name="MainWindowToController">
+    <End Name="MainWindow" Type="ExpenseManager.Views.MainWindow" Multiplicity="1" />
+    <End Name="ExpenseController" Type="ExpenseManager.Controllers.ExpenseController" Multiplicity="1" />
+  </Association>
+
+  <Association Name="MonthlyWindowToController">
+    <End Name="MonthlyWindow" Type="ExpenseManager.Views.MonthlyWindow" Multiplicity="1" />
+    <End Name="MonthlyController" Type="ExpenseManager.Controllers.MonthlyController" Multiplicity="1" />
+  </Association>
+
+  <!-- ============= INTERFACE IMPLEMENTATIONS ============= -->
+  <InheritanceLine From="ExpenseManager.Repository.ExpenseRepository" To="ExpenseManager.Repository.Interface.IExpenseRepository" />
+  <InheritanceLine From="ExpenseManager.Repository.MonthlyRepository" To="ExpenseManager.Repository.Interface.IMonthlyRepository" />
+  <InheritanceLine From="ExpenseManager.Services.Monthly.MonthlyExpenseService" To="ExpenseManager.Services.Monthly.IMonthlyExpenseService" />
+  <InheritanceLine From="ExpenseManager.Services.Prediction.MLClassifier" To="ExpenseManager.Services.Prediction.IExpenseClassifier" />
+  <InheritanceLine From="ExpenseManager.Services.Prediction.RuleBasedClassifier" To="ExpenseManager.Services.Prediction.IExpenseClassifier" />
+
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,117 @@
+﻿@startuml ExpenseManager_Deployment_Diagram
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam nodeBackgroundColor #F8F9FA
+
+title ExpenseManager - Deployment Architecture
+
+node "💻 Client Machine" {
+    
+    node "🖥️ Windows OS (.NET Framework 4.7.2)" {
+        
+        artifact "ExpenseManager.exe" as App {
+            component "WPF UI Layer" as UI
+            component "Business Logic" as BL
+            component "Data Access" as DA
+            component "ML Engine" as ML
+        }
+        
+        folder "📁 Application Directory" {
+            file "ExpenseManager.exe"
+            file "ExpenseManager.exe.config"
+            file "System.Text.Json.dll"
+            file "Microsoft.Bcl.AsyncInterfaces.dll"
+            
+            folder "Images/" {
+                file "kawaii_logo.jpg"
+                file "README.md"
+            }
+            
+            folder "Data/" {
+                file "anuong.csv"
+                file "muasam.csv"
+                file "categories.json"
+                
+                folder "User/" {
+                    file "expenses.json" as UserData
+                }
+                
+                folder "Archive/" {
+                    folder "2024/" {
+                        file "01-2024-expenses.json"
+                        file "02-2024-expenses.json"
+                        file "..."
+                    }
+                    folder "2025/" {
+                        file "01-2025-expenses.json"
+                        file "..."
+                    }
+                }
+            }
+        }
+    }
+}
+
+node "☁️ External Services" {
+    cloud "GitHub Repository" as GitHub {
+        artifact "Source Code"
+        artifact "Version Control"
+    }
+    
+    cloud "PlantUML Online" as PlantUML {
+        service "Diagram Rendering"
+    }
+}
+
+database "💾 Local Storage" {
+    storage "JSON Files" as JSONStorage {
+        table "expenses.json" as MainExpenses
+        table "monthly archives" as Archives
+        table "training data" as Training
+    }
+}
+
+' Connections
+App --> JSONStorage : Read/Write
+App --> GitHub : Version Control
+UI --> PlantUML : Generate Diagrams
+
+' Dependencies
+note as Dependencies
+    **Runtime Dependencies:**
+    • .NET Framework 4.7.2
+    • System.Text.Json 9.0.9
+    • Microsoft.Bcl.AsyncInterfaces 9.0.9
+    • System.Buffers 4.5.1
+    • System.Memory 4.5.5
+    • System.Runtime.CompilerServices.Unsafe 6.0.0
+    • System.Text.Encodings.Web 9.0.9
+    • System.Threading.Tasks.Extensions 4.5.4
+    • System.ValueTuple 4.5.0
+    • System.Numerics.Vectors 4.5.0
+    • System.IO.Pipelines 9.0.9
+end note
+
+note as Features
+    **Key Features:**
+    ✅ Standalone WPF Application
+    ✅ No Database Server Required
+    ✅ JSON-based Data Storage
+    ✅ ML Prediction Engine
+    ✅ Monthly Analytics
+    ✅ Data Import/Export
+    ✅ Visual Charts & Reports
+    ✅ Automatic Backup System
+end note
+
+note as SystemReq
+    **System Requirements:**
+    • Windows 7/8/10/11
+    • .NET Framework 4.7.2+
+    • 50 MB Disk Space
+    • 512 MB RAM
+    • Display: 1024x768+
+end note
+
+@enduml

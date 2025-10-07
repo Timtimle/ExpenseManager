@@ -1,0 +1,295 @@
+﻿@startuml ExpenseManager_Architecture
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F8F9FA
+skinparam classBorderColor #DEE2E6
+skinparam arrowColor #6C757D
+skinparam packageBackgroundColor #F1F3F4
+
+title ExpenseManager - Complete System Architecture
+
+' =====================================
+' VIEW LAYER - WPF User Interface
+' =====================================
+package "Views Layer" #E3F2FD {
+    class MainWindow {
+        - expenseController : ExpenseController
+        + RefreshData() : void
+        + UpdateCharts() : void
+        + UpdateSummaryStats() : void
+        + AddExpenseButton_Click() : void
+        + MonthlyButton_Click() : void
+        + ResetButton_Click() : void
+        + LoadFromJson() : void
+        + ExportToJson() : void
+        + CalculateCategoryTotals() : CategoryTotals
+        + UpdateChartBars() : void
+    }
+
+    class AddExpenseWindow {
+        - expenseController : ExpenseController
+        + SaveButton_Click() : void
+        + PredictButton_Click() : void
+        + CancelButton_Click() : void
+        + InitializeForm() : void
+    }
+
+    class MonthlyWindow {
+        - monthlyController : MonthlyController
+        + LoadSelectedMonth() : void
+        + LoadMonthData() : void
+        + InitializeForm() : void
+    }
+}
+
+' =====================================
+' CONTROLLER LAYER - Business Logic Coordination
+' =====================================
+package "Controllers Layer" #E8F5E8 {
+    class ExpenseController {
+        - expenseManager : ExpenseManager
+        + AddExpense(amount, description, category) : bool
+        + AddExpense(amount, description, category, date) : bool
+        + GetAllExpenses() : List<Expense>
+        + GetTotalExpenses() : decimal
+        + DeleteExpense(index) : bool
+        + LoadExpensesFromJson() : bool
+    }
+
+    class MonthlyController {
+        - monthlyService : IMonthlyExpenseService
+        + GetMonthlyReport(year, month) : MonthlyReport
+    }
+}
+
+' =====================================
+' SERVICE LAYER - Core Business Logic
+' =====================================
+package "Services Layer" #FFF3E0 {
+    class ExpenseManager {
+        - repository : IExpenseRepository
+        + AddExpense(amount, description, category) : bool
+        + AddExpense(amount, description, category, date) : bool
+        + GetAllExpenses() : List<Expense>
+        + GetTotalExpenses() : decimal
+        + DeleteExpense(index) : bool
+        + GetExpensesByCategory(category) : List<Expense>
+        + LoadExpensesFromJson() : bool
+        + GetExpensesAsTrainingData() : List<ExpenseData>
+        - ValidateExpense() : bool
+    }
+
+    interface IMonthlyExpenseService {
+        + AddExpense(amount, description, category, date) : bool
+        + GetExpensesByMonth(year, month) : List<Expense>
+        + GetExpensesByDateRange(startDate, endDate) : List<Expense>
+        + GetMonthlyTotal(year, month) : decimal
+        + GetMonthlyCategoryTotals(year, month) : Dictionary<string, decimal>
+        + GetYearlyReport(year) : List<MonthlyReport>
+        + ArchiveMonth(year, month) : bool
+    }
+
+    class MonthlyExpenseService {
+        - repository : IExpenseRepository
+        + GetExpensesByMonth(year, month) : List<Expense>
+        + GetMonthlyTotal(year, month) : decimal
+        + GetMonthlyCategoryTotals(year, month) : Dictionary<string, decimal>
+        + ArchiveMonth(year, month) : bool
+        - IsFoodCategory(category) : bool
+        - IsShoppingCategory(category) : bool
+        - IsEntertainmentCategory(category) : bool
+        - IsOthersCategory(category) : bool
+    }
+
+    class ExpensePredictor {
+        - classifiers : List<IExpenseClassifier>
+        - mlClassifier : MLClassifier
+        - ruleBasedClassifier : RuleBasedClassifier
+        + Predict(description) : string
+    }
+
+    interface IExpenseClassifier {
+        + Classify(description) : string
+    }
+
+    class RuleBasedClassifier {
+        + Classify(description) : string
+    }
+
+    class MLClassifier {
+        + Classify(description) : string
+        + Train(data) : void
+        + GetAccuracy() : double
+    }
+}
+
+' =====================================
+' REPOSITORY LAYER - Data Access
+' =====================================
+package "Repository Layer" #FFEBEE {
+    interface IExpenseRepository {
+        + AddExpense(expense) : bool
+        + GetAllExpenses() : List<Expense>
+        + GetExpensesByCategory(category) : List<Expense>
+        + DeleteExpense(index) : bool
+        + SaveExpenses() : bool
+        + LoadExpenses() : bool
+        + GetTotalAmount() : decimal
+    }
+
+    class ExpenseRepository {
+        - expenses : List<Expense>
+        - jsonFilePath : string
+        + AddExpense(expense) : bool
+        + GetAllExpenses() : List<Expense>
+        + SaveExpenses() : bool
+        + LoadExpenses() : bool
+        + GetTotalAmount() : decimal
+    }
+
+    interface IMonthlyRepository {
+        + SaveMonthlyData(year, month, expenses) : bool
+        + LoadMonthlyData(year, month) : List<Expense>
+        + ArchiveMonth(year, month) : bool
+        + GetAvailableMonths() : List<MonthlyReport>
+        + DeleteMonthlyData(year, month) : bool
+    }
+
+    class MonthlyRepository {
+        - dataPath : string
+        + SaveMonthlyData(year, month, expenses) : bool
+        + LoadMonthlyData(year, month) : List<Expense>
+        + ArchiveMonth(year, month) : bool
+        + GetAvailableMonths() : List<MonthlyReport>
+        + DeleteMonthlyData(year, month) : bool
+    }
+}
+
+' =====================================
+' MODEL LAYER - Data Models
+' =====================================
+package "Models Layer" #E1F5FE {
+    class Expense {
+        + Amount : decimal
+        + Description : string
+        + Date : DateTime
+        + Category : string
+        + Expense()
+        + Expense(amount, description, date, category)
+    }
+
+    class MonthlyReport {
+        + Year : int
+        + Month : int
+        + MonthName : string
+        + TotalAmount : decimal
+        + TotalTransactions : int
+        + FoodTotal : decimal
+        + ShoppingTotal : decimal
+        + EntertainmentTotal : decimal
+        + OthersTotal : decimal
+        + AveragePerDay : decimal
+        + GeneratedDate : DateTime
+        + MonthlyReport()
+        + MonthlyReport(year, month)
+    }
+
+    class ExpenseData {
+        + Label : string
+        + Text : string
+        + ExpenseData()
+        + ExpenseData(label, text)
+    }
+
+    class CategoryData {
+        + CategoryName : string
+        + Keywords : List<string>
+        + Weight : double
+    }
+
+    class ModelData {
+        + TrainingData : List<ExpenseData>
+        + Categories : List<CategoryData>
+        + Accuracy : double
+    }
+
+    class PredictionResult {
+        + PredictedCategory : string
+        + Confidence : double
+        + AlternativeCategories : List<string>
+    }
+}
+
+' =====================================
+' UTILS LAYER - Helper Classes
+' =====================================
+package "Utils Layer" #F9FBE7 {
+    class Vietnamese {
+        + RemoveDiacritics(text) : string
+    }
+
+    class CategoryHelper {
+        + GetCategoryColor(category) : string
+        + GetCategoryIcon(category) : string
+        + ValidateCategory(category) : bool
+    }
+
+    class DBG {
+        + Log(message) : void
+        + LogError(error) : void
+        + LogWarning(warning) : void
+    }
+}
+
+' =====================================
+' RELATIONSHIPS
+' =====================================
+
+' Views to Controllers
+MainWindow --> ExpenseController : uses
+AddExpenseWindow --> ExpenseController : uses
+MonthlyWindow --> MonthlyController : uses
+
+' Controllers to Services
+ExpenseController --> ExpenseManager : uses
+MonthlyController --> IMonthlyExpenseService : uses
+
+' Services Implementation
+MonthlyExpenseService ..|> IMonthlyExpenseService : implements
+ExpenseManager --> IExpenseRepository : uses
+MonthlyExpenseService --> IExpenseRepository : uses
+
+' Prediction Services
+ExpensePredictor --> IExpenseClassifier : uses
+RuleBasedClassifier ..|> IExpenseClassifier : implements
+MLClassifier ..|> IExpenseClassifier : implements
+AddExpenseWindow --> ExpensePredictor : uses
+
+' Repository Implementation
+ExpenseRepository ..|> IExpenseRepository : implements
+MonthlyRepository ..|> IMonthlyRepository : implements
+
+' Repository to Models
+ExpenseRepository --> Expense : manages
+MonthlyRepository --> MonthlyReport : manages
+
+' Services to Models
+ExpenseManager --> Expense : creates
+MonthlyExpenseService --> MonthlyReport : creates
+ExpensePredictor --> PredictionResult : returns
+
+' Utils Usage
+ExpensePredictor --> Vietnamese : uses
+AddExpenseWindow --> Vietnamese : uses
+MainWindow --> CategoryHelper : uses
+
+' Data Models Relationships
+ExpenseData --> Expense : maps_to
+ModelData --> ExpenseData : contains
+ModelData --> CategoryData : contains
+
+' Internal Class Relationships
+MainWindow +-- CategoryTotals : inner_class
+
+@enduml

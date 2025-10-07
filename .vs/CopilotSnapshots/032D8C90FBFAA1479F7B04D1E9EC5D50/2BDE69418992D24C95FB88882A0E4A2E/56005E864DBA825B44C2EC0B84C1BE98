@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="VIEW LAYER - WPF User Interface">
+    <Position X="0.5" Y="0.5" Width="2.5" Height="0.75" />
+  </Comment>
+  <Comment CommentText="CONTROLLER LAYER - Business Logic Coordination">
+    <Position X="0.5" Y="3.5" Width="2.5" Height="0.75" />
+  </Comment>
+  <Comment CommentText="SERVICE LAYER - Core Business Logic">
+    <Position X="0.5" Y="6.5" Width="2.5" Height="0.75" />
+  </Comment>
+  <Comment CommentText="REPOSITORY LAYER - Data Access">
+    <Position X="0.5" Y="9.5" Width="2.5" Height="0.75" />
+  </Comment>
+  <Comment CommentText="MODEL LAYER - Data Models">
+    <Position X="12" Y="9.5" Width="2.5" Height="0.75" />
+  </Comment>
+  <Comment CommentText="UTILS LAYER - Helper Classes">
+    <Position X="16" Y="6.5" Width="2.5" Height="0.75" />
+  </Comment>
+  
+  <!-- VIEW LAYER CLASSES -->
+  <Class Name="ExpenseManager.Views.MainWindow">
+    <Position X="3.5" Y="1" Width="2.5" />
+    <Members>
+      <Field Name="expenseController" Hidden="false" />
+      <Method Name="RefreshData" Hidden="false" />
+      <Method Name="UpdateCharts" Hidden="false" />
+      <Method Name="UpdateSummaryStats" Hidden="false" />
+      <Method Name="AddExpenseButton_Click" Hidden="false" />
+      <Method Name="MonthlyButton_Click" Hidden="false" />
+      <Method Name="ResetButton_Click" Hidden="false" />
+      <Method Name="LoadFromJson" Hidden="false" />
+      <Method Name="ExportToJson" Hidden="false" />
+      <Method Name="CalculateCategoryTotals" Hidden="false" />
+      <Method Name="UpdateChartBars" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Views\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="expenseController" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Views.AddExpenseWindow">
+    <Position X="6.5" Y="1" Width="2.5" />
+    <Members>
+      <Field Name="expenseController" Hidden="false" />
+      <Method Name="SaveButton_Click" Hidden="false" />
+      <Method Name="PredictButton_Click" Hidden="false" />
+      <Method Name="CancelButton_Click" Hidden="false" />
+      <Method Name="InitializeForm" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Views\AddExpenseWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="expenseController" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Views.MonthlyWindow">
+    <Position X="9.5" Y="1" Width="2.5" />
+    <Members>
+      <Field Name="monthlyController" Hidden="false" />
+      <Method Name="LoadSelectedMonth" Hidden="false" />
+      <Method Name="LoadMonthData" Hidden="false" />
+      <Method Name="InitializeForm" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Views\MonthlyWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="monthlyController" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <!-- CONTROLLER LAYER CLASSES -->
+  <Class Name="ExpenseManager.Controllers.ExpenseController">
+    <Position X="3.5" Y="4" Width="2.5" />
+    <Members>
+      <Field Name="expenseManager" Hidden="false" />
+      <Method Name="AddExpense" Hidden="false" />
+      <Method Name="GetAllExpenses" Hidden="false" />
+      <Method Name="GetTotalExpenses" Hidden="false" />
+      <Method Name="DeleteExpense" Hidden="false" />
+      <Method Name="LoadExpensesFromJson" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Controllers\ExpenseController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="expenseManager" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Controllers.MonthlyController">
+    <Position X="6.5" Y="4" Width="2.5" />
+    <Members>
+      <Field Name="monthlyService" Hidden="false" />
+      <Method Name="GetMonthlyReport" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Controllers\MonthlyController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="monthlyService" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <!-- SERVICE LAYER CLASSES -->
+  <Class Name="ExpenseManager.Services.ExpenseManager">
+    <Position X="3.5" Y="7" Width="2.5" />
+    <Members>
+      <Field Name="repository" Hidden="false" />
+      <Method Name="AddExpense" Hidden="false" />
+      <Method Name="GetAllExpenses" Hidden="false" />
+      <Method Name="GetTotalExpenses" Hidden="false" />
+      <Method Name="DeleteExpense" Hidden="false" />
+      <Method Name="LoadExpensesFromJson" Hidden="false" />
+      <Method Name="ValidateExpense" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\ExpenseManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="repository" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Services.Monthly.MonthlyExpenseService">
+    <Position X="6.5" Y="7" Width="2.5" />
+    <Members>
+      <Field Name="repository" Hidden="false" />
+      <Method Name="GetExpensesByMonth" Hidden="false" />
+      <Method Name="GetMonthlyTotal" Hidden="false" />
+      <Method Name="GetMonthlyCategoryTotals" Hidden="false" />
+      <Method Name="ArchiveMonth" Hidden="false" />
+      <Method Name="IsFoodCategory" Hidden="false" />
+      <Method Name="IsShoppingCategory" Hidden="false" />
+      <Method Name="IsEntertainmentCategory" Hidden="false" />
+      <Method Name="IsOthersCategory" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\Monthly\MonthlyExpenseService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="repository" />
+    </ShowAsAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Services.Prediction.ExpensePredictor">
+    <Position X="9.5" Y="7" Width="2.5" />
+    <Members>
+      <Field Name="classifiers" Hidden="false" />
+      <Field Name="mlClassifier" Hidden="false" />
+      <Field Name="ruleBasedClassifier" Hidden="false" />
+      <Method Name="Predict" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\Prediction\ExpensePredictor.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="classifiers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Services.Prediction.RuleBasedClassifier">
+    <Position X="12.5" Y="7" Width="2.5" />
+    <Members>
+      <Method Name="Classify" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\Prediction\RuleBasedClassifier.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  
+  <Class Name="ExpenseManager.Services.Prediction.MLClassifier">
+    <Position X="12.5" Y="4" Width="2.5" />
+    <Members>
+      <Method Name="Classify" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\Prediction\MLClassifier.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  
+  <!-- REPOSITORY LAYER CLASSES -->
+  <Class Name="ExpenseManager.Repository.ExpenseRepository">
+    <Position X="3.5" Y="10" Width="2.5" />
+    <Members>
+      <Field Name="expenses" Hidden="false" />
+      <Field Name="jsonFilePath" Hidden="false" />
+      <Method Name="AddExpense" Hidden="false" />
+      <Method Name="GetAllExpenses" Hidden="false" />
+      <Method Name="SaveExpenses" Hidden="false" />
+      <Method Name="LoadExpenses" Hidden="false" />
+      <Method Name="GetTotalAmount" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Repository\ExpenseRepository.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="expenses" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  
+  <Class Name="ExpenseManager.Repository.MonthlyRepository">
+    <Position X="6.5" Y="10" Width="2.5" />
+    <Members>
+      <Field Name="dataPath" Hidden="false" />
+      <Method Name="SaveMonthlyData" Hidden="false" />
+      <Method Name="LoadMonthlyData" Hidden="false" />
+      <Method Name="ArchiveMonth" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Repository\MonthlyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  
+  <!-- MODEL LAYER CLASSES -->
+  <Class Name="ExpenseManager.Models.Expense">
+    <Position X="12.5" Y="10" Width="2" />
+    <Members>
+      <Property Name="Amount" Hidden="false" />
+      <Property Name="Description" Hidden="false" />
+      <Property Name="Date" Hidden="false" />
+      <Property Name="Category" Hidden="false" />
+      <Method Name="Expense" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Models\Expense.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  
+  <Class Name="ExpenseManager.Models.MonthlyReport">
+    <Position X="15" Y="10" Width="2.5" />
+    <Members>
+      <Property Name="Year" Hidden="false" />
+      <Property Name="Month" Hidden="false" />
+      <Property Name="MonthName" Hidden="false" />
+      <Property Name="TotalAmount" Hidden="false" />
+      <Property Name="TotalTransactions" Hidden="false" />
+      <Property Name="FoodTotal" Hidden="false" />
+      <Property Name="ShoppingTotal" Hidden="false" />
+      <Property Name="EntertainmentTotal" Hidden="false" />
+      <Property Name="OthersTotal" Hidden="false" />
+      <Property Name="AveragePerDay" Hidden="false" />
+      <Property Name="GeneratedDate" Hidden="false" />
+      <Method Name="MonthlyReport" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Models\Reports\MonthlyReport.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  
+  <Class Name="ExpenseManager.Models.ExpenseData">
+    <Position X="18" Y="10" Width="2" />
+    <Members>
+      <Property Name="Label" Hidden="false" />
+      <Property Name="Text" Hidden="false" />
+      <Method Name="ExpenseData" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Models\ExpenseData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  
+  <!-- UTILS LAYER CLASSES -->
+  <Class Name="ExpenseManager.Utils.Vietnamese">
+    <Position X="16" Y="7" Width="2" />
+    <Members>
+      <Method Name="RemoveDiacritics" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Utils\Vietnamese.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  
+  <!-- INTERFACES -->
+  <Interface Name="ExpenseManager.Repository.Interface.IExpenseRepository">
+    <Position X="0.5" Y="10" Width="2.5" />
+    <Members>
+      <Method Name="AddExpense" Hidden="false" />
+      <Method Name="GetAllExpenses" Hidden="false" />
+      <Method Name="GetExpensesByCategory" Hidden="false" />
+      <Method Name="DeleteExpense" Hidden="false" />
+      <Method Name="SaveExpenses" Hidden="false" />
+      <Method Name="LoadExpenses" Hidden="false" />
+      <Method Name="GetTotalAmount" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Repository\Interface\IExpenseRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  
+  <Interface Name="ExpenseManager.Services.Monthly.IMonthlyExpenseService">
+    <Position X="9.5" Y="10" Width="2.5" />
+    <Members>
+      <Method Name="AddExpense" Hidden="false" />
+      <Method Name="GetExpensesByMonth" Hidden="false" />
+      <Method Name="GetMonthlyTotal" Hidden="false" />
+      <Method Name="GetMonthlyCategoryTotals" Hidden="false" />
+      <Method Name="GetYearlyReport" Hidden="false" />
+      <Method Name="ArchiveMonth" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\Monthly\IMonthlyExpenseService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  
+  <Interface Name="ExpenseManager.Services.Prediction.IExpenseClassifier">
+    <Position X="15" Y="7" Width="2" />
+    <Members>
+      <Method Name="Classify" Hidden="false" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Services\Prediction\IExpenseClassifier.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  
+</ClassDiagram>

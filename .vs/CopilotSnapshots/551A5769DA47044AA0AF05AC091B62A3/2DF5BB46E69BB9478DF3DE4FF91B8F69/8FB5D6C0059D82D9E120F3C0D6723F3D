@@ -1,0 +1,214 @@
+﻿@startuml ExpenseManager_SimpleClassDiagram
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title ExpenseManager - Class Relationships\n🔗 Simple Class Diagram (Actual Classes Only)
+
+' Models
+class Expense {
+  +Amount: decimal
+  +Description: string
+  +Date: DateTime
+  +Category: string
+}
+
+class ExpenseData {
+  +Label: string
+  +Text: string
+}
+
+class ModelData {
+  +Vocabulary: List<string>
+  +Weights: Dictionary
+  +Bias: Dictionary
+  +TrainingEpochs: int
+  +Version: string
+}
+
+class MonthlyReport {
+  +Year: int
+  +Month: int
+  +MonthName: string
+  +TotalAmount: decimal
+  +TotalTransactions: int
+  +FoodTotal: decimal
+  +ShoppingTotal: decimal
+  +EntertainmentTotal: decimal
+  +OthersTotal: decimal
+  +AveragePerDay: decimal
+  +GeneratedDate: DateTime
+}
+
+class PredictionResult {
+  +PredictedCategory: string
+  +Confidence: double
+  +Method: string
+  +PredictionTime: DateTime
+}
+
+class CategoryConfig {
+  +Categories: List<string>
+  +CategoryKeywords: Dictionary
+  +CategoryIcons: Dictionary
+  +CategoryDisplayNames: Dictionary
+}
+
+' Controllers
+class ExpenseController {
+  -expenseManager: ExpenseManager.Services.ExpenseManager
+  +AddExpense()
+  +GetAllExpenses()
+  +DeleteExpense()
+  +LoadExpensesFromJson()
+  +GetTotalExpenses()
+}
+
+class MonthlyController {
+  -monthlyService: IMonthlyExpenseService
+  +GetMonthlyReport()
+  +GetMonthExpenses()
+  +GetMonthlyTotal()
+  +CompareWithPreviousMonth()
+}
+
+' Services
+class ExpenseManager {
+  -repository: IExpenseRepository
+  +AddExpense()
+  +GetAllExpenses()
+  +DeleteExpense()
+  +LoadExpensesFromJson()
+  +ValidateExpense()
+  +GetExpensesAsTrainingData()
+}
+
+class MonthlyExpenseService {
+  -expenseRepository: ExpenseRepository
+  +AddExpense()
+  +GetExpensesByMonth()
+  +GetMonthlyTotal()
+  +GetMonthlyCategoryTotals()
+  +GetYearlyReport()
+  +ArchiveMonth()
+}
+
+class ExpensePredictor {
+  -classifiers: List<IExpenseClassifier>
+  -mlClassifier: MLClassifier
+  -ruleBasedClassifier: RuleBasedClassifier
+  +Predict()
+}
+
+class MLClassifier {
+  -trainingData: List<ExpenseData>
+  -vocabulary: List<string>
+  -weights: Dictionary
+  -bias: Dictionary
+  +Train()
+  +Classify()
+  +LoadTrainingData()
+  +SaveModel()
+  +LoadModel()
+  +EvaluateAccuracy()
+}
+
+class RuleBasedClassifier {
+  +rules: Dictionary<string, string[]>
+  +Classify()
+}
+
+' Repository
+class ExpenseRepository {
+  -expenses: List<Expense>
+  +AddExpense()
+  +GetAllExpenses()
+  +GetExpensesByCategory()
+  +DeleteExpense()
+  +SaveExpenses()
+  +LoadExpenses()
+  +GetTotalAmount()
+}
+
+class MonthlyRepository {
+  +GetMonthlyData()
+  +GetExpensesByMonth()
+  +CalculateMonthlyTotals()
+}
+
+' Interfaces
+interface IExpenseRepository
+interface IMonthlyRepository
+interface IExpenseClassifier
+interface IMonthlyExpenseService
+
+' Utils
+class Vietnamese {
+  +RemoveDiacritics()
+}
+
+class DBG {
+  +Out()
+  +Log()
+}
+
+' Views
+class MainWindow {
+  -expenseController: ExpenseController
+  +AddExpenseButton_Click()
+  +RefreshData()
+  +UpdateCharts()
+}
+
+class AddExpenseWindow {
+  -expenseController: ExpenseController
+  +PredictButton_Click()
+  +SaveButton_Click()
+}
+
+class MonthlyWindow {
+  -monthlyController: MonthlyController
+  +LoadMonthlyData()
+}
+
+class App {
+  +OnStartup()
+  +OnExit()
+}
+
+' Main Relationships - Views to Controllers
+MainWindow --> ExpenseController
+AddExpenseWindow --> ExpenseController
+MonthlyWindow --> MonthlyController
+
+' Controllers to Services
+ExpenseController --> ExpenseManager
+MonthlyController --> MonthlyExpenseService
+
+' Services to Repository (via interfaces)
+ExpenseManager --> IExpenseRepository
+MonthlyExpenseService --> ExpenseRepository
+
+' Repository implementations
+ExpenseRepository ..|> IExpenseRepository
+MonthlyRepository ..|> IMonthlyRepository
+MonthlyExpenseService ..|> IMonthlyExpenseService
+
+' AI/ML Relationships
+AddExpenseWindow --> ExpensePredictor : uses for prediction
+ExpensePredictor --> MLClassifier
+ExpensePredictor --> RuleBasedClassifier
+MLClassifier ..|> IExpenseClassifier
+RuleBasedClassifier ..|> IExpenseClassifier
+
+' Data Model Usage
+ExpenseRepository --> Expense : manages
+MLClassifier --> ExpenseData : processes
+MLClassifier --> ModelData : uses
+MonthlyRepository --> MonthlyReport : creates
+ExpensePredictor --> PredictionResult : returns
+
+' Utility Usage
+MLClassifier --> Vietnamese : text processing
+AddExpenseWindow --> Vietnamese : text processing
+
+@enduml
