@@ -58,10 +58,6 @@ namespace ExpenseManager.Services {
             return repository.GetTotalAmount();
         }
 
-        public bool DeleteExpense(int index) {
-            return repository.DeleteExpense(index);
-        }
-
         public List<Expense> GetExpensesByCategory(string category) {
             return repository.GetExpensesByCategory(category);
         }

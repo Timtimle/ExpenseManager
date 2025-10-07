@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using ExpenseManager.Controllers;
@@ -15,12 +15,6 @@ namespace ExpenseManager.Views {
             RefreshData();
         }
 
-        public ExpenseController ExpenseController {
-            get => default;
-            set {
-            }
-        }
-
         private void SetupEventHandlers() {
             AddExpenseButton.Click += AddExpenseButton_Click;
             MonthlyButton.Click += MonthlyButton_Click;
@@ -34,22 +28,17 @@ namespace ExpenseManager.Views {
 
         private void AddExpenseButton_Click(object sender, RoutedEventArgs e) {
             try {
-                // ✅ Get count BEFORE add để verify
                 var expensesBefore = expenseController.GetAllExpenses().Count;
                 
                 var addWindow = new AddExpenseWindow();
                 if (addWindow.ShowDialog() == true) {
-                    // ✅ Wait for file I/O
                     System.Threading.Thread.Sleep(200);
-                    
-                    // ✅ FORCE RELOAD data để đảm bảo fresh data
                     expenseController = new ExpenseController();
                     RefreshData();
                     
-                    // ✅ Verify data was added
                     var expensesAfter = expenseController.GetAllExpenses().Count;
                     if (expensesAfter > expensesBefore) {
-                        ShowSuccess($"✅ Expense added! ({expensesBefore} → {expensesAfter} expenses)");
+                        ShowSuccess($"? Expense added! ({expensesBefore} �� {expensesAfter} expenses)");
                     } else {
                         ShowSuccess("Expense saved!");
                     }
@@ -60,7 +49,7 @@ namespace ExpenseManager.Views {
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e) {
-            var result = MessageBox.Show("⚠️ Delete ALL expenses?\n\nThis cannot be undone!", 
+            var result = MessageBox.Show("?? Delete ALL expenses?\n\nThis cannot be undone!", 
                 "Reset All", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 
             if (result == MessageBoxResult.Yes) {
@@ -88,13 +77,11 @@ namespace ExpenseManager.Views {
 
         private void RefreshData() {
             try {
-                // ✅ FORCE FRESH DATA: Tạo new controller để reload từ files
                 expenseController = new ExpenseController();
                 var expenses = expenseController.GetAllExpenses();
                 
-                System.Diagnostics.Debug.WriteLine($"📊 RefreshData: Loading {expenses.Count} expenses");
+                System.Diagnostics.Debug.WriteLine($"?? RefreshData: Loading {expenses.Count} expenses");
                 
-                // ✅ FORCE UI REFRESH
                 ExpenseDataGrid.ItemsSource = null;
                 ExpenseDataGrid.ItemsSource = expenses;
                 ExpenseDataGrid.Items.Refresh();
@@ -102,10 +89,10 @@ namespace ExpenseManager.Views {
                 UpdateSummaryStats(expenses);
                 UpdateCharts(expenses);
                 
-                System.Diagnostics.Debug.WriteLine($"✅ RefreshData completed - Total: {expenseController.GetTotalExpenses():N0} VND");
+                System.Diagnostics.Debug.WriteLine($"? RefreshData completed - Total: {expenseController.GetTotalExpenses():N0} VND");
                 
             } catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine($"❌ RefreshData error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"? RefreshData error: {ex.Message}");
                 ShowError($"Refresh error: {ex.Message}");
             }
         }
@@ -153,19 +140,17 @@ namespace ExpenseManager.Views {
             decimal othersTotal = 0;
 
             foreach (var expense in expenses) {
-                // ✅ CHECK CATEGORY FIRST (exact match)
                 var category = expense.Category.ToLower();
                 
-                if (category.Contains("food") || category.Contains("🍽️") || category.Contains("ăn") || category.Contains("an uong")) {
+                if (category.Contains("food") || category.Contains("???") || category.Contains("?n") || category.Contains("an uong")) {
                     foodTotal += expense.Amount;
-                } else if (category.Contains("shopping") || category.Contains("🛍️") || category.Contains("mua sam")) {
+                } else if (category.Contains("shopping") || category.Contains("???") || category.Contains("mua sam")) {
                     shoppingTotal += expense.Amount;
-                } else if (category.Contains("entertainment") || category.Contains("🎮") || category.Contains("giai tri")) {
+                } else if (category.Contains("entertainment") || category.Contains("??") || category.Contains("giai tri")) {
                     entertainmentTotal += expense.Amount;
-                } else if (category.Contains("others") || category.Contains("📦") || category.Contains("khac")) {
+                } else if (category.Contains("others") || category.Contains("??") || category.Contains("khac")) {
                     othersTotal += expense.Amount;
                 } else {
-                    // ✅ FALLBACK: Check keywords in description
                     if (HasKeyword(expense, foodKeywords)) {
                         foodTotal += expense.Amount;
                     } else if (HasKeyword(expense, shoppingKeywords)) {
@@ -173,7 +158,6 @@ namespace ExpenseManager.Views {
                     } else if (HasKeyword(expense, entertainmentKeywords)) {
                         entertainmentTotal += expense.Amount;
                     } else {
-                        // ✅ DEFAULT: Everything else goes to Others
                         othersTotal += expense.Amount;
                     }
                 }
@@ -192,7 +176,6 @@ namespace ExpenseManager.Views {
                 const double maxBarWidth = 200;
                 
                 if (total > 0) {
-                    // ✅ SAFE CAST: Đảm bảo không có division by zero hoặc invalid values
                     var foodPercent = Math.Max(0, Math.Min(1, (double)(categoryTotals.Food / total)));
                     var shoppingPercent = Math.Max(0, Math.Min(1, (double)(categoryTotals.Shopping / total)));
                     var entertainmentPercent = Math.Max(0, Math.Min(1, (double)(categoryTotals.Entertainment / total)));
@@ -203,15 +186,13 @@ namespace ExpenseManager.Views {
                     EntertainmentBar.Width = entertainmentPercent * maxBarWidth;
                     OthersBar.Width = othersPercent * maxBarWidth;
                 } else {
-                    // ✅ RESET: Set all bars to 0 when no data
                     FoodBar.Width = 0;
                     ShoppingBar.Width = 0;
                     EntertainmentBar.Width = 0;
                     OthersBar.Width = 0;
                 }
             } catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine($"❌ UpdateChartBars error: {ex.Message}");
-                // Silent fail - don't crash UI for chart update issues
+                System.Diagnostics.Debug.WriteLine($"? UpdateChartBars error: {ex.Message}");
             }
         }
 
@@ -247,31 +228,6 @@ namespace ExpenseManager.Views {
                 
             } catch (Exception ex) {
                 ShowError($"JSON load error: {ex.Message}");
-            }
-        }
-
-        private void ExportToJson() {
-            try {
-                var expenses = expenseController.GetAllExpenses();
-                if (expenses.Count == 0) {
-                    ShowError("No expenses to export");
-                    return;
-                }
-                
-                var jsonPath = @"..\..\Data\User\expenses.json";
-                var directory = System.IO.Path.GetDirectoryName(jsonPath);
-                if (!System.IO.Directory.Exists(directory)) {
-                    System.IO.Directory.CreateDirectory(directory);
-                }
-                
-                var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
-                var json = System.Text.Json.JsonSerializer.Serialize(expenses, options);
-                System.IO.File.WriteAllText(jsonPath, json, new System.Text.UTF8Encoding(false));
-                
-                ShowSuccess($"Exported {expenses.Count} expenses to JSON");
-                
-            } catch (Exception ex) {
-                ShowError($"Export error: {ex.Message}");
             }
         }
 

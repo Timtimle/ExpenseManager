@@ -3,12 +3,6 @@ using System.Text;
 
 namespace ExpenseManager.Utils {
     public class Vietnamese {
-        public Services.Prediction.MLClassifier MLClassifier {
-            get => default;
-            set {
-            }
-        }
-
         public string RemoveDiacritics(string text) {
             if (string.IsNullOrEmpty(text))
                 return text;

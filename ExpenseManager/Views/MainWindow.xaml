@@ -346,7 +346,7 @@
                             <Border Style="{StaticResource CleanCard}">
                                 <StackPanel>
                                     <TextBlock Text="Expense Analytics" FontSize="16" FontWeight="SemiBold" Foreground="#2d3748" Margin="0,0,0,15"/>
-                                    
+
                                     <!-- Simple Visual Chart -->
                                     <Grid Height="140" Margin="0,0,0,15">
                                         <Grid.RowDefinitions>
@@ -355,7 +355,7 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
-                                        
+
                                         <!-- Food Bar -->
                                         <Grid Grid.Row="0" Margin="0,4">
                                             <Grid.ColumnDefinitions>
@@ -365,7 +365,7 @@
                                             <TextBlock Grid.Column="0" Text="Food" FontSize="10" VerticalAlignment="Center" FontWeight="Medium"/>
                                             <Border Grid.Column="1" Background="#667eea" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="FoodBar" Width="50" MinWidth="2"/>
                                         </Grid>
-                                        
+
                                         <!-- Shopping Bar -->
                                         <Grid Grid.Row="1" Margin="0,4">
                                             <Grid.ColumnDefinitions>
@@ -375,7 +375,7 @@
                                             <TextBlock Grid.Column="0" Text="Shopping" FontSize="10" VerticalAlignment="Center" FontWeight="Medium"/>
                                             <Border Grid.Column="1" Background="#28a745" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="ShoppingBar" Width="30" MinWidth="2"/>
                                         </Grid>
-                                        
+
                                         <!-- Entertainment Bar -->
                                         <Grid Grid.Row="2" Margin="0,4">
                                             <Grid.ColumnDefinitions>
@@ -385,7 +385,7 @@
                                             <TextBlock Grid.Column="0" Text="Entertainment" FontSize="9" VerticalAlignment="Center" FontWeight="Medium"/>
                                             <Border Grid.Column="1" Background="#fd7e14" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="EntertainmentBar" Width="20" MinWidth="2"/>
                                         </Grid>
-                                        
+
                                         <!-- Others Bar -->
                                         <Grid Grid.Row="3" Margin="0,4">
                                             <Grid.ColumnDefinitions>
@@ -396,7 +396,7 @@
                                             <Border Grid.Column="1" Background="#6f42c1" Height="18" CornerRadius="8" HorizontalAlignment="Left" Name="OthersBar" Width="10" MinWidth="2"/>
                                         </Grid>
                                     </Grid>
-                                    
+
                                     <!-- Percentage Labels -->
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,3">

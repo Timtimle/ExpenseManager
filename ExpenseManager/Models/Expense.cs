@@ -6,7 +6,6 @@ namespace ExpenseManager.Models {
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public string Category { get; set; }
-
         public Expense() { }
 
         public Expense(decimal amount, string description, DateTime date, string category) {

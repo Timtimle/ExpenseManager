@@ -20,24 +20,6 @@ namespace ExpenseManager.Services.Prediction {
             }
         }
 
-        public RuleBasedClassifier RuleBasedClassifier {
-            get => default(ExpenseManager.Services.Prediction.RuleBasedClassifier);
-            set {
-            }
-        }
-
-        public MLClassifier MLClassifier {
-            get => default(ExpenseManager.Services.Prediction.MLClassifier);
-            set {
-            }
-        }
-
-        public RuleBasedClassifier RuleBasedClassifier1 {
-            get => default(ExpenseManager.Services.Prediction.RuleBasedClassifier);
-            set {
-            }
-        }
-
         public string Predict(string description) {
             if (string.IsNullOrWhiteSpace(description)) {
                 return "Khac";

@@ -13,14 +13,8 @@ namespace ExpenseManager.Views {
             InitializeForm();
         }
 
-        public MonthlyController MonthlyController {
-            get => default;
-            set {
-            }
-        }
 
         private void InitializeForm() {
-            // Set current month/year as default
             var now = DateTime.Now;
             MonthComboBox.SelectedIndex = now.Month - 1;
             

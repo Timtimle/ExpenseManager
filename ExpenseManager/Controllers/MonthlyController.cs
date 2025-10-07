@@ -14,39 +14,6 @@ namespace ExpenseManager.Controllers {
             monthlyService = new MonthlyExpenseService(repository);
         }
 
-        public MonthlyController(IMonthlyExpenseService service) {
-            monthlyService = service;
-        }
-
-        public MonthlyExpenseService MonthlyExpenseService {
-            get => default;
-            set {
-            }
-        }
-
-        // Basic Operations
-        public bool AddExpense(decimal amount, string description, string category, DateTime date) {
-            return monthlyService.AddExpense(amount, description, category, date);
-        }
-
-        public List<Expense> GetCurrentMonthExpenses() {
-            var now = DateTime.Now;
-            return monthlyService.GetExpensesByMonth(now.Year, now.Month);
-        }
-
-        public List<Expense> GetMonthExpenses(int year, int month) {
-            return monthlyService.GetExpensesByMonth(year, month);
-        }
-
-        // Monthly Analytics
-        public decimal GetMonthlyTotal(int year, int month) {
-            return monthlyService.GetMonthlyTotal(year, month);
-        }
-
-        public Dictionary<string, decimal> GetMonthlyCategoryBreakdown(int year, int month) {
-            return monthlyService.GetMonthlyCategoryTotals(year, month);
-        }
-
         // Reports
         public MonthlyReport GetMonthlyReport(int year, int month) {
             var expenses = monthlyService.GetExpensesByMonth(year, month);
@@ -63,35 +30,5 @@ namespace ExpenseManager.Controllers {
             };
         }
 
-        public List<MonthlyReport> GetYearlyReport(int year) {
-            return monthlyService.GetYearlyReport(year);
-        }
-
-        // Comparison Methods
-        public decimal CompareWithPreviousMonth(int year, int month) {
-            var currentTotal = GetMonthlyTotal(year, month);
-            
-            var prevMonth = month - 1;
-            var prevYear = year;
-            if (prevMonth == 0) {
-                prevMonth = 12;
-                prevYear = year - 1;
-            }
-            
-            var previousTotal = GetMonthlyTotal(prevYear, prevMonth);
-            return previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : 0;
-        }
-
-        public decimal GetAverageMonthlySpending(int year) {
-            var yearlyReport = GetYearlyReport(year);
-            var monthsWithData = yearlyReport.Where(r => r.TotalAmount > 0).ToList();
-            
-            return monthsWithData.Count > 0 ? monthsWithData.Average(r => r.TotalAmount) : 0;
-        }
-
-        // Archive Operations
-        public bool ArchiveMonth(int year, int month) {
-            return monthlyService.ArchiveMonth(year, month);
-        }
     }
 }

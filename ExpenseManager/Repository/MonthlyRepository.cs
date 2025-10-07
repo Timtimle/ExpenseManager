@@ -16,13 +16,6 @@ namespace ExpenseManager.Repository {
                 Directory.CreateDirectory(dataPath);
             }
         }
-
-        public MonthlyReport MonthlyReport {
-            get => default;
-            set {
-            }
-        }
-
         public bool SaveMonthlyData(int year, int month, List<Expense> expenses) {
             try {
                 var yearPath = Path.Combine(dataPath, year.ToString());

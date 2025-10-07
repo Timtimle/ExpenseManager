@@ -1,109 +1,74 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="ExpenseManager.Views.AddExpenseWindow" Collapsed="true">
+  <Class Name="ExpenseManager.Views.AddExpenseWindow">
     <Position X="10.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BBAEAAAAAAAAIAAAAAAAAAgAAAAAAAAAQAAAAEAAAAA=</HashCode>
+      <HashCode>BBAEAAAAAAACAAAAAAAAAAgAAAAAAAAAAAAAAEAAAAA=</HashCode>
       <FileName>Views\AddExpenseWindow.xaml.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="ExpensePredictor" />
-      <Property Name="ExpenseController" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ExpenseManager.Views.MainWindow" Collapsed="true">
     <Position X="16.75" Y="0.5" Width="1.5" />
-    <AssociationLine Name="ExpenseController" Type="ExpenseManager.Controllers.ExpenseController">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.206" Y="0.503" />
-      </MemberNameLabel>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>oAAAAAAAAAASgAAAAASgAAAAAAgAAIIAQLAAAEAEAEA=</HashCode>
+      <HashCode>oAAAAAAAAAASgAAAAASgAAAAAAgAAIIAAJAAAEAEAEA=</HashCode>
       <FileName>Views\MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="ExpenseController" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Views.MonthlyWindow" Collapsed="true">
-    <Position X="13.5" Y="0.5" Width="1.5" />
+  <Class Name="ExpenseManager.Views.MonthlyWindow">
+    <Position X="14" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEAAAEAAEAAAAAAAAAAACgAAAAAAAAAAAAAAAABAQA=</HashCode>
+      <HashCode>AAAAAAEAAEAAAAAAAAAAACgAAAAAAAAAAAAAAAABAQA=</HashCode>
       <FileName>Views\MonthlyWindow.xaml.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="MonthlyController" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Controllers.MonthlyController" Collapsed="true">
-    <Position X="12.75" Y="2.5" Width="1.5" />
-    <AssociationLine Name="MonthlyExpenseService" Type="ExpenseManager.Services.Monthly.MonthlyExpenseService">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.068" Y="0.425" />
-      </MemberNameLabel>
-    </AssociationLine>
+  <Class Name="ExpenseManager.Controllers.MonthlyController">
+    <Position X="12.75" Y="2.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>EAABAAAEAAAAAAAAQBEAQAABQAAAEAQAAAEAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\MonthlyController.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="MonthlyExpenseService" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="ExpenseManager.Controllers.ExpenseController" Collapsed="true">
+  <Class Name="ExpenseManager.Controllers.ExpenseController">
     <Position X="17.75" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAIAAAAABAAABAQAABAAABAAAAAAAAAAgAACAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAABAQAABAAAAAAAAAAAAAAgAACAA=</HashCode>
       <FileName>Controllers\ExpenseController.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="ExpenseManager" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="ExpenseManager.Services.Prediction.ExpensePredictor" Collapsed="true">
+  <Class Name="ExpenseManager.Services.Prediction.ExpensePredictor">
     <Position X="9.5" Y="3.5" Width="1.5" />
-    <AssociationLine Name="MLClassifier" Type="ExpenseManager.Services.Prediction.MLClassifier">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.015" Y="0.57" />
-      </MemberNameLabel>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AgAEAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABEAAAIAAg=</HashCode>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAAAAAAg=</HashCode>
       <FileName>Services\Prediction\ExpensePredictor.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="MLClassifier" />
-      <Property Name="RuleBasedClassifier1" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="ExpenseManager.Services.Monthly.MonthlyExpenseService" Collapsed="true">
-    <Position X="12.75" Y="4.25" Width="1.5" />
+  <Class Name="ExpenseManager.Services.Monthly.MonthlyExpenseService">
+    <Position X="4" Y="4.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAABEAEEAAACAAAAABAgAAAIQAAYAAAAAAAAEAAAAAA=</HashCode>
       <FileName>Services\Monthly\MonthlyExpenseService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Services.ExpenseManager" Collapsed="true">
+  <Class Name="ExpenseManager.Services.ExpenseManager">
     <Position X="16" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAIAAACBBAAABAAAABAAABAAAAAAAAAAgAACAA=</HashCode>
+      <HashCode>AAAAAAAAAAACBBAAABAAAABAAABAAAAAAAAAAgAACAA=</HashCode>
       <FileName>Services\ExpenseManager.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ExpenseManager.Services.Prediction.MLClassifier" Collapsed="true">
+  <Class Name="ExpenseManager.Services.Prediction.MLClassifier">
     <Position X="9.25" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgAAABAEAAABEAAEIIAAAIAEAAYAEAOAAAAAAAABE=</HashCode>
+      <HashCode>AAAgAAAAAAAAABEAAAIIAAAIAEAAYAEAMAAAAAAAABE=</HashCode>
       <FileName>Services\Prediction\MLClassifier.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Services.Prediction.RuleBasedClassifier" Collapsed="true">
+  <Class Name="ExpenseManager.Services.Prediction.RuleBasedClassifier">
     <Position X="12" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
@@ -111,61 +76,77 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Models.ExpenseData" Collapsed="true">
+  <Class Name="ExpenseManager.Models.ExpenseData">
     <Position X="9.25" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
       <FileName>Models\ExpenseData.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="MLClassifier" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="ExpenseManager.Repository.ExpenseRepository" Collapsed="true">
-    <Position X="7.25" Y="6.25" Width="1.5" />
+  <Class Name="ExpenseManager.Repository.ExpenseRepository">
+    <Position X="12" Y="7.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAIAACCACAAABAAAAAAAABAgAAAAAAQAAEACAA=</HashCode>
+      <HashCode>AAAAAAAIAACAACAAABAAAAAAAABAgAAAAAAQAAEACAA=</HashCode>
       <FileName>Repository\ExpenseRepository.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Expense" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Repository.MonthlyRepository" Collapsed="true">
-    <Position X="5.5" Y="6" Width="1.5" />
+  <Class Name="ExpenseManager.Repository.MonthlyRepository">
+    <Position X="5.5" Y="6" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AQAAUAAAAAAAAAAAAQAABAAAQAAQAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQAAQAAAAAAAAAAAAQAABAAAQAAQAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Repository\MonthlyRepository.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="MonthlyReport" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ExpenseManager.Models.MonthlyReport" Collapsed="true">
+  <Class Name="ExpenseManager.Models.MonthlyReport">
     <Position X="5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAACBAAQAAAAAQQEAACAAAQAAgAEAAAAAQAAAAA=</HashCode>
       <FileName>Models\Reports\MonthlyReport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ExpenseManager.Models.Expense" Collapsed="true">
-    <Position X="7" Y="7.75" Width="1.5" />
+  <Class Name="ExpenseManager.Models.Expense">
+    <Position X="7.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAACAAAAAAAABAAAAAAAACAA=</HashCode>
       <FileName>Models\Expense.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ExpenseManager.Utils.Vietnamese" Collapsed="true">
+  <Class Name="ExpenseManager.Utils.Vietnamese">
     <Position X="18" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Utils\Vietnamese.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="MLClassifier" />
-    </ShowAsAssociation>
   </Class>
+  <Interface Name="ExpenseManager.Services.Prediction.IExpenseClassifier">
+    <Position X="3" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Prediction\IExpenseClassifier.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ExpenseManager.Repository.Interface.IExpenseRepository">
+    <Position X="1.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAACAACAAABAAAAAAAABAAAAAAAAQAAAACAA=</HashCode>
+      <FileName>Repository\Interface\IExpenseRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ExpenseManager.Repository.Interface.IMonthlyRepository">
+    <Position X="5.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAQAAAAAAAAAAAAAAABAAAQAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Repository\Interface\IMonthlyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ExpenseManager.Services.Monthly.IMonthlyExpenseService">
+    <Position X="7" Y="10.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAABEAEEAAAAAAAAABAAAAAAQAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Monthly\IMonthlyExpenseService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

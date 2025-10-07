@@ -15,12 +15,6 @@ namespace ExpenseManager.Controllers {
             expenseManager = expenseManagerService;
         }
 
-        public Services.ExpenseManager ExpenseManager {
-            get => default;
-            set {
-            }
-        }
-
         public bool AddExpense(decimal amount, string description, string category) {
             return expenseManager.AddExpense(amount, description, category);
         }
@@ -37,20 +31,9 @@ namespace ExpenseManager.Controllers {
             return expenseManager.GetTotalExpenses();
         }
 
-        public bool DeleteExpense(int index) {
-            return expenseManager.DeleteExpense(index);
-        }
-
         public bool LoadExpensesFromJson() {
             return expenseManager.LoadExpensesFromJson();
         }
 
-        public List<Expense> GetExpensesByCategory(string category) {
-            return expenseManager.GetExpensesByCategory(category);
-        }
-
-        public List<ExpenseData> GetExpensesAsTrainingData() {
-            return expenseManager.GetExpensesAsTrainingData();
-        }
     }
 }
