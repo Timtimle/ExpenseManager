@@ -150,7 +150,6 @@
     <None Include="Data\TrainingData\giaitri.csv" />
     <None Include="Data\TrainingData\khac.csv" />
     <None Include="Data\TrainingData\muasam.csv" />
-    <None Include="Data\User\expenses.json" />
     <None Include="ExpenseManagerClassDiagram.cd" />
     <None Include="Images\kawaii_logo.png.placeholder" />
     <None Include="Images\README.md" />
@@ -169,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Models\" />
+    <Folder Include="Data\User\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

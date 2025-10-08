@@ -49,7 +49,7 @@ namespace ExpenseManager.Views {
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e) {
-            var result = MessageBox.Show("?? Delete ALL expenses?\n\nThis cannot be undone!", 
+            var result = MessageBox.Show("Delete All Expenses?\n\nThis cannot be undone!", 
                 "Reset All", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 
             if (result == MessageBoxResult.Yes) {
